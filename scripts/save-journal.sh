@@ -12,11 +12,11 @@ then
     exit 1
 else
     echo "Commit message is sufficient."
-    echo "Saving files in $PWD"
+    echo "Saving Journal entries"
 fi
 
 
-
+cd $HOME/Documents/Journal
 git add .
 git commit -m "$1"
 git push

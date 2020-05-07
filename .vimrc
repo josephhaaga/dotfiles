@@ -1,7 +1,10 @@
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 
 " Enable hybrid line numbers
-set nu! rnu!
+set nu!
+
+" Permanent statusbar
+set laststatus=2
 
 " Enable syntax highlighting
 syntax on

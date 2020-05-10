@@ -1,3 +1,8 @@
+set nocompatible                " required
+filetype off                    " required
+
+filetype plugin indent on    " required
+
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 
 " Enable hybrid line numbers
@@ -26,6 +31,13 @@ call plug#begin('~/.vim/plugged')
 " Make sure you use single quotes
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
+Plug 'tmhedberg/SimpylFold'
+
+" Python formatting edgecases (e.g. multi-line function signatures)
+Plug 'vim-scripts/indentpython.vim'
+
+" Python autocompletion
+Plug 'Valloric/YouCompleteMe'
 
 call plug#end()
 
@@ -34,3 +46,42 @@ autocmd! User GoyoLeave Limelight!
 
 let g:limelight_conceal_ctermfg = 240
 
+"split navigations
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" Enable folding
+set foldmethod=indent
+set foldlevel=99
+
+" Enable folding with the spacebar
+nnoremap <space> za
+
+" Proper PEP8 Indentation
+au BufNewFile,BufRead *.py
+    \ set tabstop=4
+    \ set softtabstop=4
+    \ set shiftwidth=4
+    \ set textwidth=79
+    \ set expandtab
+    \ set autoindent
+    \ set fileformat=unix
+
+
+" Full-stack dev indenting
+au BufNewFile,BufRead *.js, *.html, *.css
+    \ set tabstop=2
+    \ set softtabstop=2
+    \ set shiftwidth=2
+
+" Mark whitespace as bad
+au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+
+" you should be using UTF-8 when working with Python3
+set encoding=utf-8
+
+let g:ycm_autoclose_preview_window_after_completion=1
+let g:ycm_python_binary_path=/Users/josephhaaga/anaconda3/bin/python3
+map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>

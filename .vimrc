@@ -39,6 +39,12 @@ Plug 'vim-scripts/indentpython.vim'
 " Python autocompletion
 Plug 'Valloric/YouCompleteMe'
 
+" Check syntax on each save
+Plug 'vim-syntastic/syntastic'
+
+" Add PEP8 checking
+Plug 'nvie/vim-flake8'
+
 call plug#end()
 
 autocmd! User GoyoEnter Limelight
@@ -59,29 +65,42 @@ set foldlevel=99
 " Enable folding with the spacebar
 nnoremap <space> za
 
-" Proper PEP8 Indentation
-au BufNewFile,BufRead *.py
-    \ set tabstop=4
-    \ set softtabstop=4
-    \ set shiftwidth=4
-    \ set textwidth=79
-    \ set expandtab
-    \ set autoindent
-    \ set fileformat=unix
-
-
-" Full-stack dev indenting
-au BufNewFile,BufRead *.js, *.html, *.css
-    \ set tabstop=2
-    \ set softtabstop=2
-    \ set shiftwidth=2
-
-" Mark whitespace as bad
-au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
-
+" " Proper PEP8 Indentation
+" au BufNewFile,BufRead *.py
+"     \ set tabstop=4
+"     \ set softtabstop=4
+"     \ set shiftwidth=4
+"     \ set textwidth=79
+"     \ set expandtab
+"     \ set autoindent
+"     \ set fileformat=unix
+" 
+" 
+" " Full-stack dev indenting
+"  au BufNewFile,BufRead *.js,*.html,*.css
+"     \ set tabstop=2
+"     \ set softtabstop=2
+"     \ set shiftwidth=2
+" 
+" " Mark whitespace as bad
+" au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+" 
 " you should be using UTF-8 when working with Python3
 set encoding=utf-8
 
 let g:ycm_autoclose_preview_window_after_completion=1
-let g:ycm_python_binary_path=/Users/josephhaaga/anaconda3/bin/python3
+let g:ycm_python_binary_path='/Users/josephhaaga/anaconda3/bin/python3'
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+"python with virtualenv support
+" py << EOF
+" import os
+" import sys
+" if 'VIRTUAL_ENV' in os.environ:
+"  project_base_dir = os.environ['VIRTUAL_ENV']
+"  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
+"  execfile(activate_this, dict(__file__=activate_this))
+" EOF
+
+let python_highlight_all=1
+syntax on

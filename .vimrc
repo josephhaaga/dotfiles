@@ -26,6 +26,18 @@ set title
 " Use OS X system clipboard
 set clipboard=unnamed
 
+" Install vim-plug if not found
+"if empty(glob('~/.vim/autoload/plug.vim'))
+"  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+"    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+"endif
+
+" Run PlugInstall if there are missing plugins
+"if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+"  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+"endif
+
+
 call plug#begin('~/.vim/plugged')
 
 " Make sure you use single quotes
@@ -34,16 +46,16 @@ Plug 'junegunn/limelight.vim'
 Plug 'tmhedberg/SimpylFold'
 
 " Python formatting edgecases (e.g. multi-line function signatures)
-Plug 'vim-scripts/indentpython.vim'
+"Plug 'vim-scripts/indentpython.vim'
 
 " Python autocompletion
-Plug 'Valloric/YouCompleteMe'
+"Plug 'Valloric/YouCompleteMe'
 
 " Check syntax on each save
-Plug 'vim-syntastic/syntastic'
+"Plug 'vim-syntastic/syntastic'
 
 " Add PEP8 checking
-Plug 'nvie/vim-flake8'
+"Plug 'nvie/vim-flake8'
 
 call plug#end()
 
@@ -53,10 +65,10 @@ autocmd! User GoyoLeave Limelight!
 let g:limelight_conceal_ctermfg = 240
 
 "split navigations
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+"nnoremap <C-J> <C-W><C-J>
+"nnoremap <C-K> <C-W><C-K>
+"nnoremap <C-L> <C-W><C-L>
+"nnoremap <C-H> <C-W><C-H>
 
 " Enable folding
 set foldmethod=indent
@@ -88,9 +100,9 @@ nnoremap <space> za
 " you should be using UTF-8 when working with Python3
 set encoding=utf-8
 
-let g:ycm_autoclose_preview_window_after_completion=1
-let g:ycm_python_binary_path='/Users/josephhaaga/anaconda3/bin/python3'
-map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"let g:ycm_autoclose_preview_window_after_completion=1
+"let g:ycm_python_binary_path='/Users/josephhaaga/anaconda3/bin/python3'
+"map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 "python with virtualenv support
 " py << EOF
@@ -104,3 +116,6 @@ map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 let python_highlight_all=1
 syntax on
+
+:colo evening
+

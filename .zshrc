@@ -161,3 +161,7 @@ alias save="~/Documents/Utilities/save.sh"
 
 alias fraym="cd ~/Documents/freelance/Fraym"
 
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+

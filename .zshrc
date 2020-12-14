@@ -114,33 +114,12 @@ source $ZSH/oh-my-zsh.sh
 
 
 
-# added by Anaconda3 5.0.1 installer
-# export PATH="/anaconda3/bin:$PATH"
-# . /anaconda3/etc/profile.d/conda.sh  # commented out by conda initialize
-
-
-
-
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/josephhaaga/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/josephhaaga/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/josephhaaga/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/josephhaaga/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/josephhaaga/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/josephhaaga/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/josephhaaga/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/josephhaaga/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 
 
 # Python environment
@@ -150,18 +129,30 @@ export PYTHONDONTWRITEBYTECODE=1
 alias ssh6340="ssh -p 1234 cs6340@localhost"
 alias start6340="VBoxManage startvm \"CS6340 VM Fall 2019 18.04LTS\" --type headless"
 alias stop6340="VBoxManage controlvm \"CS6340 VM Fall 2019 18.04LTS\" poweroff"
-alias updatetodo="git add . && git commit -m 'update todo' && git push"
+alias today="python3 -c 'import requests; print(requests.get(\"http://numbersapi.com/5/11/date\").text);'" 
 
-# alias python3="~/anaconda3/bin/python3"
-# alias pip="~/anaconda3/bin/pip3"
-alias todo="python3 ~/Documents/code/todos/todos/main.py"
 alias lx="ls -latch | vi -"
 alias vi="/usr/local/bin/vim"
-alias save="~/Documents/Utilities/save.sh"
+alias save="~/Documents/dotfiles/scripts/save.sh"
+alias journal="~/Documents/dotfiles/scripts/journal.sh"
+alias tomorrow="~/Documents/dotfiles/scripts/tomorrrow-journal.sh"
+# alias save-journal="~/Documents/Utilities/save-journal.sh"
+alias notes="vi ~/Documents/Journal/notes"
+alias streambot="vi ~/Documents/Journal/notes/streambot-ideas.md"
+alias ideas="vi ~/Documents/Journal/notes/Ideas.md"
 
 alias fraym="cd ~/Documents/freelance/Fraym"
+alias fish="asciiquarium"
+alias speedread="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/speedread.rb"
 
-export PATH="$HOME/.pyenv/bin:$PATH"
+export PATH="/Users/josephhaaga/Library/Python/3.7/bin:$PATH"
+export PATH="/Users/josephhaaga/.pyenv/bin:$PATH"
+export PATH="/Users/josephhaaga/.local/bin:$PATH"
+
 eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+#eval "$(pyenv virtualenv-init -)"
 
+#echo -e '\nif command -v pyenv 1>/dev/null 2>&1; then
+#  eval "$(pyenv init -)"
+#fi' >> ~/.bash_profile
+#

@@ -153,6 +153,9 @@ export PATH="/Users/josephhaaga/.local/bin:$PATH"
 eval "$(pyenv init -)"
 #eval "$(pyenv virtualenv-init -)"
 
+# https://gabnotes.org/how-use-pipx-pyenv/
+export PIPX_DEFAULT_PYTHON="$HOME/.pyenv/versions/3.8.5/bin/python"
+
 #echo -e '\nif command -v pyenv 1>/dev/null 2>&1; then
 #  eval "$(pyenv init -)"
 #fi' >> ~/.bash_profile

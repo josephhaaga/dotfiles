@@ -6,7 +6,9 @@ filetype plugin indent on    " required
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 
 " Enable hybrid line numbers
-set nu!
+" set nu!
+" Enable relative line numbers
+set rnu!
 
 " Permanent statusbar
 set laststatus=2

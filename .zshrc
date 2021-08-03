@@ -17,7 +17,8 @@ export SPARK_OPTS="--packages graphframes:graphframes:0.6.0-spark2.3-2_2.11"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 #ZSH_THEME="materialshell"
-ZSH_THEME="agnoster"
+# ZSH_THEME="agnoster"
+ZSH_THEME="josephhaaga"
 DEFAULT_USER="josephhaaga"
 prompt_context(){}
 
@@ -134,7 +135,7 @@ alias today="python3 -c 'import requests; print(requests.get(\"http://numbersapi
 alias lx="ls -latch | vi -"
 alias vi="/usr/local/bin/vim"
 alias save="~/Documents/dotfiles/scripts/save.sh"
-alias journal="~/Documents/dotfiles/scripts/journal.sh"
+# alias journal="~/Documents/dotfiles/scripts/journal.sh"
 alias tomorrow="~/Documents/dotfiles/scripts/tomorrow-journal.sh"
 # alias save-journal="~/Documents/Utilities/save-journal.sh"
 alias notes="vi ~/Documents/Journal/notes"
@@ -151,6 +152,9 @@ export PATH="/Users/josephhaaga/.local/bin:$PATH"
 
 eval "$(pyenv init -)"
 #eval "$(pyenv virtualenv-init -)"
+
+# https://gabnotes.org/how-use-pipx-pyenv/
+export PIPX_DEFAULT_PYTHON="$HOME/.pyenv/versions/3.8.5/bin/python"
 
 #echo -e '\nif command -v pyenv 1>/dev/null 2>&1; then
 #  eval "$(pyenv init -)"

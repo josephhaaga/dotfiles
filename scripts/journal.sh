@@ -9,9 +9,6 @@ if [[ ! -f "$FILE" ]]; then
     echo "# $(date)" >> $FILE
     echo "" >> $FILE
     echo "" >> $FILE
-    echo "## How I spent my time today" >> $FILE
-    echo "### Loved" >> $FILE
-    echo "### Loathed" >> $FILE
 #   echo "" >> $FILE
 #   echo "## Self Care" >> $FILE
 #   echo "Physical: " >> $FILE

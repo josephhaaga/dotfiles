@@ -9,6 +9,7 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 " set nu!
 " Enable relative line numbers
 set rnu!
+set nu!
 
 " Permanent statusbar
 set laststatus=2

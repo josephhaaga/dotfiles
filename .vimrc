@@ -8,7 +8,6 @@ set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 " Enable hybrid line numbers
 " set nu!
 " Enable relative line numbers
-set rnu!
 set nu!
 set rnu!
 

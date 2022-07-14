@@ -6,6 +6,9 @@ filetype plugin indent on    " required
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 
 " Enable hybrid line numbers
+" set nu!
+" Enable relative line numbers
+set rnu!
 set nu!
 set rnu!
 
@@ -118,5 +121,5 @@ set encoding=utf-8
 let python_highlight_all=1
 syntax on
 
-:colo darkblue
+" :colo darkblue
 

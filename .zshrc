@@ -4,14 +4,6 @@
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
-# Environment Variables for GraknAI
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home/
-export PYSPARK_DRIVER_PYTHON=/anaconda3/bin/jupyter
-export PYSPARK_DRIVER_PYTHON_OPTS=notebook
-export SPARK_OPTS="--packages graphframes:graphframes:0.6.0-spark2.3-2_2.11"
-
-# Environment variables for Neo4J-Spark connector
-# export $SPARK_HOME=/usr/local 
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -115,34 +107,21 @@ source $ZSH/oh-my-zsh.sh
 
 
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/josephhaaga/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/josephhaaga/Downloads/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/josephhaaga/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/josephhaaga/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
-
-
-
 # Python environment
 export PYTHONDONTWRITEBYTECODE=1
 
 # Custom Aliases
-alias ssh6340="ssh -p 1234 cs6340@localhost"
-alias start6340="VBoxManage startvm \"CS6340 VM Fall 2019 18.04LTS\" --type headless"
-alias stop6340="VBoxManage controlvm \"CS6340 VM Fall 2019 18.04LTS\" poweroff"
 alias today="python3 -c 'import requests; print(requests.get(\"http://numbersapi.com/5/11/date\").text);'" 
 
 alias lx="ls -latch | vi -"
 alias vi="/usr/local/bin/vim"
 alias save="~/Documents/dotfiles/scripts/save.sh"
-# alias journal="~/Documents/dotfiles/scripts/journal.sh"
-alias tomorrow="~/Documents/dotfiles/scripts/tomorrow-journal.sh"
-# alias save-journal="~/Documents/Utilities/save-journal.sh"
+
 alias notes="vi ~/Documents/Journal/notes"
 alias streambot="vi ~/Documents/Journal/notes/streambot-ideas.md"
 alias ideas="vi ~/Documents/Journal/notes/Ideas.md"
 
-alias fraym="cd ~/Documents/freelance/Fraym"
+
 alias fish="asciiquarium"
 alias speedread="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/speedread.rb"
 

@@ -121,4 +121,4 @@ let python_highlight_all=1
 syntax on
 
 " :colo darkblue
-
+set t_Co=256

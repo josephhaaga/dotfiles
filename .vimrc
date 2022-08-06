@@ -21,7 +21,7 @@ syntax on
 :command Json %!python -m json.tool
 
 " Create a Algo command to echo my LeetCode practice template
-:command Algo %!python3 -c "import datetime; now=datetime.datetime.now(); print(f'[{now}]\n\nTitle\n\nURL\n\n- [ ] diagram a solution\n- [ ] look for patterns\n- [ ] summarize approach\n\n- [ ] pseudocode\n- [ ] write the code\n\nWhat went wrong?\n\nWhat is one thing I could have done/known that would\'ve made everything else easier?\n');"
+:command Algo :r!python3 -c "import datetime; now=datetime.datetime.now(); print(f'[{now}]\n\n<Title>\n<URL>\n\n- [ ] diagram a solution\n- [ ] look for patterns\n- [ ] summarize approach\n\n- [ ] pseudocode\n- [ ] write the code\n\nWhat went wrong?\n\nWhat is one thing I could have done/known that would\'ve made everything else easier?\n');"
 
 " Show the cursor position
 set ruler

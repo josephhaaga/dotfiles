@@ -21,7 +21,7 @@ syntax on
 :command Json %!python -m json.tool
 
 " Create a timestamp command
-:command Ts :%!python3 -c "import datetime; now=datetime.datetime.now().strftime('\%Y-\%m-\%d \%I:\%M:\%S \%p'); print(f'[{now}]')"
+:command Ts :r!python3 -c "import datetime; now=datetime.datetime.now().strftime('\%Y-\%m-\%d \%I:\%M:\%S \%p'); print(f'[{now}]')"
 
 " Create a Algo command to echo my LeetCode practice template
 :command Algo :r!python3 -c "import datetime; now=datetime.datetime.now().strftime('\%Y-\%m-\%d \%I:\%M:\%S \%p'); print(f'[{now}]\n\n<URL>\n\nWhat went wrong?\n\nWhat is one thing I could have done/known that would\'ve made everything else easier?\n');"

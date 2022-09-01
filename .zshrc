@@ -109,6 +109,15 @@ source $ZSH/oh-my-zsh.sh
 
 # Python environment
 export PYTHONDONTWRITEBYTECODE=1
+export PATH="/Users/josephhaaga/Library/Python/3.7/bin:$PATH"
+export PATH="/Users/josephhaaga/.pyenv/bin:$PATH"
+export PATH="/Users/josephhaaga/.local/bin:$PATH"
+
+eval "$(pyenv init -)"
+
+# https://gabnotes.org/how-use-pipx-pyenv/
+export PIPX_DEFAULT_PYTHON="$HOME/.pyenv/versions/3.8.2/bin/python"
+
 
 # Custom Aliases
 alias today="python3 -c 'import requests; print(requests.get(\"http://numbersapi.com/5/11/date\").text);'" 
@@ -121,21 +130,9 @@ alias notes="vi ~/Documents/Journal/notes"
 alias streambot="vi ~/Documents/Journal/notes/streambot-ideas.md"
 alias ideas="vi ~/Documents/Journal/notes/Ideas.md"
 
-
 alias fish="asciiquarium"
 alias speedread="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/speedread.rb"
 
-export PATH="/Users/josephhaaga/Library/Python/3.7/bin:$PATH"
-export PATH="/Users/josephhaaga/.pyenv/bin:$PATH"
-export PATH="/Users/josephhaaga/.local/bin:$PATH"
-
-eval "$(pyenv init -)"
-#eval "$(pyenv virtualenv-init -)"
-
-# https://gabnotes.org/how-use-pipx-pyenv/
-export PIPX_DEFAULT_PYTHON="$HOME/.pyenv/versions/3.8.2/bin/python"
-
-#echo -e '\nif command -v pyenv 1>/dev/null 2>&1; then
-#  eval "$(pyenv init -)"
-#fi' >> ~/.bash_profile
-#
+# zsh-histdb
+source $HOME/.oh-my-zsh/custom/plugins/zsh-histdb/sqlite-history.zsh
+autoload -Uz add-zsh-hook

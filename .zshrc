@@ -94,7 +94,7 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # setopt prompt_subst
-# PS1='%n@%m $(shrink_path -f)>'
+PS1='%n@%m $(shrink_path -f)>'
 
 
 # Set name of the theme to load. Optionally, if you set this to "random"

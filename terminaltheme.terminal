@@ -147,7 +147,7 @@
 	AAAAAAAAAM4=
 	</data>
 	<key>BackgroundAlphaInactive</key>
-	<real>0.26503793352601157</real>
+	<real>0.7190020271901334</real>
 	<key>BackgroundBlur</key>
 	<real>0.033033778901734104</real>
 	<key>BackgroundBlurInactive</key>
@@ -356,7 +356,7 @@
 	<key>columnCount</key>
 	<integer>95</integer>
 	<key>name</key>
-	<string>materialshell-dark 2</string>
+	<string>terminaltheme</string>
 	<key>rowCount</key>
 	<integer>25</integer>
 	<key>type</key>

@@ -117,6 +117,8 @@ eval "$(pyenv init -)"
 # https://gabnotes.org/how-use-pipx-pyenv/
 export PIPX_DEFAULT_PYTHON=`pyenv which python3`
 
+# Adding pipx apps to PATH
+export PATH="$HOME/.local/bin:$PATH"
 
 # Custom Aliases
 alias today="python3 -c 'import requests; print(requests.get(\"http://numbersapi.com/5/11/date\").text);'" 

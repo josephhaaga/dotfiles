@@ -13,6 +13,7 @@ ln -s ~/Documents/dotfiles/ ~/.oh-my-zsh/custom/themes/
 [How to install Vim plugins](https://linuxhint.com/vim_install_plugins/)
 
 ## TODO
+- better articulate dependencies (e.g. pyenv) that cause `.zshrc` errors on Terminal start
 - install zsh
 - install oh-my-zsh
 - update .zshrc

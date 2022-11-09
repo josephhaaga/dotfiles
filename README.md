@@ -17,4 +17,4 @@ ln -s ~/Documents/dotfiles/.* ~
 - install oh-my-zsh
 - update .zshrc
 - scripts (e.g. journal, tomorrow, notes) are on path, or aliased
-
+- figure out the .oh-my-zsh submodule

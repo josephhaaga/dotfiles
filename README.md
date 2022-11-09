@@ -6,6 +6,7 @@ git clone https;//github.com/josephhaaga/dotfiles
 cd ~
 ln -s ~/Documents/dotfiles/.* ~
 ln -s ~/Documents/dotfiles/josephhaaga.zsh-theme ~/.oh-my-zsh/custom/themes/
+ln -s ~/Documents/dotfiles/.oh-my-zsh/custom ~/.oh-my-zsh/custom
 ```
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom

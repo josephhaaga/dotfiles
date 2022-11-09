@@ -4,8 +4,8 @@
 cd ~/Documents
 git clone https;//github.com/josephhaaga/dotfiles
 cd ~
-ln -s ~/Documents/dotfiles/* ~
 ln -s ~/Documents/dotfiles/.* ~
+ln -s ~/Documents/dotfiles/ ~/.oh-my-zsh/custom/themes/
 ```
 
 
@@ -17,4 +17,4 @@ ln -s ~/Documents/dotfiles/.* ~
 - install oh-my-zsh
 - update .zshrc
 - scripts (e.g. journal, tomorrow, notes) are on path, or aliased
-- figure out the .oh-my-zsh submodule
+- figure out the .oh-my-zsh submodule, and find a better location for josephhaaga.zsh-theme 

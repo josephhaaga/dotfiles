@@ -5,7 +5,7 @@ cd ~/Documents
 git clone https;//github.com/josephhaaga/dotfiles
 cd ~
 ln -s ~/Documents/dotfiles/.* ~
-ln -s ~/Documents/dotfiles/ ~/.oh-my-zsh/custom/themes/
+ln -s ~/Documents/dotfiles/josephhaaga.zsh-theme ~/.oh-my-zsh/custom/themes/
 ```
 
 

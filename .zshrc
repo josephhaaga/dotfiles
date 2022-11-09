@@ -109,10 +109,10 @@ PS1='%n@%m $(shrink_path -f)>'
 
 # Python environment
 export PYTHONDONTWRITEBYTECODE=1
-export PATH="/Users/josephhaaga/Library/Python/3.7/bin:$PATH"
-export PATH="/Users/josephhaaga/.pyenv/bin:$PATH"
-export PATH="/Users/josephhaaga/.local/bin:$PATH"
 
+## pyenv 2.3.0 setup
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 # https://gabnotes.org/how-use-pipx-pyenv/
@@ -134,6 +134,8 @@ alias fish="asciiquarium"
 alias speedread="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/speedread.rb"
 
 # zsh-histdb
-HISTDB_TABULATE_CMD=(sed -e $'s/\x1f/\t/g')
-source $HOME/.oh-my-zsh/custom/plugins/zsh-histdb/sqlite-history.zsh
+if test -f $HOME/.oh-my-zsh/custom/plugins/zsh-histdb/sqlite-history.zsh; then
+    HISTDB_TABULATE_CMD=(sed -e $'s/\x1f/\t/g')
+    source $HOME/.oh-my-zsh/custom/plugins/zsh-histdb/sqlite-history.zsh
+fi
 autoload -Uz add-zsh-hook

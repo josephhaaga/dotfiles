@@ -115,7 +115,7 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 # https://gabnotes.org/how-use-pipx-pyenv/
-export PIPX_DEFAULT_PYTHON="$HOME/.pyenv/versions/3.8.2/bin/python"
+export PIPX_DEFAULT_PYTHON=`pyenv which python3`
 
 
 # Custom Aliases

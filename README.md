@@ -8,6 +8,8 @@ ln -s ~/Documents/dotfiles/.* ~
 ln -s ~/Documents/dotfiles/josephhaaga.zsh-theme ~/.oh-my-zsh/custom/themes/
 ```
 
+To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom
+
 
 ## Resources
 [How to install Vim plugins](https://linuxhint.com/vim_install_plugins/)

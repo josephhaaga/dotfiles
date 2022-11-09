@@ -11,7 +11,7 @@ export ZSH=$HOME/.oh-my-zsh
 #ZSH_THEME="materialshell"
 # ZSH_THEME="agnoster"
 ZSH_THEME="josephhaaga"
-DEFAULT_USER="josephhaaga"
+DEFAULT_USER=`whoami`
 prompt_context(){}
 
 
@@ -94,17 +94,16 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # setopt prompt_subst
-PS1='%n@%m $(shrink_path -f)>'
+# PS1='%n@%m $(shrink_path -f)>'
+# This breaks my prompt!
 
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-#ZSH_THEME="materialshell"
-# ZSH_THEME="agnoster"
-# DEFAULT_USER="josephhaaga"
-# prompt_context(){}
-
+# ZSH_THEME="materialshell"
+ZSH_THEME="josephhaaga"
+prompt_context(){}
 
 
 # Python environment

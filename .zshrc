@@ -129,7 +129,11 @@ fi
 alias today="python3 -c 'import requests; print(requests.get(\"http://numbersapi.com/5/11/date\").text);'" 
 
 alias lx="ls -latch | vi -"
-alias vi="/usr/local/bin/vim"
+if [ -f "/usr/local/bin/vim" ]; then
+    alias vi="/usr/local/bin/vim"
+else
+    echo "vim not found at /usr/local/bin/vim - skipping 'vi' alias creation"
+fi
 alias save="~/Documents/dotfiles/scripts/save.sh"
 
 alias notes="vi ~/Documents/Journal/notes"

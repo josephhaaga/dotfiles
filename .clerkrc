@@ -1,6 +1,6 @@
 [DEFAULT]
 journal_directory=/Users/josephhaaga/Documents/Journal/journals/
-preferred_editor=vi
+preferred_editor=vi '+normal Go'
 date_format=%%Y-%%m-%%d
 file_extension=md
 

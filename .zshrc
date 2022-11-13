@@ -110,15 +110,20 @@ prompt_context(){}
 export PYTHONDONTWRITEBYTECODE=1
 
 ## pyenv 2.3.0 setup
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+if ! command -v pyenv > /dev/null 2>&1; then
+    echo "pyenv not installed! skipping environment configuration"
+else
+    export PYENV_ROOT="$HOME/.pyenv"
+    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
 
-# https://gabnotes.org/how-use-pipx-pyenv/
-export PIPX_DEFAULT_PYTHON=`pyenv which python3`
+    # https://gabnotes.org/how-use-pipx-pyenv/
+    export PIPX_DEFAULT_PYTHON=`pyenv which python3`
 
-# Adding pipx apps to PATH
-export PATH="$HOME/.local/bin:$PATH"
+    # Adding pipx apps to PATH
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
 
 # Custom Aliases
 alias today="python3 -c 'import requests; print(requests.get(\"http://numbersapi.com/5/11/date\").text);'" 

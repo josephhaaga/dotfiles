@@ -15,6 +15,7 @@ To install the Terminal.app theme, open Terminal, go to Terminal > Preferences >
 
 ## Resources
 [How to install Vim plugins](https://linuxhint.com/vim_install_plugins/)
+[Intro to tmux](https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/)
 
 ## TODO
 - better articulate dependencies (e.g. pyenv) that cause `.zshrc` errors on Terminal start
@@ -41,4 +42,6 @@ $ tmux
 **Begin selection**: <key>v</key>
 **Begin line selection**: <key>V</key>
 **Exit select mode**: <key>q</key>
+**Create new window**: **Prefix** + <key>c</key>
+**See all commands**: **Prefix** + <key>?</key>
 

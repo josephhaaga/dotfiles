@@ -8,9 +8,15 @@ ln -s ~/Documents/dotfiles/.* ~
 rm -rf .git
 mkdir -p ~/.oh-my-zsh/custom
 ln -s ~/Documents/dotfiles/omzcustom/custom/* ~/.oh-my-zsh/custom
+
+# install tmux plugin manager
+cd ~
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom
+
+To install tmux plugins, open `tmux` and hit <key>I</key>
 
 
 ## Resources

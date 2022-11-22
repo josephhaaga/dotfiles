@@ -4,7 +4,7 @@ Repeatable dev environment config
 ## Installation
 ```bash
 cd ~/Documents
-git clone https;//github.com/josephhaaga/dotfiles
+git clone https://github.com/josephhaaga/dotfiles
 brew bundle
 cd ~
 ln -s ~/Documents/dotfiles/.* ~

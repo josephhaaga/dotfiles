@@ -13,6 +13,10 @@ ln -s ~/Documents/dotfiles/omzcustom/custom/* ~/.oh-my-zsh/custom
 # install tmux plugin manager
 cd ~
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# start window + hotkey manager 
+brew services start skhd
+brew services start yabai
 ```
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom

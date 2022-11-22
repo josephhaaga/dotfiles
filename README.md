@@ -3,6 +3,7 @@
 ```bash
 cd ~/Documents
 git clone https;//github.com/josephhaaga/dotfiles
+brew bundle
 cd ~
 ln -s ~/Documents/dotfiles/.* ~
 rm -rf .git
@@ -51,4 +52,11 @@ $ tmux
 **Exit select mode**: <key>q</key>
 **Create new window**: **Prefix** + <key>c</key>
 **See all commands**: **Prefix** + <key>?</key>
+
+
+### brew
+Run `brew bundle` in a directory containing a `Brewfile` to install all listed applications.
+
+Run `brew bundle dump` to generate a `Brewfile`
+
 

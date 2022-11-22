@@ -9,15 +9,14 @@ brew bundle
 cd ~
 ln -s ~/Documents/dotfiles/.* ~
 ln -s ~/Documents/dotfiles/spacebarrc ~/.config/spacebar/spacebarrc
-rm -rf .git
+rm -rf ~/.git
 
 # install tmux plugin manager
 cd ~
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
-# start window + hotkey manager 
-brew services start skhd
-brew services start yabai
+# start window manager (yabai) + hotkey manager (skhd)
+brew services start --all
 
 # hide OS X menubar
 defaults write NSGlobalDomain _HIHideMenuBar -bool true

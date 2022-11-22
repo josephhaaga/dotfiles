@@ -1,3 +1,5 @@
+# dotfiles
+Repeatable dev environment config
 
 ## Installation
 ```bash
@@ -6,6 +8,7 @@ git clone https;//github.com/josephhaaga/dotfiles
 brew bundle
 cd ~
 ln -s ~/Documents/dotfiles/.* ~
+ln -s ~/Documents/dotfiles/spacebarrc ~/.config/spacebar/spacebarrc
 rm -rf .git
 
 # install tmux plugin manager
@@ -15,6 +18,9 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 # start window + hotkey manager 
 brew services start skhd
 brew services start yabai
+
+# hide OS X menubar
+defaults write NSGlobalDomain _HIHideMenuBar -bool true
 ```
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom
@@ -61,4 +67,5 @@ Run `brew bundle` in a directory containing a `Brewfile` to install all listed a
 
 Run `brew bundle dump` to generate a `Brewfile`
 
-
+Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` etc.
+* `brew services stop --all` and `brew services start --all` usually fixes any issues

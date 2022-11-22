@@ -7,8 +7,6 @@ brew bundle
 cd ~
 ln -s ~/Documents/dotfiles/.* ~
 rm -rf .git
-mkdir -p ~/.oh-my-zsh/custom
-ln -s ~/Documents/dotfiles/omzcustom/custom/* ~/.oh-my-zsh/custom
 
 # install tmux plugin manager
 cd ~

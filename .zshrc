@@ -3,6 +3,7 @@
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
+export ZSH_CUSTOM=$HOME/Documents/dotfiles/omzcustom/custom
 
 
 # Set name of the theme to load. Optionally, if you set this to "random"

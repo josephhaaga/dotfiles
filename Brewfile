@@ -35,6 +35,7 @@ brew "pipx"
 brew "ponysay"
 brew "pyenv"
 brew "python@3.8", link: false
+brew "shfmt"
 brew "sops"
 brew "swig"
 brew "telnet"

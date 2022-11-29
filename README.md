@@ -50,25 +50,27 @@ To install tmux plugins, open `tmux` and hit <kbd>I</kbd>.
 $ tmux
 ```
 
-**Split horizontally**: **Prefix** + <kbd>|</kbd> 
-**Split vertically**: **Prefix** + <kbd>-</kbd> 
-**Switch pane**: **Prefix** + <kbd>h,j,k,l</kbd> 
-**Flip panes**: **Prefix** + <kbd>shift</kbd> + <kbd>[</kbd> 
-**Enter select mode**: **Prefix** + <kbd>[</kbd> 
-**Begin selection**: <kbd>v</kbd> 
-**Begin line selection**: <kbd>V</kbd> 
-**Exit select mode**: <kbd>q</kbd> 
-**Create new window**: **Prefix** + <kbd>c</kbd> 
-**See all commands**: **Prefix** + <kbd>?</kbd> 
-**Start recording pane**: `:pipe-pane 'cat >~/mypanelog` 
-**Stop recording pane**: `:pipe-pane` 
-
+**Split horizontally**: **Prefix** + <kbd>|</kbd>  
+**Split vertically**: **Prefix** + <kbd>-</kbd>  
+**Switch pane**: **Prefix** + <kbd>h,j,k,l</kbd>  
+**Flip panes**: **Prefix** + <kbd>shift</kbd> + <kbd>[</kbd>  
+**Enter select mode**: **Prefix** + <kbd>[</kbd>  
+**Begin selection**: <kbd>v</kbd>  
+**Begin line selection**: <kbd>V</kbd>  
+**Exit select mode**: <kbd>q</kbd>  
+**Create new window**: **Prefix** + <kbd>c</kbd>  
+**See all commands**: **Prefix** + <kbd>?</kbd>  
+**Start recording pane**: `:pipe-pane 'cat >~/mypanelog`  
+**Stop recording pane**: `:pipe-pane`  
+ 
 ### brew
-Run `brew bundle` in a directory containing a `Brewfile` to install all listed applications.
+Run `brew bundle` in a directory containing a `Brewfile` to install all listed applications.  
 
-Run `brew bundle dump` to generate a `Brewfile`
+Run `brew bundle dump` to generate a `Brewfile`  
 
-Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` etc.
-* `brew services stop --all` and `brew services start --all` usually fixes any issues
+Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` etc.  
+* `brew services stop --all` and `brew services start --all` usually fixes any issues  
 
-
+### vim
+**Append an exclamation point to every line**: `:%norm A!`  
+**Append an exclamation point to selected lines**: <kbd>Control</kbd> + <kbd>v</kbd> (to select lines), and then `:norm A!`  

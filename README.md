@@ -24,7 +24,7 @@ defaults write NSGlobalDomain _HIHideMenuBar -bool true
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom
 
-To install tmux plugins, open `tmux` and hit <key>I</key>.
+To install tmux plugins, open `tmux` and hit <kbd>I</kbd>.
 * If you don't see anything, open `tmux` and then try running `tmux source ~/.tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
 
 
@@ -43,25 +43,25 @@ To install tmux plugins, open `tmux` and hit <key>I</key>.
 
 ## Tutorials
 ### tmux
-<key>Control</key> + <key>b</key> is my **Prefix**. (a.k.a <key>C-b</key>)
+<kbd>Control</kbd> + <kbd>b</kbd> is my **Prefix**. (a.k.a <kbd>C-b</kbd>)
 
 ```bash
 # start tmux
 $ tmux
 ```
 
-**Split horizontally**: **Prefix** + <key>|</key>
-**Split vertically**: **Prefix** + <key>-</key>
-**Switch pane**: **Prefix** + <key>h,j,k,l</key>
-**Flip panes**: **Prefix** + <key>shift</key> + <key>[</key>
-**Enter select mode**: **Prefix** + <key>[</key>
-**Begin selection**: <key>v</key>
-**Begin line selection**: <key>V</key>
-**Exit select mode**: <key>q</key>
-**Create new window**: **Prefix** + <key>c</key>
-**See all commands**: **Prefix** + <key>?</key>
-**Start recording pane**: `:pipe-pane 'cat >~/mypanelog`
-**Stop recording pane**: `:pipe-pane`
+**Split horizontally**: **Prefix** + <kbd>|</kbd> 
+**Split vertically**: **Prefix** + <kbd>-</kbd> 
+**Switch pane**: **Prefix** + <kbd>h,j,k,l</kbd> 
+**Flip panes**: **Prefix** + <kbd>shift</kbd> + <kbd>[</kbd> 
+**Enter select mode**: **Prefix** + <kbd>[</kbd> 
+**Begin selection**: <kbd>v</kbd> 
+**Begin line selection**: <kbd>V</kbd> 
+**Exit select mode**: <kbd>q</kbd> 
+**Create new window**: **Prefix** + <kbd>c</kbd> 
+**See all commands**: **Prefix** + <kbd>?</kbd> 
+**Start recording pane**: `:pipe-pane 'cat >~/mypanelog` 
+**Stop recording pane**: `:pipe-pane` 
 
 ### brew
 Run `brew bundle` in a directory containing a `Brewfile` to install all listed applications.

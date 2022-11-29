@@ -53,6 +53,7 @@ $ tmux
 **Split horizontally**: **Prefix** + <key>|</key>
 **Split vertically**: **Prefix** + <key>-</key>
 **Switch pane**: **Prefix** + <key>h,j,k,l</key>
+**Flip panes**: **Prefix** + <key>shift</key> + <key>[</key>
 **Enter select mode**: **Prefix** + <key>[</key>
 **Begin selection**: <key>v</key>
 **Begin line selection**: <key>V</key>

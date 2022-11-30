@@ -48,12 +48,22 @@ To install tmux plugins, open `tmux` and hit <kbd>I</kbd>.
 ```bash
 # start tmux
 $ tmux
+
+# list sessions
+$ tmux ls
+
+# attach to previous session
+$ tmux a  
+
+# delete all sessions except current one
+$ tmux kill-session -a
 ```
 
 **Split horizontally**: **Prefix** + <kbd>|</kbd>  
 **Split vertically**: **Prefix** + <kbd>-</kbd>  
 **Switch pane**: **Prefix** + <kbd>h,j,k,l</kbd>  
 **Flip panes**: **Prefix** + <kbd>shift</kbd> + <kbd>[</kbd>  
+**Switch split orientation**: **Prefix** + <kbd>Space</kbd>  
 **Enter select mode**: **Prefix** + <kbd>[</kbd>  
 **Begin selection**: <kbd>v</kbd>  
 **Begin line selection**: <kbd>V</kbd>  

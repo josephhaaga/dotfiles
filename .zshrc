@@ -135,7 +135,9 @@ if [ -f "/usr/local/bin/vim" ]; then
 else
     echo "vim not found at /usr/local/bin/vim - skipping 'vi' alias creation"
 fi
+
 alias save="~/Documents/dotfiles/scripts/save.sh"
+alias load="~/Documents/dotfiles/scripts/load.sh"
 
 alias notes="vi ~/Documents/Journal/notes"
 alias streambot="vi ~/Documents/Journal/notes/streambot-ideas.md"

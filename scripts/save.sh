@@ -1,24 +1,18 @@
 #!/bin/bash
 
-COMMIT_MESSAGE=$1
+COMMIT_MESSAGE="Autosave at $(date)"
 
-$HOME/Documents/Utilities/evaluate_commit_message.sh "$COMMIT_MESSAGE"
+echo $COMMIT_MESSAGE
 
-MESSAGE_IS_SUFFICIENT=$?
+git -C ~/Documents/Journal add .
+git -C ~/Documents/Journal commit -m '${COMMIT_MESSAGE}'
+git -C ~/Documents/Journal push
 
-if [ $MESSAGE_IS_SUFFICIENT -ne 0 ]; 
-then
-    echo "Commit message is insufficient."
-    exit 1
-else
-    echo "Commit message is sufficient."
-    echo "Saving files in $PWD"
-fi
+git -C ~/Documents/dotfiles add .
+git -C ~/Documents/dotfiles commit -m '${COMMIT_MESSAGE}'
+git -C ~/Documents/dotfiles push
 
 
-
-git add .
-git commit -m "$1"
-git push
-
-exit
+# 1. Check if there are any changes (unstaged, staged, committed etc.) that don't exist in the remote
+# 2. If so, autogenerate a commit message (e.g. "Autosave at {datetime}")
+# 3. Stage, commit, and push

@@ -5,6 +5,9 @@ filetype plugin indent on    " required
 
 set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab
 
+" Fix backspace in insert mode
+set backspace=indent,eol,start
+
 " Enable hybrid line numbers
 " set nu!
 " Enable relative line numbers

@@ -84,3 +84,9 @@ Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` e
 ### vim
 **Append an exclamation point to every line**: `:%norm A!`  
 **Append an exclamation point to selected lines**: <kbd>Control</kbd> + <kbd>v</kbd> (to select lines), and then `:norm A!`  
+**Replace selection**: I forgot how to do this; best to just yank the text from visual mode and paste into your `:%s/HERE/replacement/g` command
+  * `%` means entire document 
+  * `s` means replace 
+  * `g` means all occurrences on a line, not just the first match
+
+

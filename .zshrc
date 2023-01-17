@@ -61,7 +61,7 @@ prompt_context(){}
 plugins=(
     git
     shrink-path
-)
+ jira)
 
 source $ZSH/oh-my-zsh.sh
 

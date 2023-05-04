@@ -83,6 +83,7 @@ Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` e
 * `brew services stop --all` and `brew services start --all` usually fixes any issues  
 
 [How to use Homebrew with multiple OS X users](https://stackoverflow.com/a/44481141)
+- UPDATE: now I'm using a designated admin account (`brewadmin`) to own the `brew` installation
 
 
 ### vim

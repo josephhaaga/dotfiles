@@ -1,5 +1,7 @@
 export ZSH=$HOME/.oh-my-zsh
 export ZSH_CUSTOM=$HOME/Documents/dotfiles/omzcustom/custom
+export HOMEBREW_MAIN_USER=brewadmin
+
 ZSH_THEME="dst"
 
 ZSH_DISABLE_COMPFIX=true

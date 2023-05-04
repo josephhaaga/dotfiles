@@ -4,12 +4,3 @@ preferred_editor=vi '+normal Gzzo'
 date_format=%%Y-%%m-%%d
 file_extension=md
 
-[hooks]
-JOURNAL_OPENED=
-    timestamp
-
-[timestamp]
-format=%%Y-%%m-%%d %%I:%%M:%%S %%p
-prefix=
-    [
-suffix=] 

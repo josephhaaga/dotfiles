@@ -123,6 +123,8 @@ else
     export PATH="$HOME/.local/bin:$PATH"
 fi
 
+eval "$(pyenv virtualenv-init -)"
+
 
 # Custom Aliases
 alias today="python3 -c 'import requests; print(requests.get(\"http://numbersapi.com/5/11/date\").text);'" 

@@ -73,6 +73,7 @@ $ tmux kill-session -a
 **Start recording pane**: `:pipe-pane 'cat >~/mypanelog`  
 **Stop recording pane**: `:pipe-pane`  
  
+
 ### brew
 Run `brew bundle` in a directory containing a `Brewfile` to install all listed applications.  
 
@@ -80,6 +81,9 @@ Run `brew bundle dump` to generate a `Brewfile`
 
 Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` etc.  
 * `brew services stop --all` and `brew services start --all` usually fixes any issues  
+
+[How to use Homebrew with multiple OS X users](https://stackoverflow.com/a/44481141)
+
 
 ### vim
 **Append an exclamation point to every line**: `:%norm A!`  

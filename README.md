@@ -9,6 +9,7 @@ brew bundle
 cd ~
 ln -s ~/Documents/dotfiles/.* ~
 ln -s ~/Documents/dotfiles/spacebarrc ~/.config/spacebar/spacebarrc
+ln -s ~/Documents/dotfiles/Brewfile /Users/Shared/Brewfile
 rm -rf ~/.git
 
 # install tmux plugin manager

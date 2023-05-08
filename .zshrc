@@ -47,7 +47,7 @@ else
     echo "vim not found at /usr/local/bin/vim - skipping 'vi' alias creation"
 fi
 
-alias brew='sudo -Hu $HOMEBREW_MAIN_USER brew'
+# alias brew='sudo -Hu $HOMEBREW_MAIN_USER brew'
 alias lx="ls -latch | vi -"
 alias save="~/Documents/dotfiles/scripts/save.sh"
 alias load="~/Documents/dotfiles/scripts/load.sh"

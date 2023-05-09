@@ -4,8 +4,18 @@ Repeatable dev environment config
 ## Installation
 ```bash
 cd ~/Documents
-git clone https://github.com/josephhaaga/dotfiles
+git clone https://github.com/josephhaaga/dotfiles && cd dotfiles
+
+# Install Brew dependencies
 brew bundle
+
+# install oh-my-zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Restart Terminal.app to reload .zshrc
+rest
+
+# Symlink config files to user directory
 cd ~
 ln -s ~/Documents/dotfiles/.* ~
 ln -s ~/Documents/dotfiles/spacebarrc ~/.config/spacebar/spacebarrc
@@ -25,7 +35,7 @@ defaults write NSGlobalDomain _HIHideMenuBar -bool true
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom
 
-To install tmux plugins, open `tmux` and hit <kbd>I</kbd>.
+To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 * If you don't see anything, open `tmux` and then try running `tmux source ~/.tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
 
 

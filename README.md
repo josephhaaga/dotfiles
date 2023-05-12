@@ -73,7 +73,8 @@ $ tmux kill-session -a
 **Split horizontally**: **Prefix** + <kbd>|</kbd>  
 **Split vertically**: **Prefix** + <kbd>-</kbd>  
 **Switch pane**: **Prefix** + <kbd>h,j,k,l</kbd>  
-**Flip panes**: **Prefix** + <kbd>shift</kbd> + <kbd>[</kbd>  
+**Move pane left**: **Prefix** + <kbd>shift</kbd> + <kbd>[</kbd>  
+**Flip panes horizontally**: **Prefix** + <kbd>cmd</kbd> + <kbd>o</kbd>  
 **Switch split orientation**: **Prefix** + <kbd>Space</kbd>  
 **Enter select mode**: **Prefix** + <kbd>[</kbd>  
 **Begin selection**: <kbd>v</kbd>  

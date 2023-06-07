@@ -27,8 +27,6 @@ rest
 # Symlink config files to user directory
 cd ~
 ln -s ~/Documents/dotfiles/.* ~
-ln -s ~/Documents/dotfiles/spacebarrc ~/.config/spacebar/spacebarrc
-ln -s ~/Documents/dotfiles/Brewfile /Users/Shared/Brewfile
 rm -rf ~/.git
 
 # install tmux plugin manager
@@ -38,7 +36,6 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 # start window manager (yabai) + hotkey manager (skhd)
 yabai --start-service
 skhd --start-service
-
 ```
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom

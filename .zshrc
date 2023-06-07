@@ -40,12 +40,6 @@ eval "$(pyenv virtualenv-init -)"
 
 
 # Custom Aliases
-if [ -f "/usr/local/bin/vim" ]; then
-    alias vi="/usr/local/bin/vim"
-else
-    echo "vim not found at /usr/local/bin/vim - skipping 'vi' alias creation"
-fi
-
 alias lx="ls -latch | vi -"
 alias save="~/Documents/dotfiles/scripts/save.sh"
 alias load="~/Documents/dotfiles/scripts/load.sh"

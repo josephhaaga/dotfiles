@@ -36,10 +36,9 @@ cd ~
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # start window manager (yabai) + hotkey manager (skhd)
-brew services start --all
+yabai --start-service
+skhd --start-service
 
-# hide OS X menubar
-defaults write NSGlobalDomain _HIHideMenuBar -bool true
 ```
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom

@@ -6,8 +6,17 @@ Repeatable dev environment config
 cd ~/Documents
 git clone https://github.com/josephhaaga/dotfiles && cd dotfiles
 
+# Install Brew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Install Brew dependencies
 brew bundle
+
+# brew bundle --force cleanup
+# https://gist.github.com/ChristopherA/a579274536aab36ea9966f301ff14f3f
 
 # install oh-my-zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"

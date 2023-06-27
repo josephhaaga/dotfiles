@@ -2,10 +2,10 @@
 # open terminal
 alt - return : osascript -e 'tell application "Terminal" to activate'
 
-# restart Yabi, SpaceBar, and SKHD
+# restart Yabai, SpaceBar, and SKHD
 alt + shift - r : \
-    launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai"; \
-    skhd --reload
+    skhd --restart-service; \
+    yabai --restart-service
 
 
 ####### Application Blacklists #############

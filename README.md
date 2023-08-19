@@ -36,6 +36,11 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 # start window manager (yabai) + hotkey manager (skhd)
 yabai --start-service
 skhd --start-service
+
+# install Vim plugins
+mkdir -p ~/.vim/{autoload,bundle}
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+vim -c ':PlugInstall'
 ```
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom

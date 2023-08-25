@@ -1,7 +1,7 @@
+# oh-my-zsh setup
 export ZSH=$HOME/.oh-my-zsh
-export ZSH_CUSTOM=$HOME/Documents/dotfiles/omzcustom/custom
 
-ZSH_THEME="dst"
+ZSH_THEME="josephhaaga"
 
 ZSH_DISABLE_COMPFIX=true
 
@@ -13,10 +13,9 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
-ZSH_THEME="josephhaaga"
-prompt_context(){}
 
+# User configuration
+# DEFAULT_USER=`whoami`
 
 # Python environment
 export PYTHONDONTWRITEBYTECODE=1

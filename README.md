@@ -28,6 +28,7 @@ rest
 cd ~
 ln -s ~/Documents/dotfiles/.* ~
 rm -rf ~/.git
+ln -s ~/Documents/dotfiles/omzcustom/custom/themes/josephhaaga.zsh-theme ./.oh-my-zsh/custom/themes/josephhaaga.zsh-theme
 
 # install tmux plugin manager
 cd ~
@@ -48,10 +49,10 @@ To install the Terminal.app theme, open Terminal, go to Terminal > Preferences >
 To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 * If you don't see anything, open `tmux` and then try running `tmux source ~/.tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
 
-
 ## Resources
 [How to install Vim plugins](https://linuxhint.com/vim_install_plugins/)
 [Intro to tmux](https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/)
+[Install Powerline fonts for Agnoster-based oh-my-zsh themes](https://fmacedoo.medium.com/oh-my-zsh-with-powerline-fonts-pretty-simple-as-you-deserve-fbe7f6d23723)
 
 ## TODO
 - better articulate dependencies (e.g. pyenv) that cause `.zshrc` errors on Terminal start
@@ -60,6 +61,7 @@ To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 - update .zshrc
 - scripts (e.g. journal, tomorrow, notes) are on path, or aliased
 - figure out the .oh-my-zsh submodule, and find a better location for josephhaaga.zsh-theme 
+- profile and speed up new window/tab creation
 
 
 ## Tutorials
@@ -117,3 +119,8 @@ Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` e
   * `g` means all occurrences on a line, not just the first match
 
 
+### oh-my-zsh
+**Reload** by running `omz reload`
+
+**Customize PS1** by altering `prompt_context()` in `josephhaaga.zsh-theme`  
+- the `%m` characters are called "prompt sequences" ([see "Expansion of Prompt Sequences" in `man zshmisc`](https://stackoverflow.com/questions/13660636/what-is-percent-tilde-in-zsh))

@@ -74,6 +74,9 @@ Plug 'tmhedberg/SimpylFold'
 " Syntax highlighting for all languages
 Plug 'sheerun/vim-polyglot'
 
+" Asynchronous linting (no need to `:w` the file!)
+Plug 'dense-analysis/ale'
+
 call plug#end()
 
 autocmd! User GoyoEnter Limelight

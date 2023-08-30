@@ -71,6 +71,9 @@ Plug 'tmhedberg/SimpylFold'
 " Add PEP8 checking
 "Plug 'nvie/vim-flake8'
 
+" Syntax highlighting for all languages
+Plug 'sheerun/vim-polyglot'
+
 call plug#end()
 
 autocmd! User GoyoEnter Limelight

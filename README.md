@@ -50,9 +50,9 @@ To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 * If you don't see anything, open `tmux` and then try running `tmux source ~/.tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
 
 ## Resources
-[How to install Vim plugins](https://linuxhint.com/vim_install_plugins/)
-[Intro to tmux](https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/)
-[Install Powerline fonts for Agnoster-based oh-my-zsh themes](https://fmacedoo.medium.com/oh-my-zsh-with-powerline-fonts-pretty-simple-as-you-deserve-fbe7f6d23723)
+[How to install Vim plugins](https://linuxhint.com/vim_install_plugins/)  
+[Intro to tmux](https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/)  
+[Install Powerline fonts for Agnoster-based oh-my-zsh themes](https://fmacedoo.medium.com/oh-my-zsh-with-powerline-fonts-pretty-simple-as-you-deserve-fbe7f6d23723)  
 
 ## TODO
 - better articulate dependencies (e.g. pyenv) that cause `.zshrc` errors on Terminal start
@@ -99,6 +99,8 @@ $ tmux kill-session -a
  
 
 ### brew
+I use Homebrew, the popular OS X package manager, to install most of my desktop applications (e.g. Chrome). 
+
 Run `brew bundle` in a directory containing a `Brewfile` to install all listed applications.  
 
 Run `brew bundle dump` to generate a `Brewfile`  
@@ -111,6 +113,8 @@ Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` e
 
 
 ### vim
+I use vim 9.0 (haven't switched to neovim yet) and `vim-plug`, a popular plugin manager written by [junegunn](https://github.com/junegunn). 
+
 **Append an exclamation point to every line**: `:%norm A!`  
 **Append an exclamation point to selected lines**: <kbd>Control</kbd> + <kbd>v</kbd> (to select lines), and then `:norm A!`  
 **Replace selection**: I forgot how to do this; best to just yank the text from visual mode and paste into your `:%s/HERE/replacement/g` command
@@ -120,6 +124,8 @@ Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` e
 
 
 ### oh-my-zsh
+The default shell in OS X is now `zsh`. I use a popular customization framework called `oh-my-zsh` for terminal theming, handy aliases etc. 
+
 **Reload** by running `omz reload`
 
 **Customize PS1** by altering `prompt_context()` in `josephhaaga.zsh-theme`  

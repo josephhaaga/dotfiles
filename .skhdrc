@@ -79,7 +79,7 @@ cmd + shift - d : yabai -m window --resize right:-20:0
 
 # change layout of desktop
 alt - e : yabai -m space --layout bsp
-alt - f : yabai -m space --layout float
+alt - w : yabai -m space --layout float
 
 # float / unfloat window and center on screen
 #alt - t : yabai -m window --toggle float;\

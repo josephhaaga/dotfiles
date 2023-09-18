@@ -6,3 +6,5 @@ Themes for Terminal.app
 3. Click "Default" with the theme selected
 
 [Installation instructions](https://github.com/lysyi3m/macos-terminal-themes#installation-instructions)
+
+[lysyi3m/macos-terminal-themes](https://github.com/lysyi3m/macos-terminal-themes)

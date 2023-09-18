@@ -130,3 +130,8 @@ The default shell in OS X is now `zsh`. I use a popular customization framework 
 
 **Customize PS1** by altering `prompt_context()` in `josephhaaga.zsh-theme`  
 - the `%m` characters are called "prompt sequences" ([see "Expansion of Prompt Sequences" in `man zshmisc`](https://stackoverflow.com/questions/13660636/what-is-percent-tilde-in-zsh))
+
+
+### Terminal.app
+Themes are from [lysyi3m/macos-terminal-themes](https://github.com/lysyi3m/macos-terminal-themes)
+

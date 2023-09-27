@@ -97,9 +97,19 @@ set foldlevel=99
 " Enable folding with the spacebar
 nnoremap <space> za
 
+" python with virtualenv support
+function! ActivateVirtualenv()
+    if (g:current_venv != '')
+        call system(". " + g:current_venv + "/venv/bin/activate")
+    endif
+endfunction
+
+let g:current_venv=system("echo $VIRTUAL_ENV")
+call ActivateVirtualenv()
+
 " YouCompleteMe setup
 let g:ycm_autoclose_preview_window_after_completion=1
-" let g:ycm_python_binary_path='/opt/homebrew/bin/python3'
+let g:ycm_python_binary_path=g:current_venv + 'bin/python3'
 "map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 " Only for non-Intel/AMD Macs
@@ -127,17 +137,6 @@ au BufNewFile,BufRead *.js,*.html,*.css
 
 " you should be using UTF-8 when working with Python3
 set encoding=utf-8
-
-
-" python with virtualenv support
-function! ActivateVirtualenv()
-    if (g:current_venv != '')
-        call system(". " + g:current_venv + "/venv/bin/activate")
-    endif
-endfunction
-
-let g:current_venv=system("echo $VIRTUAL_ENV")
-call ActivateVirtualenv()
 
 let python_highlight_all=1
 syntax on

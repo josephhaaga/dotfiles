@@ -60,16 +60,16 @@ Plug 'junegunn/limelight.vim'
 Plug 'tmhedberg/SimpylFold'
 
 " Python formatting edgecases (e.g. multi-line function signatures)
-"Plug 'vim-scripts/indentpython.vim'
+Plug 'vim-scripts/indentpython.vim'
 
 " Python autocompletion
-"Plug 'Valloric/YouCompleteMe'
+Plug 'Valloric/YouCompleteMe'
 
 " Check syntax on each save
-"Plug 'vim-syntastic/syntastic'
+Plug 'vim-syntastic/syntastic'
 
 " Add PEP8 checking
-"Plug 'nvie/vim-flake8'
+Plug 'nvie/vim-flake8'
 
 " Syntax highlighting for all languages
 Plug 'sheerun/vim-polyglot'
@@ -78,6 +78,9 @@ Plug 'sheerun/vim-polyglot'
 Plug 'dense-analysis/ale'
 
 call plug#end()
+
+" YouCompleteMe
+let g:ycm_clangd_binary_path = trim(system('brew --prefix llvm')).'/bin/clangd'
 
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!

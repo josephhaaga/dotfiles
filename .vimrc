@@ -30,7 +30,6 @@ syntax on
 :command Algo :r!python3 -c "import datetime; now=datetime.datetime.now().strftime('\%Y-\%m-\%d \%I:\%M:\%S \%p'); print(f'[{now}]\n\n<URL>\n\nWhat went wrong?\n\nWhat is one thing I could have done/known that would\'ve made everything else easier?\n');"
 
 
-
 " Show the cursor position
 set ruler
 
@@ -79,8 +78,6 @@ Plug 'dense-analysis/ale'
 
 call plug#end()
 
-" YouCompleteMe
-let g:ycm_clangd_binary_path = trim(system('brew --prefix llvm')).'/bin/clangd'
 
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
@@ -100,42 +97,47 @@ set foldlevel=99
 " Enable folding with the spacebar
 nnoremap <space> za
 
-" " Proper PEP8 Indentation
-" au BufNewFile,BufRead *.py
-"     \ set tabstop=4
-"     \ set softtabstop=4
-"     \ set shiftwidth=4
-"     \ set textwidth=79
-"     \ set expandtab
-"     \ set autoindent
-"     \ set fileformat=unix
-" 
-" 
-" " Full-stack dev indenting
-"  au BufNewFile,BufRead *.js,*.html,*.css
-"     \ set tabstop=2
-"     \ set softtabstop=2
-"     \ set shiftwidth=2
-" 
-" " Mark whitespace as bad
+" YouCompleteMe setup
+let g:ycm_autoclose_preview_window_after_completion=1
+" let g:ycm_python_binary_path='/opt/homebrew/bin/python3'
+"map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+" Only for non-Intel/AMD Macs
+let g:ycm_clangd_binary_path = trim(system('brew --prefix llvm')).'/bin/clangd'
+
+" Proper PEP8 Indentation
+au BufNewFile,BufRead *.py
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
+    \ set textwidth=79 |
+    \ set expandtab |
+    \ set autoindent |
+    \ set fileformat=unix
+
+
+" Full-stack dev indenting
+au BufNewFile,BufRead *.js,*.html,*.css
+   \ set tabstop=2 |
+   \ set softtabstop=2 |
+   \ set shiftwidth=2
+
+" Mark whitespace as bad
 " au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
-" 
+
 " you should be using UTF-8 when working with Python3
 set encoding=utf-8
 
-"let g:ycm_autoclose_preview_window_after_completion=1
-"let g:ycm_python_binary_path='/Users/josephhaaga/anaconda3/bin/python3'
-"map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
-"python with virtualenv support
-" py << EOF
-" import os
-" import sys
-" if 'VIRTUAL_ENV' in os.environ:
-"  project_base_dir = os.environ['VIRTUAL_ENV']
-"  activate_this = os.path.join(project_base_dir, 'bin/activate_this.py')
-"  execfile(activate_this, dict(__file__=activate_this))
-" EOF
+" python with virtualenv support
+function! ActivateVirtualenv()
+    if (g:current_venv != '')
+        call system(". " + g:current_venv + "/venv/bin/activate")
+    endif
+endfunction
+
+let g:current_venv=system("echo $VIRTUAL_ENV")
+call ActivateVirtualenv()
 
 let python_highlight_all=1
 syntax on

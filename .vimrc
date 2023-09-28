@@ -115,6 +115,31 @@ let g:ycm_python_binary_path=g:current_venv + 'bin/python3'
 " Only for non-Intel/AMD Macs
 let g:ycm_clangd_binary_path = trim(system('brew --prefix llvm')).'/bin/clangd'
 
+"https://vi.stackexchange.com/a/36667
+"Toggle YouCompleteMe on and off with F3
+function Toggle_ycm()
+    if g:ycm_show_diagnostics_ui == 0
+        let g:ycm_auto_trigger = 1
+        let g:ycm_show_diagnostics_ui = 1
+        :YcmRestartServer
+        :e
+        :echo "YCM on"
+    elseif g:ycm_show_diagnostics_ui == 1
+        let g:ycm_auto_trigger = 0
+        let g:ycm_show_diagnostics_ui = 0
+        :YcmRestartServer
+        :e
+        :echo "YCM off"
+    endif
+endfunction
+map <F3> :call Toggle_ycm() <CR>
+
+" turn off automatic YouCompleteMe cursor hover info
+"let g:ycm_auto_hover = ''
+
+" toggle language hover info with F4
+"map <F4> <plug>(YCMHover)
+
 " Proper PEP8 Indentation
 au BufNewFile,BufRead *.py
     \ set tabstop=4 |

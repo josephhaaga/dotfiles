@@ -65,16 +65,16 @@ Plug 'vim-scripts/indentpython.vim'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
 " Check syntax on each save
-Plug 'vim-syntastic/syntastic'
+" Plug 'vim-syntastic/syntastic'
 
 " Add PEP8 checking
-Plug 'nvie/vim-flake8'
+" Plug 'nvie/vim-flake8'
 
 " Syntax highlighting for all languages
 Plug 'sheerun/vim-polyglot'
 
 " Asynchronous linting (no need to `:w` the file!)
-Plug 'dense-analysis/ale'
+" Plug 'dense-analysis/ale'
 
 call plug#end()
 

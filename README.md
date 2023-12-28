@@ -40,8 +40,12 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 yabai --start-service
 skhd --start-service
 
-# install Vim plugins
-## vim-plug
+# install global python via pyenv
+$ LATEST_PYTHON=$(pyenv latest 3)
+$ pyenv install $LATEST_PYTHON
+$ pyenv global $LATEST_PYTHON
+
+# install Vim plugins via vim-plug
 vim -c ':PlugInstall'
 ```
 
@@ -58,6 +62,7 @@ To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 
 ## TODO
 - better articulate dependencies (e.g. pyenv) that cause `.zshrc` errors on Terminal start
+    - `brew` installs pyenv and neovim, but we need to set the global python and re-install neovim so YouCompleteMe installs can compile
 - install zsh
 - install oh-my-zsh
 - update .zshrc

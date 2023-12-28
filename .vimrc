@@ -97,19 +97,19 @@ set foldlevel=99
 " Enable folding with the spacebar
 nnoremap <space> za
 
-" python with virtualenv support
-function! ActivateVirtualenv()
-    if (g:current_venv != '')
-        call system(". " + g:current_venv + "/venv/bin/activate")
-    endif
-endfunction
-
-let g:current_venv=system("echo $VIRTUAL_ENV")
-call ActivateVirtualenv()
+" " python with virtualenv support
+" function! ActivateVirtualenv()
+"     if (g:current_venv != '')
+"         call system(". " + g:current_venv + "/venv/bin/activate")
+"     endif
+" endfunction
+" 
+" let g:current_venv=system("echo $VIRTUAL_ENV")
+" call ActivateVirtualenv()
 
 " YouCompleteMe setup
 let g:ycm_autoclose_preview_window_after_completion=1
-let g:ycm_python_binary_path=g:current_venv + 'bin/python3'
+" let g:ycm_python_binary_path=g:current_venv + 'bin/python3'
 "map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 " Only for non-Intel/AMD Macs

@@ -39,6 +39,10 @@ eval "$(pyenv virtualenv-init -)"
 
 
 # Custom Aliases
+alias vim="nvim"
+alias vi="nvim"
+alias vimdiff='nvim -d'
+export EDITOR=nvim
 alias lx="ls -latch | vi -"
 alias save="~/Documents/dotfiles/scripts/save.sh"
 alias load="~/Documents/dotfiles/scripts/load.sh"

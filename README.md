@@ -29,6 +29,8 @@ cd ~
 ln -s ~/Documents/dotfiles/.* ~
 rm -rf ~/.git
 ln -s ~/Documents/dotfiles/omzcustom/custom/themes/josephhaaga.zsh-theme ./.oh-my-zsh/custom/themes/josephhaaga.zsh-theme
+ln -s ~/Documents/dotfiles/.config/* ~/.config 
+ln -s ~/Documents/dotfiles/.vim/* ~/.vim
 
 # install tmux plugin manager
 cd ~
@@ -39,9 +41,12 @@ yabai --start-service
 skhd --start-service
 
 # install Vim plugins
-mkdir -p ~/.vim/{autoload,bundle}
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+## vim-plug
 vim -c ':PlugInstall'
+
+## Vundle
+vim +PluginInstall +qall
+
 ```
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom

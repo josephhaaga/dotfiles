@@ -43,10 +43,6 @@ skhd --start-service
 # install Vim plugins
 ## vim-plug
 vim -c ':PlugInstall'
-
-## Vundle
-vim +PluginInstall +qall
-
 ```
 
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom
@@ -58,6 +54,7 @@ To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 [How to install Vim plugins](https://linuxhint.com/vim_install_plugins/)  
 [Intro to tmux](https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/)  
 [Install Powerline fonts for Agnoster-based oh-my-zsh themes](https://fmacedoo.medium.com/oh-my-zsh-with-powerline-fonts-pretty-simple-as-you-deserve-fbe7f6d23723)  
+[VimAwesome – list of Vim resources](https://vimawesome.com/plugin/youcompleteme#installation)
 
 ## TODO
 - better articulate dependencies (e.g. pyenv) that cause `.zshrc` errors on Terminal start
@@ -118,7 +115,7 @@ Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` e
 
 
 ### vim
-I use vim 9.0 (haven't switched to neovim yet) and `vim-plug`, a popular plugin manager written by [junegunn](https://github.com/junegunn). 
+I use neovim and `vim-plug`, a popular plugin manager written by [junegunn](https://github.com/junegunn). 
 
 **Append an exclamation point to every line**: `:%norm A!`  
 **Append an exclamation point to selected lines**: <kbd>Control</kbd> + <kbd>v</kbd> (to select lines), and then `:norm A!`  

@@ -45,6 +45,10 @@ $ LATEST_PYTHON=$(pyenv latest 3)
 $ pyenv install $LATEST_PYTHON
 $ pyenv global $LATEST_PYTHON
 
+# re-install neovim to fix python-provider (powers many vim plugins)
+$ python3 -m pip install --user --upgrade pynvim
+$ brew reinstall neovim
+
 # install Vim plugins via vim-plug
 vim -c ':PlugInstall'
 ```

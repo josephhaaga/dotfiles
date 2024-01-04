@@ -107,7 +107,9 @@ $ tmux kill-session -a
 **See all commands**: **Prefix** + <kbd>?</kbd>  
 **Start recording pane**: `:pipe-pane 'cat >~/mypanelog`  
 **Stop recording pane**: `:pipe-pane`  
- 
+**Renumber windows starting at 1**: **Prefix** + `:move-window -r`  
+
+
 
 ### brew
 I use Homebrew, the popular OS X package manager, to install most of my desktop applications (e.g. Chrome). 

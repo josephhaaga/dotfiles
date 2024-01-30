@@ -65,7 +65,7 @@ Plug 'vim-scripts/indentpython.vim'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 
 " Check syntax on each save
-" Plug 'vim-syntastic/syntastic'
+Plug 'vim-syntastic/syntastic'
 
 " Add PEP8 checking
 " Plug 'nvie/vim-flake8'
@@ -74,7 +74,10 @@ Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 Plug 'sheerun/vim-polyglot'
 
 " Asynchronous linting (no need to `:w` the file!)
-" Plug 'dense-analysis/ale'
+Plug 'dense-analysis/ale'
+
+" Context (i.e. floating function signatures while scrolling)
+" Plug 'nvim-treesitter/nvim-treesitter-context'
 
 call plug#end()
 

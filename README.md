@@ -134,6 +134,10 @@ I use neovim and `vim-plug`, a popular plugin manager written by [junegunn](http
   * `%` means entire document 
   * `s` means replace 
   * `g` means all occurrences on a line, not just the first match
+**Open link under cursor**: <kbd>g</kbd> <kbd>x</kbd>
+**Clear and redraw screen**: <kbd>Control</kbd> + <kbd>l</kbd> 
+
+https://neovim.io/doc/user/various.html#various
 
 
 ### oh-my-zsh

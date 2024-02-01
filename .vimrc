@@ -110,6 +110,10 @@ nnoremap <space> za
 " let g:current_venv=system("echo $VIRTUAL_ENV")
 " call ActivateVirtualenv()
 
+let g:ale_python_auto_pipenv = 1
+let g:ale_python_auto_poetry = 1
+let g:ale_python_auto_virtualenv = 1
+
 " YouCompleteMe setup
 let g:ycm_autoclose_preview_window_after_completion=1
 " let g:ycm_python_binary_path=g:current_venv + 'bin/python3'

@@ -50,6 +50,7 @@ brew "pyenv"
 brew "pyenv-virtualenv"
 brew "python@3.10"
 brew "redis", restart_service: true
+brew "ripgrep"
 brew "shfmt"
 brew "sops"
 brew "terraform"

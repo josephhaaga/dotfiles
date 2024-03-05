@@ -834,6 +834,6 @@ require('lazy').setup {
   },
 }
 
-vim.cmd [[command! Ts execute 'normal! i[' . strftime('%Y-%m-%d %H:%M:%S %p') . "]\n"]]
+vim.cmd [[command! Ts execute 'normal! i[' . strftime('%Y-%m-%d %I:%M:%S %p') . "]\n"]]
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

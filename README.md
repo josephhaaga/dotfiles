@@ -152,3 +152,8 @@ The default shell in OS X is now `zsh`. I use a popular customization framework 
 ### Terminal.app
 Themes are from [lysyi3m/macos-terminal-themes](https://github.com/lysyi3m/macos-terminal-themes)
 
+
+### Misc
+`nodemon` can run a command when a file/directory changes 
+- `nodemon -w my_directory -e .py -x "clear; python3 my_directory/t.py"`
+

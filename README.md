@@ -108,7 +108,13 @@ $ tmux kill-session -a
 **Start recording pane**: `:pipe-pane 'cat >~/mypanelog`  
 **Stop recording pane**: `:pipe-pane`  
 **Renumber windows starting at 1**: **Prefix** + `:move-window -r`  
+**Move window to**: **Prefix** + <kbd>.</kbd>
+**Help**: **Prefix** + <kbd>?</kbd>
 
+#### other commands
+`list-keys` to view all key bindings
+
+https://tmuxcheatsheet.com/
 
 
 ### brew

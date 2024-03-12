@@ -315,7 +315,7 @@ require('lazy').setup {
       -- Useful for getting pretty icons, but requires special font.
       --  If you already have a Nerd Font, or terminal set up with fallback fonts
       --  you can enable this
-      -- { 'nvim-tree/nvim-web-devicons' }
+      { 'nvim-tree/nvim-web-devicons' },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -533,7 +533,7 @@ require('lazy').setup {
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -588,6 +588,7 @@ require('lazy').setup {
         'pyright', -- Python LSP
         'black', -- Python formatter
         'isort', -- Python formatter
+        'ruff', -- Python linter
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -809,7 +810,7 @@ require('lazy').setup {
   --  Here are some example plugins that I've included in the kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -817,23 +818,10 @@ require('lazy').setup {
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information see: :help lazy.nvim-lazy.nvim-structuring-your-plugins
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   -- {
   --   'danth/pathfinder.vim',
   -- },
-  {
-    'jackMort/ChatGPT.nvim',
-    event = 'VeryLazy',
-    config = function()
-      require('chatgpt').setup()
-    end,
-    dependencies = {
-      'MunifTanjim/nui.nvim',
-      'nvim-lua/plenary.nvim',
-      'folke/trouble.nvim',
-      'nvim-telescope/telescope.nvim',
-    },
-  },
 }
 
 vim.cmd [[command! Ts execute 'normal! i[' . strftime('%Y-%m-%d %I:%M:%S %p') . "]\n"]]

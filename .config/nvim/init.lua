@@ -589,6 +589,7 @@ require('lazy').setup {
         'black', -- Python formatter
         'isort', -- Python formatter
         'ruff', -- Python linter
+        'debugpy', -- Python debugger
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 

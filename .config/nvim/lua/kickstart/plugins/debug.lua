@@ -138,6 +138,9 @@ return {
         justMyCode = true,
       }
       table.insert(dap.configurations.python, runningContainer)
+
+      -- Add configurations from any .vscode/launch.json files
+      require('dap.ext.vscode').load_launchjs(nil, { python = { 'py' } })
     end,
   },
 }

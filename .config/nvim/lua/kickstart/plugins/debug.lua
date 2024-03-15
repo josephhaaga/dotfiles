@@ -104,7 +104,8 @@ return {
 
       -- Add nvim-dap configuration for debugging a running Docker container
       local dap = require 'dap'
-      table.insert(dap.configurations.python, {
+
+      local runningContainer = {
         type = 'python',
         request = 'attach',
         name = 'Locally running container',
@@ -135,7 +136,8 @@ return {
         },
         pathMappings = {},
         justMyCode = true,
-      })
+      }
+      table.insert(dap.configurations.python, runningContainer)
     end,
   },
 }

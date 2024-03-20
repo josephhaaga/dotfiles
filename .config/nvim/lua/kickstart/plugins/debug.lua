@@ -87,6 +87,9 @@ return {
 
       -- Install golang specific config
       require('dap-go').setup()
+
+      -- Add configurations from any .vscode/launch.json files
+      require('dap.ext.vscode').load_launchjs()
     end,
   },
   {
@@ -94,53 +97,12 @@ return {
     ft = 'python',
     dependencies = {
       'mfussenegger/nvim-dap',
-      'nvim-lua/plenary.nvim',
     },
     config = function()
       -- uses the debugypy installation by mason
       local debugpy = require('mason-registry').get_package 'debugpy'
       local pathToDebugpy = debugpy:get_install_path() .. '/venv/bin/python3'
       require('dap-python').setup(pathToDebugpy, {})
-
-      -- Add nvim-dap configuration for debugging a running Docker container
-      local dap = require 'dap'
-
-      local runningContainer = {
-        type = 'python',
-        request = 'attach',
-        name = 'JOE Locally running container',
-        connect = {
-          host = '0.0.0.0',
-          port = function()
-            return coroutine.create(function(dap_run_co)
-              vim.ui.input({ prompt = 'Container port: ' }, function(input)
-                coroutine.resume(dap_run_co, tonumber(input))
-              end)
-            end)
-            -- -- list running containers
-            -- local Job = require'plenary.job'
-            --
-            -- Job:new({
-            --   command = 'docker',
-            --   args = { 'ps', '--format="{{.Names}}|{{.Ports}}"' },
-            --   on_exit = function(j, _)
-            --     local containers_and_ports = j:result()
-            --
-            --
-            --   end,
-            -- }):sync()
-            --
-            -- -- show select UI
-            -- --
-          end,
-        },
-        pathMappings = {},
-        justMyCode = true,
-      }
-      table.insert(dap.configurations.python, runningContainer)
-
-      -- Add configurations from any .vscode/launch.json files
-      require('dap.ext.vscode').load_launchjs(nil, { python = { 'py' } })
     end,
   },
 }

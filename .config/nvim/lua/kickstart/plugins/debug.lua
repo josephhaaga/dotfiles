@@ -108,7 +108,7 @@ return {
       local runningContainer = {
         type = 'python',
         request = 'attach',
-        name = 'Locally running container',
+        name = 'JOE Locally running container',
         connect = {
           host = '0.0.0.0',
           port = function()

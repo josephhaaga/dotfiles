@@ -821,3 +821,6 @@ vim.cmd [[command! Ts execute 'normal! i[' . strftime('%Y-%m-%d %I:%M:%S %p') . 
 -- vim: ts=2 sts=2 sw=2 et
 
 -- vim.o.statuscolumn = '%s%#NonText#%{&nu?v:lnum:""}%=%{&rnu&&(v:lnum%2)?" ".v:relnum:""}%#LineNr#%{&rnu&&!(v:lnum%2)?"\\ ".v:relnum:""}|'
+
+---@diagnostic disable-next-line: unused-local
+commands = require 'custom.commands'

@@ -8,6 +8,23 @@ return {
     -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
   },
   opts = {
+    close_if_last_window = true,
+    default_component_configs = {
+      git_status = {
+        symbols = {
+          added = '✚',
+          deleted = '✖',
+          modified = '',
+          renamed = '󰁕',
+          -- Status type
+          untracked = '',
+          ignored = '',
+          unstaged = '󰄱',
+          staged = '',
+          conflict = '',
+        },
+      },
+    },
     filesystem = {
       filtered_items = {
         visible = true,

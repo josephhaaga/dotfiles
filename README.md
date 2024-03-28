@@ -33,8 +33,8 @@ ln -s ~/Documents/dotfiles/.config/* ~/.config
 ln -s ~/Documents/dotfiles/.vim/* ~/.vim
 
 # install tmux plugin manager
-cd ~
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+# Run <C-b> + I to install Tmux plugins
 
 # start window manager (yabai) + hotkey manager (skhd)
 yabai --start-service

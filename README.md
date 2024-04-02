@@ -25,7 +25,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 rest
 
 # Symlink config files to user directory
-ln -s ~/Documents/dotfiles/.config/* ~/.config 
+ln -s ~/Documents/dotfiles/.config ~
 
 # install tmux plugin manager
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm

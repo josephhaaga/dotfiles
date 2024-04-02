@@ -27,8 +27,7 @@ rest
 # Symlink config files to user directory
 ln -s ~/Documents/dotfiles/.config ~
 
-# install tmux plugin manager
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+# install tmux plugins
 # Run <C-b> + I to install Tmux plugins
 
 # start window manager (yabai) + hotkey manager (skhd)

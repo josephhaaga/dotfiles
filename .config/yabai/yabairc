@@ -64,10 +64,9 @@ yabai -m rule --add app='Goland IDEA' title='Edit configuration' manage=off
 
 
 # Animations
-yabai -m config \
-	window_animation_duration    0.9               \
-	window_animation_easing      ease_in_out_sine  \
-	window_opacity_duration      0.1               \
+yabai -m config window_animation_duration    0.9
+yabai -m config window_animation_easing      ease_in_out_sine
+yabai -m config window_opacity_duration      0.1
 
 
 SPACEBAR_HEIGHT=$(spacebar -m config height)

@@ -18,13 +18,14 @@ return {
     local opts = { noremap = true, silent = true }
 
     -- Run tests
-    map('n', '<leader>tn', "<cmd>lua require('neotest').run.run()<CR>", opts)
+    map('n', '<leader>tn', "<cmd>lua require('neotest').run.run()<CR>", { desc = 'Run tests' })
     -- Run nearest test
-    map('n', '<leader>tf', "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>", opts)
+    map('n', '<leader>tf', "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>", { desc = 'Run nearest test' })
     -- Run last test
-    map('n', '<leader>tl', "<cmd>lua require('neotest').run.run_last()<CR>", opts)
+    map('n', '<leader>tl', "<cmd>lua require('neotest').run.run_last()<CR>", { desc = 'Run last test' })
     -- Debug last test
-    map('n', '<leader>tL', "<cmd>lua require('neotest').run.run_last({ strategy = 'dap' })<CR>", opts)
+    map('n', '<leader>tL', "<cmd>lua require('neotest').run.run_last({ strategy = 'dap' })<CR>",
+      { desc = 'Debug last test' })
     -- Run tests in watch mode
     -- map("n", "<leader>tw", "<cmd>lua require('neotest').run.run({ jestCommand = 'jest --watch ' })<CR>", opts)
   end,

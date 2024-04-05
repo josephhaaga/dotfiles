@@ -232,7 +232,7 @@ require('lazy').setup {
   --    require('Comment').setup({})
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',    opts = {} },
+  { 'numToStr/Comment.nvim', opts = {} },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following lua:
@@ -259,7 +259,7 @@ require('lazy').setup {
   -- after the plugin has been loaded:
   --  config = function() ... end
 
-  {                     -- Useful plugin to show you pending keybinds.
+  { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VeryLazy', -- Sets the loading event to 'VeryLazy'
     config = function() -- This is the function that runs, AFTER loading
@@ -576,12 +576,13 @@ require('lazy').setup {
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'stylua',  -- Used to format lua code
+        'stylua', -- Used to format lua code
         'pyright', -- Python LSP
-        'black',   -- Python formatter
-        'isort',   -- Python formatter
+        'black', -- Python formatter
+        'isort', -- Python formatter
         -- 'ruff', -- Python linter
         'debugpy', -- Python debugger
+        'sqlfmt', -- SQL formatter
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -606,7 +607,8 @@ require('lazy').setup {
       notify_on_error = true,
       format_on_save = {
         timeout_ms = 500,
-        lsp_fallback = 'never',
+        async = true,
+        lsp_fallback = 'true',
       },
       formatters_by_ft = {
         lua = { 'stylua' },
@@ -616,6 +618,7 @@ require('lazy').setup {
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         -- javascript = { { "prettierd", "prettier" } },
+        sql = { 'sqlfmt' },
       },
     },
   },
@@ -719,7 +722,7 @@ require('lazy').setup {
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`
     'folke/tokyonight.nvim',
-    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+    lazy = false, -- make sure we load this during startup if it is your main colorscheme
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       -- Load the colorscheme here

@@ -30,9 +30,10 @@ spacebar -m config space_icon_color_tertiary   0xfffff9b0
 spacebar -m config space_icon_strip            1 2 3 4 5 6 7 8 9 10
 spacebar -m config clock_icon                  
 spacebar -m config dnd_icon                    
-spacebar -m config clock_format                "%d/%m/%y %R"
-# spacebar -m config right_shell                 on
-# spacebar -m config right_shell_icon            
-# spacebar -m config right_shell_command         "whoami"
+spacebar -m config clock_format                "%A, %B %e, %Y %R"
+
+
+spacebar -m config left_shell                 on
+spacebar -m config left_shell_command         "yabai -m config --space mouse layout"
 
 echo "spacebar configuration loaded.."

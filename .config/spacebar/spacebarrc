@@ -33,7 +33,7 @@ spacebar -m config dnd_icon                    
 spacebar -m config clock_format                "%A, %B %e, %Y %R"
 
 
-spacebar -m config left_shell                 on
 spacebar -m config left_shell_command         "yabai -m config --space mouse layout"
+spacebar -m config left_shell                 on
 
 echo "spacebar configuration loaded.."

@@ -2,10 +2,9 @@
 # open terminal
 alt - return : osascript -e 'tell application "Terminal" to activate'
 
-# restart Yabai, SpaceBar, and SKHD
+# restart Yabai and SKHD
 alt + shift - r : \
     skhd --restart-service; \
-    brew services restart spacebar; \
     yabai --restart-service
 
 

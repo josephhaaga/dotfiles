@@ -583,6 +583,7 @@ require('lazy').setup {
         -- 'ruff', -- Python linter
         'debugpy', -- Python debugger
         'sqlfmt', -- SQL formatter
+        'prettier', -- Markdown formatter
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -614,6 +615,7 @@ require('lazy').setup {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         python = { 'black', 'isort' },
+        markdown = { 'prettier' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.

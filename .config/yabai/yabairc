@@ -49,12 +49,18 @@ yabai -m config mouse_action1                move
 yabai -m config mouse_action2                resize
 
 # general space settings
-yabai -m config layout                       bsp
-yabai -m config top_padding                  30
-yabai -m config bottom_padding               30
-yabai -m config left_padding                 30
-yabai -m config right_padding                30
-yabai -m config window_gap                   30
+if [ $(system_profiler SPDisplaysDataType | grep -c "Display") -gt 1 ]; then
+  echo "External display is connected."
+  yabai -m config layout                       float
+else
+  echo "No external display connected."
+  yabai -m config layout                       bsp
+  yabai -m config top_padding                  30
+  yabai -m config bottom_padding               30
+  yabai -m config left_padding                 30
+  yabai -m config right_padding                30
+  yabai -m config window_gap                   30
+fi
 
 # float system preferences
 yabai -m rule --add app='^System Information$' manage=off

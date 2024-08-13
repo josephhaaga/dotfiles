@@ -1,7 +1,7 @@
 # oh-my-zsh setup
 export ZSH=$HOME/.oh-my-zsh
 
-ZSH_THEME="agnoster"
+ZSH_THEME="refined"
 
 ZSH_DISABLE_COMPFIX=true
 

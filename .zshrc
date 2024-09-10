@@ -57,3 +57,5 @@ if test -f $HOME/.oh-my-zsh/custom/plugins/zsh-histdb/sqlite-history.zsh; then
     source $HOME/.oh-my-zsh/custom/plugins/zsh-histdb/sqlite-history.zsh
 fi
 autoload -Uz add-zsh-hook
+
+. "$HOME/.cargo/env"

@@ -50,6 +50,7 @@ alias notes="vi ~/Documents/Journal/notes"
 alias ideas="vi ~/Documents/Journal/notes/Ideas.md"
 alias fish="asciiquarium"
 alias speedread="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/speedread.rb"
+alias dotfiles="echo 'H' | nvim -c 'Neotree' -s - ~/Documents/dotfiles"
 
 # zsh-histdb
 if test -f $HOME/.oh-my-zsh/custom/plugins/zsh-histdb/sqlite-history.zsh; then

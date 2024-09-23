@@ -1,7 +1,9 @@
 # dotfiles
+
 Repeatable dev environment config
 
 ## Installation
+
 ```bash
 cd ~/Documents
 git clone https://github.com/josephhaaga/dotfiles && cd dotfiles
@@ -36,11 +38,6 @@ echo "$(whoami) ALL=(root) NOPASSWD: sha256:$(shasum -a 256 $(which yabai) | cut
 yabai --start-service
 skhd --start-service
 
-# install global python via pyenv
-$ LATEST_PYTHON=$(pyenv latest 3)
-$ pyenv install $LATEST_PYTHON
-$ pyenv global $LATEST_PYTHON
-
 # re-install neovim to fix python-provider (powers many vim plugins)
 $ python3 -m pip install --user --upgrade pynvim
 $ brew reinstall neovim
@@ -52,27 +49,31 @@ vim -c ':PlugInstall'
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom
 
 To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
-* If you don't see anything, open `tmux` and then try running `tmux source ~/.tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
+
+- If you don't see anything, open `tmux` and then try running `tmux source ~/.tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
 
 ## Resources
+
 [How to install Vim plugins](https://linuxhint.com/vim_install_plugins/)  
 [Intro to tmux](https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/)  
 [Install Powerline fonts for Agnoster-based oh-my-zsh themes](https://fmacedoo.medium.com/oh-my-zsh-with-powerline-fonts-pretty-simple-as-you-deserve-fbe7f6d23723)  
 [VimAwesome – list of Vim resources](https://vimawesome.com/plugin/youcompleteme#installation)
 
 ## TODO
-- better articulate dependencies (e.g. pyenv) that cause `.zshrc` errors on Terminal start
-    - `brew` installs pyenv and neovim, but we need to set the global python and re-install neovim so YouCompleteMe installs can compile
+
+- better articulate dependencies that cause `.zshrc` errors on Terminal start
+  - `brew` installs neovim, but we need to set the global python and re-install neovim so YouCompleteMe installs can compile
 - install zsh
 - install oh-my-zsh
 - update .zshrc
 - scripts (e.g. journal, tomorrow, notes) are on path, or aliased
-- figure out the .oh-my-zsh submodule, and find a better location for josephhaaga.zsh-theme 
+- figure out the .oh-my-zsh submodule, and find a better location for josephhaaga.zsh-theme
 - profile and speed up new window/tab creation
 
-
 ## Tutorials
+
 ### tmux
+
 <kbd>Control</kbd> + <kbd>b</kbd> is my **Prefix**. (a.k.a <kbd>C-b</kbd>)
 
 ```bash
@@ -83,7 +84,7 @@ $ tmux
 $ tmux ls
 
 # attach to previous session
-$ tmux a  
+$ tmux a
 
 # delete all sessions except current one
 $ tmux kill-session -a
@@ -108,54 +109,59 @@ $ tmux kill-session -a
 **Help**: **Prefix** + <kbd>?</kbd>
 
 #### other commands
+
 `list-keys` to view all key bindings
 
 https://tmuxcheatsheet.com/
 
-
 ### brew
-I use Homebrew, the popular OS X package manager, to install most of my desktop applications (e.g. Chrome). 
 
-Run `brew bundle` in a directory containing a `Brewfile` to install all listed applications.  
+I use Homebrew, the popular OS X package manager, to install most of my desktop applications (e.g. Chrome).
 
-Run `brew bundle dump` to generate a `Brewfile`  
+Run `brew bundle` in a directory containing a `Brewfile` to install all listed applications.
 
-Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` etc.  
-* `brew services stop --all` and `brew services start --all` usually fixes any issues  
+Run `brew bundle dump` to generate a `Brewfile`
+
+Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` etc.
+
+- `brew services stop --all` and `brew services start --all` usually fixes any issues
 
 [How to use Homebrew with multiple OS X users](https://stackoverflow.com/a/44481141)
+
 - UPDATE: now I'm using a designated admin account (`brewadmin`) to own the `brew` installation
 
-
 ### vim
-I use neovim and `vim-plug`, a popular plugin manager written by [junegunn](https://github.com/junegunn). 
+
+I use neovim and `vim-plug`, a popular plugin manager written by [junegunn](https://github.com/junegunn).
 
 **Append an exclamation point to every line**: `:%norm A!`  
 **Append an exclamation point to selected lines**: <kbd>Control</kbd> + <kbd>v</kbd> (to select lines), and then `:norm A!`  
 **Replace selection**: I forgot how to do this; best to just yank the text from visual mode and paste into your `:%s/HERE/replacement/g` command
-  * `%` means entire document 
-  * `s` means replace 
-  * `g` means all occurrences on a line, not just the first match
-**Open link under cursor**: <kbd>g</kbd> <kbd>x</kbd>
-**Clear and redraw screen**: <kbd>Control</kbd> + <kbd>l</kbd> 
+
+- `%` means entire document
+- `s` means replace
+- `g` means all occurrences on a line, not just the first match
+  **Open link under cursor**: <kbd>g</kbd> <kbd>x</kbd>
+  **Clear and redraw screen**: <kbd>Control</kbd> + <kbd>l</kbd>
 
 https://neovim.io/doc/user/various.html#various
 
-
 ### oh-my-zsh
-The default shell in OS X is now `zsh`. I use a popular customization framework called `oh-my-zsh` for terminal theming, handy aliases etc. 
+
+The default shell in OS X is now `zsh`. I use a popular customization framework called `oh-my-zsh` for terminal theming, handy aliases etc.
 
 **Reload** by running `omz reload`
 
-**Customize PS1** by altering `prompt_context()` in `josephhaaga.zsh-theme`  
+**Customize PS1** by altering `prompt_context()` in `josephhaaga.zsh-theme`
+
 - the `%m` characters are called "prompt sequences" ([see "Expansion of Prompt Sequences" in `man zshmisc`](https://stackoverflow.com/questions/13660636/what-is-percent-tilde-in-zsh))
 
-
 ### Terminal.app
+
 Themes are from [lysyi3m/macos-terminal-themes](https://github.com/lysyi3m/macos-terminal-themes)
 
-
 ### Misc
-`nodemon` can run a command when a file/directory changes 
-- `nodemon -w my_directory -e .py -x "clear; python3 my_directory/t.py"`
 
+`nodemon` can run a command when a file/directory changes
+
+- `nodemon -w my_directory -e .py -x "clear; python3 my_directory/t.py"`

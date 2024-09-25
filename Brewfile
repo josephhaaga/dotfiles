@@ -38,3 +38,7 @@ cask "docker"
 cask "font-fontawesome"
 cask "font-hack-nerd-font"
 cask "google-cloud-sdk"
+
+at_exit do
+  puts 'Running post-install tasks...'
+end

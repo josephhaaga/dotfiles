@@ -1,6 +1,6 @@
 [DEFAULT]
 journal_directory=~/Documents/journal/journals/
-preferred_editor=nvim '+normal Gzzo' +"colorscheme peachpuff"
+preferred_editor=nvim '+normal Gzzo'
 date_format=%%Y-%%m-%%d
 file_extension=md
 

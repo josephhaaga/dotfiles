@@ -146,6 +146,12 @@ I use neovim and `vim-plug`, a popular plugin manager written by [junegunn](http
 
 https://neovim.io/doc/user/various.html#various
 
+**View all themes**: `:Telescope colorscheme`
+
+**Set background on start**: `vi +"set background=light"`
+
+**Set colorscheme on start**: `vi +"colorscheme peachpuff"`
+
 ### oh-my-zsh
 
 The default shell in OS X is now `zsh`. I use a popular customization framework called `oh-my-zsh` for terminal theming, handy aliases etc.

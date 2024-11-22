@@ -4,8 +4,9 @@ alt - return : osascript -e 'tell application "Terminal" to activate'
 
 # restart Yabai and SKHD
 alt + shift - r : \
+    osascript -e 'display notification "Restarting yabai" with title "skhd"'; \
     skhd --restart-service; \
-    yabai --restart-service
+    yabai --restart-service;
 
 
 ####### Application Blacklists #############

@@ -1,7 +1,7 @@
 # oh-my-zsh setup
 export ZSH=$HOME/.oh-my-zsh
 
-ZSH_THEME="tjkirch_mod" # set by `omz`
+ZSH_THEME="wedisagree" # set by `omz`
 
 ZSH_DISABLE_COMPFIX=true
 

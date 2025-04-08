@@ -56,3 +56,7 @@ vscode "ms-python.python"
 vscode "ms-python.vscode-pylance"
 vscode "ms-vscode-remote.remote-containers"
 vscode "vscodevim.vim"
+
+at_exit do
+  puts 'Running post-install tasks...'
+end

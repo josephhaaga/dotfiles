@@ -1,6 +1,6 @@
 ####### Shortcut Hotkeys #############
 # open terminal
-alt - return : osascript -e 'tell application "Terminal" to activate'
+alt - return : osascript -e 'tell application "Zed" to activate'
 
 # restart Yabai and SKHD
 alt + shift - r : \

@@ -43,6 +43,7 @@ cask "font-fontawesome"
 cask "font-hack-nerd-font"
 cask "google-cloud-sdk"
 cask "visual-studio-code"
+cask "zed"
 mas "Bitwarden", id: 1352778147
 mas "GarageBand", id: 682658836
 mas "iMovie", id: 408981434
@@ -51,12 +52,22 @@ mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
 mas "Slack", id: 803453959
 mas "Userscripts-Mac-App", id: 1463298887
+vscode "afmicc.getterandsettergenerator"
+vscode "bibhasdn.django-html"
+vscode "dbaeumer.vscode-eslint"
+vscode "esbenp.prettier-vscode"
+vscode "fabiospampinato.vscode-todo-plus"
+vscode "github.copilot"
+vscode "github.copilot-chat"
+vscode "keksiqc.idx-monospace-theme"
 vscode "ms-python.debugpy"
+vscode "ms-python.isort"
 vscode "ms-python.python"
 vscode "ms-python.vscode-pylance"
+vscode "ms-toolsai.jupyter"
+vscode "ms-toolsai.jupyter-keymap"
+vscode "ms-toolsai.jupyter-renderers"
+vscode "ms-toolsai.vscode-jupyter-cell-tags"
+vscode "ms-toolsai.vscode-jupyter-slideshow"
 vscode "ms-vscode-remote.remote-containers"
 vscode "vscodevim.vim"
-
-at_exit do
-  puts 'Running post-install tasks...'
-end

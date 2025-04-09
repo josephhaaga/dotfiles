@@ -1,0 +1,30 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "vim_mode": true,
+  "ui_font_size": 16,
+  "buffer_font_size": 16,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "One Dark"
+  },
+  // Whether to use the system provided dialogs for Open and Save As.
+  // When set to false, Zed will use the built-in keyboard-first pickers.
+  "use_system_path_prompts": false,
+  // Whether to use the system provided dialogs for prompts, such as confirmation
+  // prompts.
+  // When set to false, Zed will use its built-in prompts. Note that on Linux,
+  // this option is ignored and Zed will always use the built-in prompts.
+  "use_system_prompts": false,
+  // Show method signatures in the editor, when inside parentheses.
+  "auto_signature_help": true,
+  // Hide the values of in variables from visual display in private files
+  "redact_private_values": true
+}

@@ -55,5 +55,11 @@
     // 1. hour12
     // 2. hour24
     "hour_format": "hour12"
+  },
+  // Language-specific settings
+  "languages": {
+    "Markdown": {
+      "show_completions_on_input": false
+    }
   }
 }

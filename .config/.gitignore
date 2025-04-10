@@ -2,3 +2,4 @@ gcloud
 nvim/.vim
 rig
 pip
+omni-dbt/creds

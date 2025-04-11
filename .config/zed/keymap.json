@@ -17,5 +17,11 @@
     "bindings": {
       // "j k": ["workspace::SendKeystrokes", "escape"]
     }
+  },
+  {
+    "context": "vim_mode == normal",
+    "bindings": {
+      "g r": "editor::FindAllReferences"
+    }
   }
 ]

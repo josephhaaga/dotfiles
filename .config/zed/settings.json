@@ -27,7 +27,7 @@
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "One Dark"
+    "dark": "Ayu Mirage" //"One Dark"
   },
   // Whether to use the system provided dialogs for Open and Save As.
   // When set to false, Zed will use the built-in keyboard-first pickers.
@@ -62,7 +62,10 @@
   // Language-specific settings
   "languages": {
     "Markdown": {
-      "show_completions_on_input": false
+      "format_on_save": "on",
+      "show_completions_on_input": false,
+      "show_edit_predictions": false,
+      "show_completion_documentation": false
     }
   }
 }

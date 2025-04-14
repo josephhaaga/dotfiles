@@ -27,7 +27,7 @@
   "theme": {
     "mode": "system",
     "light": "One Light",
-    "dark": "Ayu Mirage" //"One Dark"
+    "dark": "Gruvbox Dark Hard"
   },
   // Whether to use the system provided dialogs for Open and Save As.
   // When set to false, Zed will use the built-in keyboard-first pickers.

@@ -649,6 +649,15 @@ require('lazy').setup {
         if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
           return
         end
+
+        -- Get the file path
+        local file_path = vim.api.nvim_buf_get_name(bufnr)
+
+        -- Check if the file is a Python file inside a 'mono/' subdirectory
+        if file_path:match 'mono/.*%.py$' then
+          return
+        end
+
         return { timeout_ms = 500, lsp_format = 'fallback' } --         lsp_fallback = 'true',
       end,
       formatters_by_ft = {

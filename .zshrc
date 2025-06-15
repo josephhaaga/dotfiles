@@ -41,7 +41,7 @@ if test -f $HOME/.oh-my-zsh/custom/plugins/zsh-histdb/sqlite-history.zsh; then
 fi
 autoload -Uz add-zsh-hook
 
-# for `openmhz-to-map`
+# for `kata/openmhz-to-map`
 export PATH="/opt/homebrew/opt/ffmpeg@6/bin:$PATH"
 export DYLD_LIBRARY_PATH=$(brew --prefix ffmpeg)/lib:$DYLD_LIBRARY_PATH
 

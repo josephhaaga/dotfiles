@@ -2,3 +2,5 @@ model
 OpenAI
 Pydantic
 OpenMHZ
+GCP
+KFP

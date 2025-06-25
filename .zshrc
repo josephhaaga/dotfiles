@@ -45,4 +45,7 @@ autoload -Uz add-zsh-hook
 export PATH="/opt/homebrew/opt/ffmpeg@6/bin:$PATH"
 export DYLD_LIBRARY_PATH=$(brew --prefix ffmpeg)/lib:$DYLD_LIBRARY_PATH
 
+# for `tldr`
+export TEALDEER_CONFIG_DIR="~/.config/tealdeer"
+
 eval "$(starship init zsh)"

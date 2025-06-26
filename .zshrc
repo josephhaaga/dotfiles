@@ -48,4 +48,22 @@ export DYLD_LIBRARY_PATH=$(brew --prefix ffmpeg)/lib:$DYLD_LIBRARY_PATH
 # for `tldr`
 export TEALDEER_CONFIG_DIR="~/.config/tealdeer"
 
+# set Brewfile location for `brew bundle` commands
+export HOMEBREW_BREWFILE="~/.config/brew/Brewfile"
+function brew() {
+    if [[ "$1" == "bundle" ]]; then
+        # Check if --file is specified
+        if [[ "$*" != *"--file"* ]]; then
+            # Add --file ./some/path if not specified
+            command brew bundle --file $HOMEBREW_BREWFILE "${@:2}"
+        else
+            # Run the command as is
+            command brew "$@"
+        fi
+    else
+        # Run the command as is for other brew commands
+        command brew "$@"
+    fi
+}
+
 eval "$(starship init zsh)"

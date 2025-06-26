@@ -47,3 +47,4 @@ cask "ghostty"
 cask "google-cloud-sdk"
 cask "ollama"
 
+brew "ffmpeg"

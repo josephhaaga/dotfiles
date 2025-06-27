@@ -87,7 +87,7 @@ return {
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     config = {
-      prompts = M.get_prompts,
+      prompts = M.get_prompts(),
     },
   },
 }

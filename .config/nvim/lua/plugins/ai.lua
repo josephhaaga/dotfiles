@@ -1,6 +1,4 @@
-local M = {}
-
-local mono = require("plugins.mono")
+local mono = require("utils.mono")
 
 return {
   {

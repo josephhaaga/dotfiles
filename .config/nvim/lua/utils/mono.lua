@@ -25,13 +25,24 @@ function M.find_mono_root(start_path)
   return nil
 end
 
--- Reads the first Markdown header (line starting with '#') from the specified file.
+-- Reads the contents of a file and returns it as a string.
+-- Returns nil if the file cannot be opened.
+function M.read_file_contents(filepath)
+  local file = io.open(filepath, "r")
+  if not file then
+    return nil
+  end
+  local contents = file:read("*a")
+  file:close()
+  return contents
+end
+
+-- Extracts the first Markdown header (line starting with '#') from the file contents.
 -- Returns the header string, or nil if no header is found.
-function M.read_first_header(filepath)
-  for line in io.lines(filepath) do
-    local header = line:match("^#%s*(.+)")
-    if header then
-      return header
+function M.extract_first_header(file_contents)
+  for line in file_contents:gmatch("[^\n]+") do
+    if line:match("^#") then
+      return line:sub(2):gsub("^%s+", "") -- Remove leading '# ' and trim whitespace
     end
   end
   return nil
@@ -39,13 +50,14 @@ end
 
 -- Collects prompts from all '.prompt.md' files in a directory.
 -- Returns a table keyed by title-cased filename, with prompt and description.
-function M.collect_prompts(dir, description)
+function M.collect_prompts(dir, prefix)
   local tbl = {}
   local files = vim.fn.globpath(dir, "*.prompt.md", false, true)
   for _, file in ipairs(files) do
     local name = vim.fn.fnamemodify(file, ":t:r:r") -- strip .prompt.md
-    local key = M.title_case(name)
-    local prompt = M.read_first_header(file)
+    local key = prefix .. M.title_case(name):gsub("%s+", "")
+    local prompt = M.read_file_contents(file)
+    local description = M.extract_first_header(prompt)
     if prompt then
       tbl[key] = { prompt = prompt, description = description }
     end
@@ -65,7 +77,7 @@ function M.get_mono_prompts()
 
   -- Global prompts
   local global_dir = mono_root .. "/dev/llm/_global/prompts"
-  local global_prompts = M.collect_prompts(global_dir, "global")
+  local global_prompts = M.collect_prompts(global_dir, "Mono")
   for k, v in pairs(global_prompts) do
     prompts[k] = v
   end
@@ -73,7 +85,7 @@ function M.get_mono_prompts()
   -- Project-specific prompts
   if project then
     local project_dir = mono_root .. "/" .. project .. "/.github/prompts"
-    local project_prompts = M.collect_prompts(project_dir, "project-specific")
+    local project_prompts = M.collect_prompts(project_dir, "Service")
     for k, v in pairs(project_prompts) do
       local key = prompts[k] and ("Project: " .. k) or k
       prompts[key] = v

@@ -13,7 +13,7 @@ fi
 (
   echo
   echo 'eval "$(/opt/homebrew/bin/brew shellenv)"'
-) >>~/.zprofile
+) >>"$HOME/.zprofile"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Install Brew dependencies
@@ -21,9 +21,9 @@ brew bundle --file=$HOME/Documents/dotfiles/.config/brew/Brewfile
 
 # Symlink configuration files
 # Set ZDOTDIR
-echo 'export ZDOTDIR="$HOME/.config/zsh"' >>~/.zshenv
+echo 'export ZDOTDIR="$HOME/.config/zsh"' >>$HOME/.zshenv
 
-ln -sf $HOME/Documents/dotfiles/configs ~
+ln -sf $HOME/Documents/dotfiles/configs $HOME
 
 # Set up oh-my-zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
@@ -41,4 +41,3 @@ vim -c ':PlugInstall' --headless +qall
 
 # Final message
 echo "Installation complete! Please restart your terminal for changes to take effect."
-

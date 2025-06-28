@@ -1,7 +1,7 @@
 #!/bin/bash
 
 COMMIT_MESSAGE="Autosave at $(date)"
-repos=("~/Documents/journal" "~/Documents/dotfiles")
+repos=("$HOME/Documents/journal" "$HOME/Documents/dotfiles")
 
 for repo in "${repos[@]}"; do
   echo "Saving changes in $repo"
@@ -19,4 +19,3 @@ for repo in "${repos[@]}"; do
   fi
 
 done
-

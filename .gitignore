@@ -2,4 +2,4 @@
 *.swp
 .DS_Store
 .config/zed/conversations/
-.opencode
+.opencode/*

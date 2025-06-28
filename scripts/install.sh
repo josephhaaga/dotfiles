@@ -10,14 +10,20 @@ if ! command -v brew &>/dev/null; then
 fi
 
 # Source Brew environment
-(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
+(
+  echo
+  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+) >>~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Install Brew dependencies
-brew bundle --file=~/Documents/dotfiles/.config/brew/Brewfile
+brew bundle --file=$HOME/Documents/dotfiles/.config/brew/Brewfile
 
 # Symlink configuration files
-ln -sf ~/Documents/dotfiles/.config ~
+# Set ZDOTDIR
+echo 'export ZDOTDIR="$HOME/.config/zsh"' >>~/.zshenv
+
+ln -sf $HOME/Documents/dotfiles/configs ~
 
 # Set up oh-my-zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
@@ -35,3 +41,4 @@ vim -c ':PlugInstall' --headless +qall
 
 # Final message
 echo "Installation complete! Please restart your terminal for changes to take effect."
+

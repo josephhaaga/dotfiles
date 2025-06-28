@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Update repositories before starting a working session
-repos=("~/Documents/journal" "~/Documents/dotfiles")
+repos=("$HOME/Documents/journal" "$HOME/Documents/dotfiles")
 
 for repo in "${repos[@]}"; do
   echo "Updating $repo"

@@ -5,7 +5,7 @@ repos=("$HOME/Documents/journal" "$HOME/Documents/dotfiles")
 
 for repo in "${repos[@]}"; do
   echo "Saving changes in $repo"
-  if git -C "$repo" diff --quiet && git -C "$repo" diff --staged --quiet; then
+  if git -C "$repo" diff --quiet && git -C "$repo" diff --staged --quiet && git -C "$repo" rev-parse --verify HEAD; then
     echo "No changes to save in $repo. Skipping."
     continue
   fi
@@ -19,3 +19,4 @@ for repo in "${repos[@]}"; do
   fi
 
 done
+

@@ -67,7 +67,7 @@ The `prompts/` directory is for storing reusable prompt templates and workflows.
 - `actions/`: Task-specific prompts, e.g., refactoring, committing, or testing.
 - `rules/`: Guidelines for coding styles, standards, or language-specific rules.
 
-To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom
+
 
 To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 

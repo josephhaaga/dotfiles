@@ -58,6 +58,22 @@ bash scripts/install.sh
 
 # Update your machine to the latest configuration
 bash scripts/update.sh
+
+# Install the configuration:
+bash scripts/install.sh
+
+# Update your setup as needed:
+bash scripts/update.sh
+```
+
+Use the new scripts for quick setup and updates:
+
+```bash
+# Install your entire environment from scratch
+bash scripts/install.sh
+
+# Update your machine to the latest configuration
+bash scripts/update.sh
 ```
 
 ## Prompts Directory

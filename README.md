@@ -48,6 +48,25 @@ $ brew reinstall neovim
 vim -c ':PlugInstall'
 ```
 
+## Quick Start
+
+Use the new scripts for quick setup and updates:
+
+```bash
+# Install your entire environment from scratch
+bash scripts/install.sh
+
+# Update your machine to the latest configuration
+bash scripts/update.sh
+```
+
+## Prompts Directory
+
+The `prompts/` directory is for storing reusable prompt templates and workflows. Subdirectories include:
+
+- `actions/`: Task-specific prompts, e.g., refactoring, committing, or testing.
+- `rules/`: Guidelines for coding styles, standards, or language-specific rules.
+
 To install the Terminal.app theme, open Terminal, go to Terminal > Preferences > Profiles and click Import under the `...` button at the bottom
 
 To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.

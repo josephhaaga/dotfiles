@@ -5,16 +5,18 @@ Repeatable dev environment config
 ## Installation
 
 ```bash
+# Clone the repository
 cd ~/Documents
 git clone https://github.com/josephhaaga/dotfiles && cd dotfiles
 
-# Install Brew
+# Install Homebrew, a package manager for macOS
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
 (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Install Brew dependencies
+# Brew dependencies
+brew bundle --file=.config/brew/Brewfile
+# Example packages: yabai (window manager), nvim (vim-based IDE), skhd (hotkey manager), ghostty (terminal), uv (CLI config)
 brew bundle
 
 # brew bundle --force cleanup

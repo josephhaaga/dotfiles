@@ -1,5 +1,16 @@
 #!/bin/bash
 
-# Update my Journal and dotfiles before I start a working session on a new machine
-git -C ~/Documents/Journal pull
-git -C ~/Documents/dotfiles pull
+# Update repositories before starting a working session
+repos=("~/Documents/journal" "~/Documents/dotfiles")
+
+for repo in "${repos[@]}"; do
+  echo "Updating $repo"
+  if git -C "$repo" pull; then
+    echo "$repo updated successfully."
+  else
+    echo "Failed to update $repo. Please check the error." >&2
+    exit 1
+  fi
+
+done
+

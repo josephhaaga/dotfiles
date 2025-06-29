@@ -5,3 +5,4 @@
 .opencode/*
 configs/zsh/*
 !configs/zsh/.zshrc
+.aider*

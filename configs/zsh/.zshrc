@@ -66,5 +66,4 @@ function brew() {
     fi
 }
 
-alias foo=""
 eval "$(starship init zsh)"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install dependencies and set up environment
-set -e
+set -euxo pipefail
 
 # Ensure Homebrew is installed
 if ! command -v brew &>/dev/null; then
@@ -17,7 +17,7 @@ fi
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Install Brew dependencies
-brew bundle --file=$HOME/Documents/dotfiles/.config/brew/Brewfile
+brew bundle --file=$HOME/Documents/dotfiles/configs/brew/Brewfile
 
 # Symlink configuration files
 # Set ZDOTDIR
@@ -34,10 +34,6 @@ fi
 # Start essential services
 yabai --start-service
 skhd --start-service
-
-# Set up Neovim
-brew reinstall neovim
-vim -c ':PlugInstall' --headless +qall
 
 # Final message
 echo "Installation complete! Please restart your terminal for changes to take effect."

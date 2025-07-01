@@ -1,24 +1,21 @@
--- return {
---   {
---     "saghen/blink.cmp",
---     enabled = true,
---     opts = {
---       completion = {
---         accept = { auto_brackets = { enabled = false } },
---         trigger = { show_on_keyword = false },
---         menu = { auto_show = false },
---       },
---       keymap = {
---         ["<C-p>"] = { "show", "select_prev" }, -- TODO: add to which-key
---       },
---     },
---   },
--- }
-
 return {
   {
+    "saghen/blink.cmp",
+    enabled = true,
+    opts = {
+      completion = {
+        accept = { auto_brackets = { enabled = false } },
+        trigger = { show_on_keyword = false },
+        menu = { auto_show = false },
+      },
+      keymap = {
+        ["<C-p>"] = { "show", "select_prev" }, -- TODO: add to which-key
+        ["<C-n>"] = { "show", "select_next" }, -- TODO: add to which-key
+      },
+    },
+  },
+  {
     "hrsh7th/nvim-cmp",
-    ---@param opts cmp.ConfigSchema
     opts = function(_, opts)
       local has_words_before = function()
         unpack = unpack or table.unpack

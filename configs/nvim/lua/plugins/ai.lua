@@ -2,6 +2,15 @@ local mono = require("utils.mono")
 
 return {
   {
+    "zbirenbaum/copilot.lua",
+    opts = {
+      suggestion = {
+        auto_trigger = false, -- Disable auto-triggering of suggestions
+      },
+    },
+  },
+
+  {
     "CopilotC-Nvim/CopilotChat.nvim",
 
     config = {

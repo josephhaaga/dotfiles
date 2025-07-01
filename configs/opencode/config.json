@@ -1,16 +1,15 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "ollama": {
+    "lmstudio": {
       "npm": "@ai-sdk/openai-compatible",
       "options": {
-        "baseURL": "http://localhost:11434/v1"
+        "baseURL": "http://0.0.0.0:1234/v1"
       },
       "models": {
-        "llama3.1:8b": {
-          "tools": true
-        }
+        "qwen/qwen3-4b": {}
       }
     }
-  }
+  },
+  "model": "qwen/qwen3-4b"
 }

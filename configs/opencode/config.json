@@ -11,5 +11,12 @@
       }
     }
   },
-  "model": "qwen/qwen3-4b"
+  "model": "qwen/qwen3-4b",
+  "mcp": {
+    "localmcp": {
+      "type": "local",
+      "command": ["bun", "x", "@playwright/mcp@latest"],
+      "enabled": true
+    }
+  }
 }

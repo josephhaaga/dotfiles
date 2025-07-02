@@ -14,7 +14,7 @@ for repo in "${repos[@]}"; do
   fi
 
   diffstat=$(git -C "$repo" diff --stat HEAD)
-  echo "$diffstat" | gum format -t template
+  echo "$diffstat" | gum format -t code
 
   if git -C "$repo" add . && git -C "$repo" commit -m "${COMMIT_MESSAGE}" && git -C "$repo" push; then
     :

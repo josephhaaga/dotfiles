@@ -65,3 +65,5 @@ function brew() {
         command brew "$@"
     fi
 }
+
+eval "$(starship init zsh)"

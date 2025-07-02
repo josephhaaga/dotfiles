@@ -4,7 +4,7 @@ COMMIT_MESSAGE="Autosave at $(date)"
 repos=("$HOME/Documents/journal" "$HOME/Documents/dotfiles")
 
 for repo in "${repos[@]}"; do
-  echo "{{ Bold $repo }}" | gum format -t template
+  gum style --foreground 212 "$repo"
 
   changes=$(git -C "$repo" status --porcelain)
   if [ -z "$changes" ]; then

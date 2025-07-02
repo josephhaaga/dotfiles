@@ -1,0 +1,2 @@
+[gcloud]
+format = 'on [$project]($style) '

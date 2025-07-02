@@ -4,7 +4,8 @@ COMMIT_MESSAGE="Autosave at $(date)"
 repos=("$HOME/Documents/journal" "$HOME/Documents/dotfiles")
 
 for repo in "${repos[@]}"; do
-  gum style --foreground 212 "$repo"
+  # gum style --foreground 212 "$repo"
+  gum format "**$repo**"
 
   changes=$(git -C "$repo" status --porcelain)
   if [ -z "$changes" ]; then
@@ -13,7 +14,7 @@ for repo in "${repos[@]}"; do
   fi
 
   diffstat=$(git -C "$repo" diff --stat HEAD)
-  echo "$diffstat"
+  echo "$diffstat" | gum format -t template
 
   if git -C "$repo" add . && git -C "$repo" commit -m "${COMMIT_MESSAGE}" && git -C "$repo" push; then
     :

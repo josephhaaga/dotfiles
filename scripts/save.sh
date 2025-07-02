@@ -5,11 +5,11 @@ repos=("$HOME/Documents/journal" "$HOME/Documents/dotfiles")
 
 for repo in "${repos[@]}"; do
   # gum style --foreground 212 "$repo"
-  gum format "**$repo**"
+  gum style --bold "$repo"
 
   changes=$(git -C "$repo" status --porcelain)
   if [ -z "$changes" ]; then
-    gum format "  _No changes to save. Skipping._"
+    gum style --italic --margin "1 0" "No changes to save. Skipping."
     continue
   fi
 

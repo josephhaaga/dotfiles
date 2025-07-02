@@ -9,7 +9,7 @@ for repo in "${repos[@]}"; do
 
   changes=$(git -C "$repo" status --porcelain)
   if [ -z "$changes" ]; then
-    gum style --italic --margin "1 0" "No changes to save. Skipping."
+    gum style --italic --margin "0 1" "No changes to save. Skipping."
     continue
   fi
 

@@ -19,8 +19,9 @@ for repo in "${repos[@]}"; do
     continue
   fi
 
-  SAVE=$(git -C "$repo" add . >/dev/null 2>&1 && git -C "$repo" commit -m "${COMMIT_MESSAGE}" >/dev/null 2>&1 && git -C "$repo" push >/dev/null 2>&1)
-  if [ "$SAVE" = 0 ]; then
+  if git -C "$repo" add . >/dev/null 2>&1 &&
+    git -C "$repo" commit -m "${COMMIT_MESSAGE}" >/dev/null 2>&1 &&
+    git -C "$repo" push >/dev/null 2>&1; then
     :
   else
     echo "Failed to save $repo" >&2

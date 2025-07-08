@@ -23,7 +23,8 @@ for repo in "${repos[@]}"; do
   if [ "$SAVE" = 0 ]; then
     :
   else
-    exit 1
+    echo "Failed to save $repo" >&2
+    continue
   fi
   echo
 

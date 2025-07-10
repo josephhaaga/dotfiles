@@ -14,3 +14,11 @@ end, {
   desc = "Insert current datetime",
   -- You can add other options here, e.g., `range = true` if it should operate on a range
 })
+
+-- Disable autoformat for files in `/mono/`
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+  pattern = { "*/mono/*" },
+  callback = function()
+    vim.b.autoformat = false
+  end,
+})

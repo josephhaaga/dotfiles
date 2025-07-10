@@ -16,9 +16,10 @@ end, {
 })
 
 -- Disable autoformat for files in `/mono/`
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
   pattern = { "*/mono/*" },
   callback = function()
-    vim.b.autoformat = false
+    vim.b.autoformat = false -- silent
+    -- LazyVim.format.enable(false, true) -- more verbose; shows a noice.nvim notification
   end,
 })

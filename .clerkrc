@@ -1,6 +1,6 @@
 [DEFAULT]
 journal_directory=~/Documents/journal/journals/
-preferred_editor=nvim '+normal Gzzo'
+preferred_editor=nvim '+colorscheme catppuccin-mocha' '+lua vim.diagnostic.disable(0)' '+lua vim.opt_local.spell = false' '+normal Gzzo'
 date_format=%%Y-%%m-%%d
 file_extension=md
 

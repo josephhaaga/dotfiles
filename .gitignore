@@ -6,3 +6,4 @@
 configs/zsh/*
 !configs/zsh/.zshrc
 .aider*
+!.clerkrc

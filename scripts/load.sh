@@ -23,7 +23,7 @@ for repo in "${repos[@]}"; do
       MESSAGE=$(gum style --italic --margin "0 1" "Pulled latest changes")
     else
       echo "Failed to update $repo. Please check the error." >&2
-      exit_code = 1
+      exit_code=1
     fi
   elif [ "$REMOTE" = "$BASE" ]; then
     # Ahead
@@ -31,7 +31,7 @@ for repo in "${repos[@]}"; do
   else
     # Diverged
     MESSAGE=$(gum style --italic --margin "0 1" "Diverged from remote!")
-    exit_code = 1
+    exit_code=1
   fi
 
   gum join --vertical "$TITLE" "$MESSAGE"

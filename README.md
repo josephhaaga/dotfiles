@@ -145,9 +145,10 @@ $ tmux kill-session -a
 
 #### floating window
 
-**Open a floating terminal**: **Prefix** + <kbd>cmd</kbd> + <kbd>t</kbd>
-**Open a floating `lazygit`**: **Prefix** + <kbd>cmd</kbd> + <kbd>y</kbd>
-**Open a floating `ipython`**: **Prefix** + <kbd>cmd</kbd> + <kbd>p</kbd>
+**Open a floating `journal`**: **Prefix** + <kbd>Control</kbd> + <kbd>j</kbd>
+**Open a floating terminal**: **Prefix** + <kbd>Control</kbd> + <kbd>t</kbd>
+**Open a floating `lazygit`**: **Prefix** + <kbd>Control</kbd> + <kbd>y</kbd>
+**Open a floating `ipython`**: **Prefix** + <kbd>Control</kbd> + <kbd>p</kbd>
 
 #### other commands
 

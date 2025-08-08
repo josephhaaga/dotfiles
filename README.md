@@ -83,8 +83,6 @@ The `prompts/` directory is for storing reusable prompt templates and workflows.
 - `actions/`: Task-specific prompts, e.g., refactoring, committing, or testing.
 - `rules/`: Guidelines for coding styles, standards, or language-specific rules.
 
-
-
 To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 
 - If you don't see anything, open `tmux` and then try running `tmux source ~/.tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
@@ -145,11 +143,17 @@ $ tmux kill-session -a
 **Move window to**: **Prefix** + <kbd>.</kbd>
 **Help**: **Prefix** + <kbd>?</kbd>
 
+#### floating window
+
+**Open a floating terminal**: **Prefix** + <kbd>cmd</kbd> + <kbd>t</kbd>
+**Open a floating `lazygit`**: **Prefix** + <kbd>cmd</kbd> + <kbd>y</kbd>
+**Open a floating `ipython`**: **Prefix** + <kbd>cmd</kbd> + <kbd>p</kbd>
+
 #### other commands
 
 `list-keys` to view all key bindings
 
-https://tmuxcheatsheet.com/
+<https://tmuxcheatsheet.com/>
 
 ### brew
 
@@ -181,7 +185,7 @@ I use neovim and `vim-plug`, a popular plugin manager written by [junegunn](http
   **Open link under cursor**: <kbd>g</kbd> <kbd>x</kbd>
   **Clear and redraw screen**: <kbd>Control</kbd> + <kbd>l</kbd>
 
-https://neovim.io/doc/user/various.html#various
+<https://neovim.io/doc/user/various.html#various>
 
 **View all themes**: `:Telescope colorscheme`
 

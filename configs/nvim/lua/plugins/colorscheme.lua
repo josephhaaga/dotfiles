@@ -3,8 +3,7 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      -- colorscheme = "tokyonight-day", -- "catppuccin-frappe",
-      colorscheme = "catppuccin-latte",
+      colorscheme = "tokyonight-moon", -- "catppuccin-frappe",
     },
   },
   {

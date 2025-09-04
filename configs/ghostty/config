@@ -1,6 +1,5 @@
 font-family = Hack
-# theme = tokyonight-day
+theme = tokyonight-storm
 # theme = 0x96f
-theme = "light:catppuccin-latte,dark:catppuccin-frappe"
 # If you want to avoid text that is difficult to read, a value of 3 or higher is a good value. The higher the value, the more likely that text will become black or white.
 minimum-contrast = 3.0

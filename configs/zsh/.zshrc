@@ -63,4 +63,7 @@ function brew() {
     fi
 }
 
+# use latest bash (installed via `brew`) to hopefully fix tmux-tokyo-night colors
+export PATH="/opt/homebrew/bin:$PATH"
+
 eval "$(starship init zsh)"

@@ -50,10 +50,10 @@ yabai -m config mouse_action2 resize
 
 # general space settings
 padding=30
-if [ $(system_profiler SPDisplaysDataType | grep -c "Display") -gt 1 ]; then
-  # External display is connected
-  padding=100
-fi
+# if [ $(system_profiler SPDisplaysDataType | grep -c "Display") -gt 1 ]; then
+#   # External display is connected
+#   padding=100
+# fi
 yabai -m config layout bsp
 yabai -m config top_padding $padding
 yabai -m config bottom_padding $padding

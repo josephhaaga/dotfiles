@@ -1,0 +1,12 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "my-local-mcp-server": {
+      "type": "local",
+      // Or ["bun", "x", "my-mcp-command"]
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "enabled": true,
+      "environment": {}
+    }
+  }
+}

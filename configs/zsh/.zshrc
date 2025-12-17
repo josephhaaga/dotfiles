@@ -7,8 +7,9 @@ ZSH_DISABLE_COMPFIX=true
 
 plugins=(
     git
-    shrink-path
+    httpie
     jira
+    shrink-path
 )
 
 source $ZSH/oh-my-zsh.sh

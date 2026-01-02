@@ -10,6 +10,7 @@ plugins=(
     httpie
     jira
     shrink-path
+    uv
 )
 
 source $ZSH/oh-my-zsh.sh

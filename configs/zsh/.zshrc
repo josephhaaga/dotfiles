@@ -25,6 +25,7 @@ plugins=(
     jira
     shrink-path
     uv
+    zsh-autosuggestions
 )
 
 source $ZSH/oh-my-zsh.sh

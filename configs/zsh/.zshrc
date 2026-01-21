@@ -1,7 +1,9 @@
+# Prevent duplicate entries in PATH
+typeset -U PATH path
 # oh-my-zsh setup
 export ZSH=$HOME/.oh-my-zsh
 
-ZSH_THEME="wedisagree" # set by `omz`
+ZSH_THEME=""
 
 ZSH_DISABLE_COMPFIX=true
 
@@ -66,6 +68,6 @@ function brew() {
 }
 
 # use latest bash (installed via `brew`) to hopefully fix tmux-tokyo-night colors
-export PATH="/opt/homebrew/bin:$PATH"
+# export PATH="/opt/homebrew/bin:$PATH"
 
 eval "$(starship init zsh)"

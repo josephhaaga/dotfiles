@@ -1,7 +1,19 @@
 # Prevent duplicate entries in PATH
 typeset -U PATH path
+
 # oh-my-zsh setup
-export ZSH=$HOME/.oh-my-zsh
+## use XDG standard cache location
+export ZSH_CACHE_DIR="$HOME/.cache/oh-my-zsh"
+mkdir -p "$ZSH_CACHE_DIR"
+## use XDG standard data location
+local omz_data_directory="$HOME/.local/share/oh-my-zsh"
+if [[ ! -e "$omz_data_directory" ]]; then
+  message="Warning: $omz_data_directory does not exist.
+  Did you forget to \`mv ~/.oh-my-zsh ~/.local/share/oh-my-zsh\`?"
+  echo "$message" >&2
+fi
+export ZSH="$omz_data_directory"
+
 
 ZSH_THEME=""
 
@@ -66,8 +78,5 @@ function brew() {
         command brew "$@"
     fi
 }
-
-# use latest bash (installed via `brew`) to hopefully fix tmux-tokyo-night colors
-# export PATH="/opt/homebrew/bin:$PATH"
 
 eval "$(starship init zsh)"

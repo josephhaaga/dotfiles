@@ -14,9 +14,7 @@ if [[ ! -e "$omz_data_directory" ]]; then
 fi
 export ZSH="$omz_data_directory"
 
-
 ZSH_THEME=""
-
 ZSH_DISABLE_COMPFIX=true
 
 plugins=(
@@ -28,8 +26,6 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-
 
 
 # User configuration

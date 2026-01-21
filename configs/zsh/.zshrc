@@ -25,10 +25,11 @@ plugins=(
     jira
     shrink-path
     uv
-    zsh-autosuggestions
 )
 
 source $ZSH/oh-my-zsh.sh
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 
 
 # User configuration

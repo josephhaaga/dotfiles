@@ -1,0 +1,9 @@
+[common]
+# This forces Standard SQL globally
+use_legacy_sql = false
+
+# Set a default dataset so you don't have to type project:dataset every time
+dataset_id = bf-rig-prod-central:machine_learning_pipelines
+
+# Set a default location (e.g., US or EU)
+location = US

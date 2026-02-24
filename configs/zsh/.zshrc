@@ -77,4 +77,7 @@ function brew() {
     fi
 }
 
+# set config file location for `bq` utility
+export BIGQUERYRC="~/.config/.bigqueryrc"
+
 eval "$(starship init zsh)"

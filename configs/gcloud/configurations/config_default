@@ -1,0 +1,11 @@
+[core]
+account = joe.haaga@buzzfeed.com
+project = ml-model-workflow-dev
+disable_usage_reporting = False
+
+[compute]
+region = us-central1
+
+[ai]
+region = us-central1
+

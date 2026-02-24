@@ -1,0 +1,9 @@
+# Ignore everything
+*
+# But don't ignore the .gitignore file itself
+!.gitignore
+# Re-include the root directory, otherwise child re-includes won't work
+!*/
+!configurations/
+# Re-include the specific files and directories
+!configurations/config_default

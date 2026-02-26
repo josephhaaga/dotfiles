@@ -1,4 +1,5 @@
 font-family = JetBrains Mono
+font-size = 16
 theme = tokyonight-storm
 # theme = 0x96f
 # If you want to avoid text that is difficult to read, a value of 3 or higher is a good value. The higher the value, the more likely that text will become black or white.

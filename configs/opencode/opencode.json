@@ -7,6 +7,15 @@
       "command": ["npx", "-y", "@playwright/mcp@latest"],
       "enabled": true,
       "environment": {}
+    },
+    "vibe-mcp": {
+      "type": "remote",
+      "url": "https://mcp.vibe.buzzfeed.com/mcp/mcp",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:VIBE_API_TOKEN}"
+      }
     }
   }
 }

@@ -81,3 +81,6 @@ function brew() {
 export BIGQUERYRC="~/.config/.bigqueryrc"
 
 eval "$(starship init zsh)"
+
+# Local secrets (gitignored)
+[[ -f "$ZDOTDIR/.secrets" ]] && source "$ZDOTDIR/.secrets"

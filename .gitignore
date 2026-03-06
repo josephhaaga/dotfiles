@@ -6,5 +6,6 @@
 configs/zsh/*
 !configs/zsh/.zshrc
 !configs/zsh/.secrets
+configs/httpie/sessions/
 .aider*
 !.clerkrc

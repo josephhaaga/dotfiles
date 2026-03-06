@@ -82,5 +82,10 @@ export BIGQUERYRC="~/.config/.bigqueryrc"
 
 eval "$(starship init zsh)"
 
+# HTTPie environment aliases
+alias http-dev='http --session=dev dev.buzzfeed.io'
+alias http-stage='http --session=stage api-public-stage.buzzfeed.com'
+alias http-prod='http --session=prod api-public.buzzfeed.com'
+
 # Local secrets (gitignored)
 [[ -f "$ZDOTDIR/.secrets" ]] && source "$ZDOTDIR/.secrets"

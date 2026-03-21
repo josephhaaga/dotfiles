@@ -4,3 +4,24 @@ theme = tokyonight-storm
 # theme = 0x96f
 # If you want to avoid text that is difficult to read, a value of 3 or higher is a good value. The higher the value, the more likely that text will become black or white.
 minimum-contrast = 3.0
+
+## Tmux-style bindings
+
+## 1. Clear the prefix
+keybind = ctrl+b=unbind
+
+## 2. Visual Splits (Vertical and Horizontal)
+## - for a vertical line separating two panes (Vertical Split)
+## | for a horizontal line separating two panes (Horizontal Split)
+keybind = ctrl+b>shift+backslash=new_split:right
+keybind = ctrl+b>minus=new_split:down
+
+## 3. Quick Navigation (Vim-style)
+keybind = ctrl+b>h=goto_split:left
+keybind = ctrl+b>j=goto_split:bottom
+keybind = ctrl+b>k=goto_split:top
+keybind = ctrl+b>l=goto_split:right
+
+## 4. Utilities
+keybind = ctrl+b>z=toggle_split_zoom
+keybind = ctrl+b>ctrl+b=text:\x02

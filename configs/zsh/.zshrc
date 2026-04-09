@@ -90,3 +90,8 @@ http-prod()  { http --session=prod  --follow "api-public.buzzfeed.com$1"       "
 
 # Local secrets (gitignored)
 [[ -f "$ZDOTDIR/.secrets" ]] && source "$ZDOTDIR/.secrets"
+
+# Machine-specific config overrides
+if [[ "$(hostname)" == "BF-002261" ]]; then
+  export OPENCODE_CONFIG="$HOME/.config/opencode/opencode.work.json"
+fi

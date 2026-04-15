@@ -10,36 +10,54 @@ patch is safe for the entire process lifetime.
 Lives outside the mono repo so it is unaffected by upstream changes to
 platform.py. The only dependency on the dev internals is the stable
 dev.platform.ui module interface.
+
+--
+
+The BuzzFeed dev mcp command launches a FastMCP stdio server that exposes
+internal tooling (Jira, BigQuery, Google Docs, agent management) via the Model
+Context Protocol. The VS Code extension takes a different approach — it calls
+tech-api directly over HTTPS using credentials stored in VSCode's SecretStorage
+— but that approach isn't portable to other MCP clients. Instead, this wrapper
+delegates to dev mcp, which handles auth automatically via the dev secrets
+system (a SOPS-encrypted secrets_v2.yml already present after dev/install). The
+wrapper exists solely to patch dev.platform.ui.print to write to stderr instead
+of stdout, preventing startup banner messages from corrupting the MCP JSON-RPC
+stream.
+
 """
+
 import sys
 import os
 
 # Must run from mono root — secrets_v2.yml and other relative paths depend on it
-os.chdir('/Users/josephhaaga/Documents/code/mono')
+os.chdir("/Users/josephhaaga/Documents/code/mono")
 
 # Simulate what `source dev/env/bin/activate` sets, so env.verify() passes
-VENV = '/Users/josephhaaga/Documents/code/mono/dev/env'
-os.environ['VIRTUAL_ENV'] = VENV
-os.environ['PATH'] = f"{VENV}/bin:{os.environ.get('PATH', '')}"
+VENV = "/Users/josephhaaga/Documents/code/mono/dev/env"
+os.environ["VIRTUAL_ENV"] = VENV
+os.environ["PATH"] = f"{VENV}/bin:{os.environ.get('PATH', '')}"
 
 # Make the dev Python package importable
-sys.path.insert(0, '/Users/josephhaaga/Documents/code/mono/dev/src/python')
+sys.path.insert(0, "/Users/josephhaaga/Documents/code/mono/dev/src/python")
 
 # Ensure argv looks like `dev mcp` so the shell routes to the Mcp command
-sys.argv = [sys.argv[0], 'mcp']
+sys.argv = [sys.argv[0], "mcp"]
 
 # Patch ui.print -> stderr before anything in the dev shell runs.
 # This covers all ui.print calls (startup banners, error messages, etc.)
 # without touching any specific line in platform.py.
 import dev.platform.ui as _ui
 
-def _stderr_print(text, color=None, delay=0, end='\n', flush=False):
+
+def _stderr_print(text, color=None, delay=0, end="\n", flush=False):
     sys.stderr.write(f"{text}{end}")
     if flush:
         sys.stderr.flush()
+
 
 _ui.print = _stderr_print
 
 # Run the dev shell normally; it will dispatch to the Mcp command
 from main import main
+
 main()

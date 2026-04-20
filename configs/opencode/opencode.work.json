@@ -13,6 +13,10 @@
       "type": "remote",
       "url": "https://mcp.vibe.buzzfeed.ai/mcp",
       "enabled": true
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
     }
   }
 }

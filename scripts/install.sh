@@ -19,6 +19,9 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # Install Brew dependencies
 brew bundle --file=$HOME/Documents/dotfiles/configs/brew/Brewfile
 
+# Set up aggregate audio device (microphone + BlackHole for system audio capture)
+python3 $HOME/Documents/dotfiles/scripts/setup_aggregate_audio.py
+
 # Symlink configuration files
 # Set ZDOTDIR
 echo 'export ZDOTDIR="$HOME/.config/zsh"' >>$HOME/.zshenv

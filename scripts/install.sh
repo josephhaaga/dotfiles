@@ -31,6 +31,9 @@ if [ ! -d "$HOME/.oh-my-zsh" ]; then
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
+# Install gh extensions
+gh extension install wham/gh-slackdump 2>/dev/null || true
+
 # Start essential services
 yabai --start-service
 skhd --start-service

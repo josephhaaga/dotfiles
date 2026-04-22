@@ -6,6 +6,7 @@ import os
 import re
 import shutil
 import sqlite3
+import ssl
 import subprocess
 import sys
 import tempfile
@@ -14,6 +15,9 @@ import urllib.parse
 import urllib.request
 from datetime import datetime
 from pathlib import Path
+
+# macOS Python doesn't use the system cert store by default; use it explicitly.
+_SSL_CONTEXT = ssl.create_default_context(cafile="/etc/ssl/cert.pem")
 
 
 def get_slack_cookie() -> str | None:
@@ -24,10 +28,12 @@ def get_slack_cookie() -> str | None:
     try:
         from Crypto.Cipher import AES
     except ImportError:
+        print("Warning: pycryptodome not installed; cannot download private images.", file=sys.stderr)
         return None
 
     cookie_path = Path.home() / "Library/Application Support/Slack/Cookies"
     if not cookie_path.exists():
+        print("Warning: Slack cookie store not found; cannot download private images.", file=sys.stderr)
         return None
 
     try:
@@ -36,6 +42,7 @@ def get_slack_cookie() -> str | None:
             stderr=subprocess.DEVNULL,
         ).strip()
     except (subprocess.CalledProcessError, FileNotFoundError):
+        print("Warning: Slack Safe Storage key not found in keychain.", file=sys.stderr)
         return None
 
     try:
@@ -47,11 +54,15 @@ def get_slack_cookie() -> str | None:
         ).fetchone()
         conn.close()
         os.unlink(tmp)
-    except Exception:
+    except Exception as e:
+        print(f"Warning: Could not read Slack cookie DB: {e}", file=sys.stderr)
         return None
 
     if not row:
+        print("Warning: Slack 'd' cookie not found.", file=sys.stderr)
         return None
+
+    from Crypto.Cipher import AES
 
     enc = bytes(row[0])
     if not enc.startswith(b"v10"):
@@ -63,29 +74,47 @@ def get_slack_cookie() -> str | None:
     return match.group(0).decode() if match else None
 
 
-def download_image(url: str, dest_dir: str, cookie: str | None) -> str | None:
+def make_opener(cookie: str | None) -> urllib.request.OpenerDirector:
+    """Build a urllib opener that attaches the Slack cookie on every request, including redirects."""
+
+    class CookieRedirectHandler(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            new_req = super().redirect_request(req, fp, code, msg, headers, newurl)
+            if new_req and cookie:
+                new_req.add_header("Cookie", f"d={cookie}")
+            return new_req
+
+    opener = urllib.request.build_opener(
+        CookieRedirectHandler,
+        urllib.request.HTTPSHandler(context=_SSL_CONTEXT),
+    )
+    if cookie:
+        opener.addheaders = [("Cookie", f"d={cookie}")]
+    return opener
+
+
+def download_image(url: str, dest_dir: str, opener: urllib.request.OpenerDirector) -> str | None:
     """
     Download a Slack private image URL to dest_dir.
-    Returns the local file path, or None on failure.
+    Returns the local filename (basename only), or None on failure.
     """
     parsed = urllib.parse.urlparse(url)
     filename = Path(parsed.path).name or "image"
     dest = os.path.join(dest_dir, filename)
 
-    # Avoid re-downloading
     if os.path.exists(dest):
-        return dest
-
-    req = urllib.request.Request(url)
-    if cookie:
-        req.add_header("Cookie", f"d={cookie}")
+        return filename
 
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
+        with opener.open(url, timeout=30) as resp:
             with open(dest, "wb") as f:
                 f.write(resp.read())
-        return dest
-    except urllib.error.URLError:
+        return filename
+    except urllib.error.HTTPError as e:
+        print(f"Warning: Failed to download {url} — HTTP {e.code} {e.reason}", file=sys.stderr)
+        return None
+    except urllib.error.URLError as e:
+        print(f"Warning: Failed to download {url} — {e.reason}", file=sys.stderr)
         return None
 
 
@@ -94,7 +123,7 @@ def indent_content(text, prefix="> "):
     return text.replace("\n", f"\n{prefix}")
 
 
-def convert_thread(download_dir: str | None, no_download: bool):
+def convert_thread(output_dir: str | None):
     try:
         data = json.load(sys.stdin)
     except json.JSONDecodeError:
@@ -107,13 +136,16 @@ def convert_thread(download_dir: str | None, no_download: bool):
     first_ts = float(messages[0].get("ts", 0))
     date_header = datetime.fromtimestamp(first_ts).strftime("%Y-%m-%d")
 
-    sys.stdout.write(f"**Thread Archive ({date_header})**\n\n")
-
-    cookie = None
-    if not no_download:
+    # Set up download if -o was given
+    opener = None
+    if output_dir:
         cookie = get_slack_cookie()
-        if download_dir is None:
-            download_dir = tempfile.mkdtemp(prefix="slackmd-")
+        opener = make_opener(cookie)
+
+    lines = []
+    lines.append(f"**Thread Archive ({date_header})**\n")
+
+    has_private_urls = False
 
     for i, msg in enumerate(messages):
         if msg.get("type") != "message":
@@ -121,32 +153,29 @@ def convert_thread(download_dir: str | None, no_download: bool):
 
         username = msg.get("user") or msg.get("username")
         if not username and "user_profile" in msg:
-            username = msg["user_profile"].get("name") or msg["user_profile"].get(
-                "real_name"
-            )
+            username = msg["user_profile"].get("name") or msg["user_profile"].get("real_name")
         username = username or "Unknown"
 
         text = msg.get("text", "").strip()
 
-        # --- Handle Files/Images ---
         file_links = []
         if "files" in msg:
             for f in msg["files"]:
-                file_url = (
-                    f.get("url_private") or f.get("permalink_public") or "URL missing"
-                )
+                file_url = f.get("url_private") or f.get("permalink_public") or "URL missing"
                 file_name = f.get("name", "attachment")
 
                 if f.get("mimetype", "").startswith("image/"):
-                    if not no_download and file_url != "URL missing":
-                        local = download_image(file_url, download_dir, cookie)
+                    if output_dir and file_url != "URL missing":
+                        local = download_image(file_url, output_dir, opener)
                         if local:
                             file_url = local
+                        # else: fall back to original URL
+                    elif not output_dir and file_url.startswith("https://files.slack.com"):
+                        has_private_urls = True
                     file_links.append(f"![{file_name}]({file_url})")
                 else:
                     file_links.append(f"📎 [{file_name}]({file_url})")
 
-        # Combine text and files
         full_content = text
         if file_links:
             full_content += "\n" + "\n".join(file_links)
@@ -155,29 +184,39 @@ def convert_thread(download_dir: str | None, no_download: bool):
         time_str = datetime.fromtimestamp(ts).strftime("%H:%M")
 
         if i == 0:
-            sys.stdout.write(f"**{username}** `{time_str}`: {full_content}\n\n")
+            lines.append(f"**{username}** `{time_str}`: {full_content}\n")
         else:
             prefix = "> "
             clean_content = indent_content(full_content, prefix)
-            sys.stdout.write(
-                f"{prefix}**{username}** `{time_str}`: {clean_content}\n{prefix}\n"
+            lines.append(f"{prefix}**{username}** `{time_str}`: {clean_content}\n{prefix}")
+
+    md = "\n".join(lines) + "\n"
+
+    if output_dir:
+        out_path = os.path.join(output_dir, "thread.md")
+        with open(out_path, "w") as f:
+            f.write(md)
+        print(f"Wrote {out_path}", file=sys.stderr)
+    else:
+        if has_private_urls:
+            print(
+                "Warning: thread contains private Slack image URLs that will be broken. "
+                "Use -o DIR to download images locally.",
+                file=sys.stderr,
             )
+        sys.stdout.write(md)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Format slackdump JSON as Markdown, downloading private images."
+        description="Format slackdump JSON as Markdown."
     )
     parser.add_argument(
-        "--download-dir",
+        "-o",
         metavar="DIR",
+        dest="output_dir",
         default=None,
-        help="Directory to save downloaded images (default: a temp dir).",
-    )
-    parser.add_argument(
-        "--no-download",
-        action="store_true",
-        help="Skip downloading private images; leave URLs as-is.",
+        help="Write thread.md and downloaded images into DIR.",
     )
     args = parser.parse_args()
-    convert_thread(download_dir=args.download_dir, no_download=args.no_download)
+    convert_thread(output_dir=args.output_dir)

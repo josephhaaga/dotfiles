@@ -1,0 +1,24 @@
+{
+  "$schema": "./proxies.schema.json",
+  "proxies": [
+    {
+      "name": "slack",
+      "description": "Slack MCP — OAuth app registered for VS Code on port 3118",
+      "listen_port": 3118,
+      "target_port": 19876,
+      "target_path": "/mcp/oauth/callback",
+      "tool_auth_command": "opencode mcp auth slack",
+      "opencode_config": {
+        "mcp": {
+          "slack": {
+            "type": "remote",
+            "url": "https://mcp.slack.com/mcp",
+            "oauth": {
+              "clientId": "2151144447.10922119588374"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

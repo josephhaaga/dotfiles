@@ -23,6 +23,13 @@
     "chrome-devtools": {
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
+    },
+    "slack": {
+      "type": "remote",
+      "url": "https://mcp.slack.com/mcp",
+      "oauth": {
+        "clientId": "2151144447.10922119588374"
+      }
     }
   }
 }

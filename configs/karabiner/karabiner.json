@@ -1,6 +1,16 @@
 {
     "profiles": [
         {
+            "fn_function_keys": [
+                {
+                    "from": { "key_code": "f1" },
+                    "to": [{ "key_code": "apple_display_brightness_decrement" }]
+                },
+                {
+                    "from": { "key_code": "f2" },
+                    "to": [{ "key_code": "apple_display_brightness_increment" }]
+                }
+            ],
             "name": "Default profile",
             "selected": true,
             "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }

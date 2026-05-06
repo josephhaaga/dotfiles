@@ -1,0 +1,14 @@
+# worklog configuration
+
+[log]
+output_dir = "~/Documents/journal/notes/jobs/buzzfeed/worklogs"
+
+[github]
+username = "josephhaaga"
+orgs = ["buzzfeed"]
+
+[slack]
+workspace_url = "https://buzzfeed.slack.com"
+
+[gdrive]
+notes_title_suffix = " - Notes by Gemini"

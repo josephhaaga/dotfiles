@@ -16,6 +16,9 @@
 
 set -euo pipefail
 
+# Ensure Homebrew binaries are on PATH (needed when script is launched outside a login shell)
+eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
+
 # Load password from Keychain if not already in environment
 if [[ -z "${OPENCODE_SERVER_PASSWORD:-}" ]]; then
   OPENCODE_SERVER_PASSWORD=$(security find-generic-password -a "$USER" -s opencode-server -w 2>/dev/null || true)

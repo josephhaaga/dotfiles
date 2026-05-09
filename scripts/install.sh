@@ -38,5 +38,22 @@ gh extension install wham/gh-slackdump 2>/dev/null || true
 yabai --start-service
 skhd --start-service
 
+# Set up Tailscale for remote OpenCode access
+echo ""
+echo "=== Tailscale setup ==="
+echo "Tailscale was installed via Homebrew. Next steps:"
+echo "  1. Create a free account at https://login.tailscale.com/start (if you don't have one)"
+echo "  2. Open the Tailscale menu bar app and sign in"
+echo "     (or run: /Applications/Tailscale.app/Contents/MacOS/Tailscale up)"
+echo "  3. Enable MagicDNS in the admin console: https://login.tailscale.com/admin/dns"
+echo "     (tick 'Enable MagicDNS' — free on all plans)"
+echo "  4. Store your OpenCode server password in Keychain (one-time):"
+echo "     security add-generic-password -a \"\$USER\" -s opencode-server -w 'your-password'"
+echo "  5. To serve OpenCode to your phone: ~/Documents/dotfiles/scripts/serve-opencode.sh"
+echo "     Then on your phone (connected to Tailscale), open:"
+echo "       http://<your-mac-magicdns-name>:4096"
+echo "     For the mobile-friendly UI, also run: bunx openportal  (port 3000)"
+echo ""
+
 # Final message
 echo "Installation complete! Please restart your terminal for changes to take effect."

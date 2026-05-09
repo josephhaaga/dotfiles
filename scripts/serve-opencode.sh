@@ -19,14 +19,20 @@
 
 set -euo pipefail
 
-# Verify password is set
+# Load password from Keychain if not already in environment
 if [[ -z "${OPENCODE_SERVER_PASSWORD:-}" ]]; then
-  echo "ERROR: OPENCODE_SERVER_PASSWORD is not set."
-  echo "Add it to Keychain with:"
+  OPENCODE_SERVER_PASSWORD=$(security find-generic-password -a "$USER" -s opencode-server -w 2>/dev/null || true)
+fi
+
+if [[ -z "${OPENCODE_SERVER_PASSWORD:-}" ]]; then
+  echo "ERROR: No OpenCode server password found."
+  echo "Store one in Keychain with:"
   echo "  security add-generic-password -a \"\$USER\" -s opencode-server -w 'your-password'"
-  echo "Then open a new shell and re-run this script."
   exit 1
 fi
+
+export OPENCODE_SERVER_PASSWORD
+export OPENCODE_SERVER_USERNAME="${OPENCODE_SERVER_USERNAME:-$USER}"
 
 # Print access URLs
 TAILSCALE_IP=$(tailscale ip -4 2>/dev/null || echo "<tailscale-ip>")

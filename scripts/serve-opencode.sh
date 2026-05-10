@@ -50,5 +50,6 @@ bunx openportal stop 2>/dev/null || true
 bunx openportal clean 2>/dev/null || true
 
 # openportal manages the opencode server internally
-exec bunx openportal --port 3000 --opencode-port 4096 --hostname 0.0.0.0
+# Use current directory explicitly so openportal doesn't confuse stale instances
+exec bunx openportal --port 3000 --opencode-port 4096 --hostname 0.0.0.0 --directory "$(pwd)" --name "$(basename "$(pwd)")"
 

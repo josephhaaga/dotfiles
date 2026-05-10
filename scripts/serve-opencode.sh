@@ -1,5 +1,8 @@
 #!/bin/bash
-# Start OpenCode as a server accessible over Tailscale, plus the openportal mobile UI.
+# Start OpenCode + openportal mobile UI, accessible over Tailscale.
+#
+# openportal manages the OpenCode server internally; this script handles
+# auth and prints the access URLs.
 #
 # Prerequisites:
 #   1. Tailscale must be running and authenticated (open the menu bar app or run `tailscale up`)
@@ -7,10 +10,9 @@
 #        security add-generic-password -a "$USER" -s opencode-server -w 'your-password'
 #   3. Run this script from inside the project directory you want to work on.
 #
-# Access from phone (both require Tailscale):
+# Access from phone (requires Tailscale connected on phone):
 #   - Mobile UI (openportal): http://<tailscale-ip>:3000
 #   - Raw OpenCode API/UI:    http://<tailscale-ip>:4096
-#   - mDNS (LAN only):        http://opencode.local:4096
 #
 # Credentials: username=$USER, password=value stored in Keychain under 'opencode-server'
 
@@ -35,25 +37,18 @@ export OPENCODE_SERVER_PASSWORD
 export OPENCODE_SERVER_USERNAME="${OPENCODE_SERVER_USERNAME:-$USER}"
 
 TAILSCALE_IP=$(tailscale ip -4 2>/dev/null || echo "<tailscale-ip>")
-echo "Starting OpenCode server + openportal mobile UI..."
+echo "Starting OpenCode + openportal mobile UI..."
 echo "  Mobile UI:  http://${TAILSCALE_IP}:3000"
 echo "  OpenCode:   http://${TAILSCALE_IP}:4096"
-echo "  mDNS (LAN): http://opencode.local:4096"
 echo "  Username:   ${OPENCODE_SERVER_USERNAME}"
 echo ""
-echo "Press Ctrl-C to stop both."
+echo "Press Ctrl-C to stop."
 echo ""
 
-# Start opencode server in background
-opencode serve --mdns --port 4096 &
-OPENCODE_PID=$!
+# Clean up any stale openportal instances that might be holding ports
+bunx openportal stop 2>/dev/null || true
+bunx openportal clean 2>/dev/null || true
 
-# Start openportal, pointed at the local opencode server
-bunx openportal &
-PORTAL_PID=$!
-
-# On exit, kill both
-trap 'echo ""; echo "Shutting down..."; kill $OPENCODE_PID $PORTAL_PID 2>/dev/null; wait' EXIT INT TERM
-
-wait $OPENCODE_PID $PORTAL_PID
+# openportal manages the opencode server internally
+exec bunx openportal --port 3000 --opencode-port 4096 --hostname 0.0.0.0
 

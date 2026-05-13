@@ -23,10 +23,15 @@ eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
 # openportal's SDK client sends no auth headers. Tailscale secures the network.
 unset OPENCODE_SERVER_PASSWORD OPENCODE_SERVER_USERNAME
 
+# Plannotator remote mode — fixed port so Tailscale access is stable
+export PLANNOTATOR_REMOTE=1
+export PLANNOTATOR_PORT=19432
+
 TAILSCALE_IP=$(tailscale ip -4 2>/dev/null || echo "<tailscale-ip>")
 echo "Starting OpenCode + openportal mobile UI..."
-echo "  Mobile UI:  http://${TAILSCALE_IP}:3000"
-echo "  OpenCode:   http://${TAILSCALE_IP}:4096"
+echo "  Mobile UI:       http://${TAILSCALE_IP}:3000"
+echo "  OpenCode:        http://${TAILSCALE_IP}:4096"
+echo "  Plannotator UI:  http://${TAILSCALE_IP}:${PLANNOTATOR_PORT}"
 echo ""
 echo "Press Ctrl-C to stop."
 echo ""

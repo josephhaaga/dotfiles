@@ -12,3 +12,8 @@ workspace_url = "https://buzzfeed.slack.com"
 
 [gdrive]
 notes_title_suffix = " - Notes by Gemini"
+
+# Optional — enables LLM summarisation + meeting graph
+[llm]
+provider = "transformers" # or "litellm" / "llama.cpp"
+model = "Qwen/Qwen3-0.6B"

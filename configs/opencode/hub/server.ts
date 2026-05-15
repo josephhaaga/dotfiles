@@ -56,22 +56,12 @@ function getPortalServices(): Service[] {
       const projectName = dir.split("/").pop() ?? inst.name;
       if (inst.port) {
         services.push({
-          name: projectName,
+          name: "OpenPortal",
           port: inst.port,
           icon: "🔮",
-          description: `OpenPortal · ${dir}`,
+          description: dir,
           static: true,
-          group: "OpenPortal",
-        });
-      }
-      if (inst.opencodePort && inst.opencodePort !== inst.port) {
-        services.push({
-          name: projectName,
-          port: inst.opencodePort,
-          icon: "🤖",
-          description: `OpenCode · ${dir}`,
-          static: true,
-          group: "OpenCode",
+          group: projectName,
         });
       }
     }

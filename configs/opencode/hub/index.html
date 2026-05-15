@@ -138,6 +138,7 @@
     .card.offline { opacity: 0.4; pointer-events: none; }
 
     .card-icon { font-size: 26px; line-height: 1; }
+    .card-icon--svg { font-size: 0; line-height: 0; display: flex; align-items: center; height: 26px; }
 
     .card-name {
       font-size: 15px;
@@ -229,13 +230,24 @@
     </svg>`;
 
     // Inline the actual opencode wordmark paths, colour-adapted
-    const OPENCODE_ICON = `<svg viewBox="0 0 24 24" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3 17H1V7H3V17Z" fill="currentColor" opacity="0.4"/>
-      <path d="M3 5H1V17H3V5ZM5 19H0V5H5V19Z" fill="currentColor"/>
-      <path d="M11 17H9V7H11V17Z" fill="currentColor" opacity="0.4"/>
-      <path d="M9 17H11V5H9V17ZM12 19H9V21H7V3H12V19Z" fill="currentColor"/>
-      <path d="M19 13V15H15V13H19Z" fill="currentColor" opacity="0.4"/>
-      <path d="M19 13H15V15H19V17H14V3H19V13ZM15 9H18V7H15V9Z" fill="currentColor"/>
+    // Real opencode logo paths, recoloured to currentColor (light parts) + currentColor at 35% (dark parts)
+    const OPENCODE_ICON = `<svg viewBox="0 0 234 42" width="52" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0">
+      <path d="M18 30H6V18H18V30Z" fill="currentColor" opacity="0.35"/>
+      <path d="M18 12H6V30H18V12ZM24 36H0V6H24V36Z" fill="currentColor"/>
+      <path d="M48 30H36V18H48V30Z" fill="currentColor" opacity="0.35"/>
+      <path d="M36 30H48V12H36V30ZM54 36H36V42H30V6H54V36Z" fill="currentColor"/>
+      <path d="M84 24V30H66V24H84Z" fill="currentColor" opacity="0.35"/>
+      <path d="M84 24H66V30H84V36H60V6H84V24ZM66 18H78V12H66V18Z" fill="currentColor"/>
+      <path d="M108 36H96V18H108V36Z" fill="currentColor" opacity="0.35"/>
+      <path d="M108 12H96V36H90V6H108V12ZM114 36H108V12H114V36Z" fill="currentColor"/>
+      <path d="M144 30H126V18H144V30Z" fill="currentColor" opacity="0.35"/>
+      <path d="M144 12H126V30H144V36H120V6H144V12Z" fill="currentColor"/>
+      <path d="M168 30H156V18H168V30Z" fill="currentColor" opacity="0.35"/>
+      <path d="M168 12H156V30H168V12ZM174 36H150V6H174V36Z" fill="currentColor"/>
+      <path d="M198 30H186V18H198V30Z" fill="currentColor" opacity="0.35"/>
+      <path d="M198 12H186V30H198V12ZM204 36H180V6H198V0H204V36Z" fill="currentColor"/>
+      <path d="M234 24V30H216V24H234Z" fill="currentColor" opacity="0.35"/>
+      <path d="M216 12V18H228V12H216ZM234 24H216V30H234V36H210V6H234V24Z" fill="currentColor"/>
     </svg>`;
 
     function serviceUrl(port) {
@@ -243,7 +255,7 @@
     }
 
     function iconHtml(svc) {
-      if (svc.icon === '__opencode__') return `<div class="card-icon" style="color:var(--text)">${OPENCODE_ICON}</div>`;
+      if (svc.icon === '__opencode__') return `<div class="card-icon card-icon--svg" style="color:var(--text)">${OPENCODE_ICON}</div>`;
       return `<div class="card-icon">${svc.icon}</div>`;
     }
 
@@ -318,11 +330,11 @@
         const portal = services.filter(s => s.static && s.group);
         const docker = services.filter(s => !s.static);
 
-        // Group portal instances by project name (svc.name)
+        // Group portal instances by project name (svc.group)
         const portalByProject = new Map();
         for (const svc of portal) {
-          if (!portalByProject.has(svc.name)) portalByProject.set(svc.name, []);
-          portalByProject.get(svc.name).push(svc);
+          if (!portalByProject.has(svc.group)) portalByProject.set(svc.group, []);
+          portalByProject.get(svc.group).push(svc);
         }
 
         // Group Docker by composeProject; ungrouped (no project) go last

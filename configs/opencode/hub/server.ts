@@ -64,6 +64,16 @@ function getPortalServices(): Service[] {
           group: projectName,
         });
       }
+      if (inst.opencodePort) {
+        services.push({
+          name: "OpenCode",
+          port: inst.opencodePort,
+          icon: "__opencode__",
+          description: dir,
+          static: true,
+          group: projectName,
+        });
+      }
     }
     return services;
   } catch {

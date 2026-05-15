@@ -61,7 +61,7 @@ function getPortalServices(): Service[] {
           icon: "🔮",
           description: dir,
           static: true,
-          group: projectName,
+          group: dir,
         });
       }
       if (inst.opencodePort) {
@@ -71,7 +71,7 @@ function getPortalServices(): Service[] {
           icon: "__opencode__",
           description: dir,
           static: true,
-          group: projectName,
+          group: dir,
         });
       }
     }
@@ -164,6 +164,10 @@ export const server = Bun.serve({
   hostname: "0.0.0.0",
   async fetch(req) {
     const url = new URL(req.url);
+
+    if (url.pathname === "/api/meta") {
+      return Response.json({ home: homedir() }, { headers: { "Cache-Control": "no-store" } });
+    }
 
     if (url.pathname === "/api/services") {
       const portal = getPortalServices();

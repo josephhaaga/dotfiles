@@ -275,6 +275,12 @@
       return a;
     }
 
+    let homeDir = '';
+
+    function tildeify(path) {
+      return homeDir ? path.replace(homeDir, '~') : path;
+    }
+
     function renderGroup(grid, label, labelIcon, badge, services) {
       if (!services.length) return;
       const section = document.createElement('div');
@@ -288,7 +294,7 @@
         header.appendChild(icon);
       }
       const text = document.createElement('span');
-      text.textContent = label;
+      text.textContent = tildeify(label);
       header.appendChild(text);
       if (badge) {
         const span = document.createElement('span');
@@ -315,8 +321,13 @@
       empty.style.display = 'none';
 
       try {
-        const res = await fetch('/api/services');
-        const services = await res.json();
+        const [metaRes, servicesRes] = await Promise.all([
+          fetch('/api/meta'),
+          fetch('/api/services'),
+        ]);
+        const meta = await metaRes.json();
+        homeDir = meta.home ?? '';
+        const services = await servicesRes.json();
 
         spinner.style.display = 'none';
 

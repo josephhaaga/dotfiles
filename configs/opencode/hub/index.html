@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Dev Home</title>
+  <title>Hub</title>
   <meta name="description" content="Quick links to local dev services" />
   <meta name="theme-color" content="#0f0f0f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Dev Home" />
+  <meta name="apple-mobile-web-app-title" content="Hub" />
   <link rel="manifest" href="/manifest.json" />
   <link rel="apple-touch-icon" href="/icon.svg" />
   <style>
@@ -74,17 +74,36 @@
       display: inline-block;
     }
 
+    #grid {
+      padding: 0 12px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .section-label {
-      padding: 20px 20px 8px;
+      padding: 0 4px;
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text-muted);
-      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .section-label:first-child { padding-top: 8px; }
+    .section-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+    }
 
     .compose-badge {
       display: inline-block;
@@ -94,18 +113,9 @@
       color: var(--text-muted);
       border-radius: 4px;
       padding: 1px 5px;
-      margin-left: 6px;
-      vertical-align: middle;
       letter-spacing: 0;
       text-transform: none;
       font-weight: 500;
-    }
-
-    #grid {
-      padding: 0 12px 32px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 10px;
     }
 
     .card {
@@ -121,6 +131,8 @@
       transition: background 0.12s, transform 0.1s;
       -webkit-tap-highlight-color: transparent;
       position: relative;
+      min-width: 0;
+      overflow: hidden;
     }
     .card:active { background: var(--surface-hover); transform: scale(0.97); }
     .card.offline { opacity: 0.4; pointer-events: none; }
@@ -138,6 +150,10 @@
       font-size: 12px;
       color: var(--text-muted);
       line-height: 1.3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
     }
 
     .card-port {
@@ -193,7 +209,7 @@
 </head>
 <body>
   <header>
-    <h1>🏠 Dev Home</h1>
+    <h1>🏠 Hub</h1>
     <button id="refresh-btn" onclick="load()">↻ Refresh</button>
   </header>
   <div id="hostname-badge"></div>
@@ -206,8 +222,29 @@
     const host = window.location.hostname;
     document.getElementById('hostname-badge').textContent = host;
 
+    // OpenCode logo SVG — color-scheme aware via currentColor
+    const OPENCODE_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
+      <rect x="1" y="5" width="6" height="14" rx="0" fill="currentColor" opacity="0.45"/>
+      <rect x="3" y="3" width="6" height="18" rx="0" fill="currentColor" opacity="0.9"/>
+    </svg>`;
+
+    // Inline the actual opencode wordmark paths, colour-adapted
+    const OPENCODE_ICON = `<svg viewBox="0 0 24 24" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 17H1V7H3V17Z" fill="currentColor" opacity="0.4"/>
+      <path d="M3 5H1V17H3V5ZM5 19H0V5H5V19Z" fill="currentColor"/>
+      <path d="M11 17H9V7H11V17Z" fill="currentColor" opacity="0.4"/>
+      <path d="M9 17H11V5H9V17ZM12 19H9V21H7V3H12V19Z" fill="currentColor"/>
+      <path d="M19 13V15H15V13H19Z" fill="currentColor" opacity="0.4"/>
+      <path d="M19 13H15V15H19V17H14V3H19V13ZM15 9H18V7H15V9Z" fill="currentColor"/>
+    </svg>`;
+
     function serviceUrl(port) {
       return `${window.location.protocol}//${host}:${port}`;
+    }
+
+    function iconHtml(svc) {
+      if (svc.icon === '__opencode__') return `<div class="card-icon" style="color:var(--text)">${OPENCODE_ICON}</div>`;
+      return `<div class="card-icon">${svc.icon}</div>`;
     }
 
     function renderCard(svc) {
@@ -218,7 +255,7 @@
       a.rel = 'noopener';
       a.innerHTML = `
         <div class="status-dot"></div>
-        <div class="card-icon">${svc.icon}</div>
+        ${iconHtml(svc)}
         <div class="card-name">${svc.name}</div>
         <div class="card-desc">${svc.description}</div>
         <div class="card-port">:${svc.port}</div>
@@ -226,23 +263,35 @@
       return a;
     }
 
-    function renderLabel(text, badge) {
-      const div = document.createElement('div');
-      div.className = 'section-label';
-      div.textContent = text;
+    function renderGroup(grid, label, labelIcon, badge, services) {
+      if (!services.length) return;
+      const section = document.createElement('div');
+      section.className = 'section';
+
+      const header = document.createElement('div');
+      header.className = 'section-label';
+      if (labelIcon) {
+        const icon = document.createElement('span');
+        icon.textContent = labelIcon;
+        header.appendChild(icon);
+      }
+      const text = document.createElement('span');
+      text.textContent = label;
+      header.appendChild(text);
       if (badge) {
         const span = document.createElement('span');
         span.className = 'compose-badge';
         span.textContent = badge;
-        div.appendChild(span);
+        header.appendChild(span);
       }
-      return div;
-    }
+      section.appendChild(header);
 
-    function renderGroup(grid, label, badge, services) {
-      if (!services.length) return;
-      grid.appendChild(renderLabel(label, badge));
-      services.forEach(s => grid.appendChild(renderCard(s)));
+      const cards = document.createElement('div');
+      cards.className = 'section-cards';
+      services.forEach(s => cards.appendChild(renderCard(s)));
+      section.appendChild(cards);
+
+      grid.appendChild(section);
     }
 
     async function load() {
@@ -288,21 +337,21 @@
           }
         }
 
-        renderGroup(grid, 'Evergreen', null, evergreen);
+        renderGroup(grid, 'Evergreen', null, null, evergreen);
 
         for (const [project, svcs] of portalByProject) {
           svcs.sort((a, b) => b.online - a.online);
-          renderGroup(grid, project, null, svcs);
+          renderGroup(grid, project, '📁', null, svcs);
         }
 
         for (const [project, svcs] of byProject) {
           svcs.sort((a, b) => b.online - a.online);
-          renderGroup(grid, 'Docker', project, svcs);
+          renderGroup(grid, project, '🐳', null, svcs);
         }
 
         if (standalone.length) {
           standalone.sort((a, b) => b.online - a.online);
-          renderGroup(grid, 'Docker', null, standalone);
+          renderGroup(grid, 'Docker', '🐳', null, standalone);
         }
 
       } catch (e) {

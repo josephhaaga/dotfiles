@@ -15,6 +15,16 @@
     "chrome-devtools": {
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
+    },
+    "raindrop": {
+      "type": "local",
+      "command": [
+        "/Users/josephhaaga/.raindrop/bin/raindrop",
+        "workshop",
+        "mcp"
+      ],
+      "enabled": true,
+      "environment": {}
     }
   }
 }

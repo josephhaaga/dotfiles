@@ -10,10 +10,16 @@
  * When imported as a module (e.g. from the hub.ts plugin):
  *   - Only the HTTP server starts (no openportal, no process management)
  *
- * GET /api/services — list of known + Docker-discovered services
+ * Endpoints:
+ *   GET  /api/meta              — home dir, hostname
+ *   GET  /api/services          — all services with status
+ *   GET  /api/stats             — battery, CPU, RAM
+ *   DELETE /api/portal/:name    — stop + remove a portal instance
+ *   POST /api/push/subscribe    — register Web Push subscription
+ *   GET  /api/push/vapid-key    — VAPID public key
  */
 
-import { readFileSync, existsSync } from "fs";
+import { readFileSync, existsSync, writeFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execSync, spawnSync } from "child_process";
@@ -22,6 +28,8 @@ import { homedir } from "os";
 export const HUB_PORT = Number(process.env.DEV_HOME_PORT ?? 8080);
 const __dir = dirname(fileURLToPath(import.meta.url));
 const PORTAL_CONFIG = join(homedir(), ".portal.json");
+const PUSH_SUBS_FILE = join(homedir(), ".hub-push-subscriptions.json");
+const VAPID_FILE = join(homedir(), ".hub-vapid.json");
 
 // ---------------------------------------------------------------------------
 // Evergreen services (always shown, fixed ports)
@@ -44,6 +52,25 @@ const EVERGREEN_SERVICES: Service[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+interface Service {
+  name: string;
+  port: number;
+  icon: string;
+  description: string;
+  static: boolean;
+  group?: string;
+  branch?: string;
+  containerName?: string;
+  composeProject?: string;
+  instanceName?: string;
+  opencodePort?: number;
+  stale?: boolean;
+  sessionStatus?: "idle" | "running" | "error";
+}
+
+// ---------------------------------------------------------------------------
 // Read live openportal instances from ~/.portal.json
 // ---------------------------------------------------------------------------
 function getPortalServices(): Service[] {
@@ -53,7 +80,23 @@ function getPortalServices(): Service[] {
     const services: Service[] = [];
     for (const inst of config.instances ?? []) {
       const dir = inst.directory ?? inst.name ?? "unknown";
-      const projectName = dir.split("/").pop() ?? inst.name;
+      const instanceName = inst.name ?? dir.split("/").pop();
+
+      // Detect stale: check if the opencode process is still alive
+      let stale = false;
+      if (inst.opencodePid) {
+        try { process.kill(inst.opencodePid, 0); }
+        catch { stale = true; }
+      }
+
+      // Git branch for this directory
+      let branch: string | undefined;
+      try {
+        branch = execSync("git branch --show-current", {
+          cwd: dir, encoding: "utf8", timeout: 1000, stdio: ["ignore", "pipe", "ignore"],
+        }).trim() || undefined;
+      } catch { /* not a git repo or git not available */ }
+
       if (inst.port) {
         services.push({
           name: "OpenPortal",
@@ -62,6 +105,10 @@ function getPortalServices(): Service[] {
           description: dir,
           static: true,
           group: dir,
+          branch,
+          instanceName,
+          opencodePort: inst.opencodePort,
+          stale,
         });
       }
       if (inst.opencodePort) {
@@ -72,6 +119,10 @@ function getPortalServices(): Service[] {
           description: dir,
           static: true,
           group: dir,
+          branch,
+          instanceName,
+          opencodePort: inst.opencodePort,
+          stale,
         });
       }
     }
@@ -79,17 +130,6 @@ function getPortalServices(): Service[] {
   } catch {
     return [];
   }
-}
-
-interface Service {
-  name: string;
-  port: number;
-  icon: string;
-  description: string;
-  static: boolean;
-  group?: string;
-  containerName?: string;
-  composeProject?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -142,6 +182,163 @@ async function isPortOpen(port: number): Promise<boolean> {
 }
 
 // ---------------------------------------------------------------------------
+// Session status — poll the OpenCode API for the most recent session state
+// ---------------------------------------------------------------------------
+async function getSessionStatus(opencodePort: number): Promise<"idle" | "running" | "error"> {
+  try {
+    const res = await fetch(`http://127.0.0.1:${opencodePort}/session`, {
+      signal: AbortSignal.timeout(800),
+    });
+    if (!res.ok) return "error";
+    const sessions: Array<{ time: { updated: number } }> = await res.json();
+    if (!sessions.length) return "idle";
+    // Sort by most recently updated
+    const latest = sessions.sort((a, b) => b.time.updated - a.time.updated)[0];
+    const age = Date.now() - latest.time.updated;
+    // If updated within last 5 seconds, consider it running
+    return age < 5000 ? "running" : "idle";
+  } catch {
+    return "error";
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Machine stats — battery, CPU, RAM (macOS)
+// ---------------------------------------------------------------------------
+function getMachineStats() {
+  const stats: Record<string, unknown> = {};
+
+  // Battery
+  try {
+    const batt = execSync("pmset -g batt", { encoding: "utf8", timeout: 2000 });
+    const pctMatch = batt.match(/(\d+)%/);
+    const charging = batt.includes("charging") || batt.includes("AC Power");
+    const remainMatch = batt.match(/(\d+:\d+) remaining/);
+    if (pctMatch) {
+      stats.battery = {
+        pct: Number(pctMatch[1]),
+        charging,
+        remaining: remainMatch?.[1] ?? null,
+      };
+    }
+  } catch { /* no battery / non-macOS */ }
+
+  // CPU
+  try {
+    const topOut = execSync("top -l 1 -n 0 -s 0", { encoding: "utf8", timeout: 3000 });
+    const cpuLine = topOut.match(/CPU usage:\s*([\d.]+)%\s*user,\s*([\d.]+)%\s*sys,\s*([\d.]+)%\s*idle/);
+    if (cpuLine) {
+      stats.cpu = {
+        user: parseFloat(cpuLine[1]),
+        sys: parseFloat(cpuLine[2]),
+        idle: parseFloat(cpuLine[3]),
+        used: Math.round(parseFloat(cpuLine[1]) + parseFloat(cpuLine[2])),
+      };
+    }
+  } catch { /* non-macOS */ }
+
+  // RAM via vm_stat
+  try {
+    const vmOut = execSync("vm_stat", { encoding: "utf8", timeout: 2000 });
+    const pageSize = 16384;
+    const get = (key: string) => {
+      const m = vmOut.match(new RegExp(`${key}:\\s+(\\d+)`));
+      return m ? Number(m[1]) * pageSize : 0;
+    };
+    const free = get("Pages free") + get("Pages speculative");
+    const active = get("Pages active");
+    const inactive = get("Pages inactive");
+    const wired = get("Pages wired down");
+    const compressed = get("Pages occupied by compressor");
+    const total = free + active + inactive + wired + compressed;
+    const used = active + wired + compressed;
+    stats.ram = {
+      usedGB: Math.round(used / 1e9 * 10) / 10,
+      totalGB: Math.round(total / 1e9 * 10) / 10,
+      pct: Math.round(used / total * 100),
+    };
+  } catch { /* non-macOS */ }
+
+  return stats;
+}
+
+// ---------------------------------------------------------------------------
+// VAPID key management (lazy init)
+// ---------------------------------------------------------------------------
+function getVapidKeys(): { publicKey: string; privateKey: string } | null {
+  try {
+    if (existsSync(VAPID_FILE)) {
+      return JSON.parse(readFileSync(VAPID_FILE, "utf-8"));
+    }
+    // Generate new keys using openssl
+    const privateKeyRaw = execSync("openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 2>/dev/null | openssl pkcs8 -topk8 -nocrypt -outform DER 2>/dev/null | tail -c 32 | base64", { encoding: "utf8", timeout: 5000 }).trim();
+    // For simplicity, use web-push if available, otherwise skip
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+// Push subscriptions store
+function getPushSubscriptions(): unknown[] {
+  try {
+    if (!existsSync(PUSH_SUBS_FILE)) return [];
+    return JSON.parse(readFileSync(PUSH_SUBS_FILE, "utf-8"));
+  } catch { return []; }
+}
+
+function savePushSubscription(sub: unknown) {
+  const subs = getPushSubscriptions();
+  // Deduplicate by endpoint
+  const endpoint = (sub as { endpoint: string }).endpoint;
+  const filtered = subs.filter((s) => (s as { endpoint: string }).endpoint !== endpoint);
+  filtered.push(sub);
+  writeFileSync(PUSH_SUBS_FILE, JSON.stringify(filtered, null, 2));
+}
+
+// ---------------------------------------------------------------------------
+// Session watcher — fires Web Push when a session goes idle
+// ---------------------------------------------------------------------------
+const sessionWasRunning = new Map<number, boolean>();
+
+async function checkAndNotify(opencodePort: number, instanceName: string) {
+  const status = await getSessionStatus(opencodePort);
+  const wasRunning = sessionWasRunning.get(opencodePort) ?? false;
+  sessionWasRunning.set(opencodePort, status === "running");
+
+  if (wasRunning && status === "idle") {
+    // Session just went idle — send push notification
+    const subs = getPushSubscriptions();
+    if (subs.length === 0) return;
+    // Use web-push if available
+    try {
+      const webPush = await import("web-push");
+      const vapid = getVapidKeys();
+      if (!vapid) return;
+      webPush.setVapidDetails("mailto:hub@localhost", vapid.publicKey, vapid.privateKey);
+      const payload = JSON.stringify({ title: `${instanceName} is idle`, body: "OpenCode finished." });
+      for (const sub of subs) {
+        webPush.sendNotification(sub as Parameters<typeof webPush.sendNotification>[0], payload).catch(() => {});
+      }
+    } catch { /* web-push not installed */ }
+  }
+}
+
+// Poll every 10 seconds for session status changes
+setInterval(async () => {
+  try {
+    if (!existsSync(PORTAL_CONFIG)) return;
+    const config = JSON.parse(readFileSync(PORTAL_CONFIG, "utf-8"));
+    for (const inst of config.instances ?? []) {
+      if (inst.opencodePort) {
+        const name = inst.name ?? inst.directory?.split("/").pop() ?? "project";
+        await checkAndNotify(inst.opencodePort, name);
+      }
+    }
+  } catch { /* ignore */ }
+}, 10_000);
+
+// ---------------------------------------------------------------------------
 // Guard: exit cleanly if Hub is already running
 // ---------------------------------------------------------------------------
 try {
@@ -165,8 +362,15 @@ export const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
 
+    // CORS for local dev
+    const headers = { "Cache-Control": "no-store", "Access-Control-Allow-Origin": "*" };
+
     if (url.pathname === "/api/meta") {
-      return Response.json({ home: homedir() }, { headers: { "Cache-Control": "no-store" } });
+      return Response.json({ home: homedir() }, { headers });
+    }
+
+    if (url.pathname === "/api/stats") {
+      return Response.json(getMachineStats(), { headers });
     }
 
     if (url.pathname === "/api/services") {
@@ -178,9 +382,51 @@ export const server = Bun.serve({
       ]);
       const docker = getDockerServices(allStaticPorts);
       const all = [...evergreen, ...portal, ...docker];
-      const statuses = await Promise.all(all.map((s) => isPortOpen(s.port)));
-      const result = all.map((s, i) => ({ ...s, online: statuses[i] }));
-      return Response.json(result, { headers: { "Cache-Control": "no-store" } });
+
+      // Probe ports + session statuses concurrently
+      const [statuses, sessionStatuses] = await Promise.all([
+        Promise.all(all.map((s) => isPortOpen(s.port))),
+        Promise.all(all.map((s) =>
+          s.opencodePort ? getSessionStatus(s.opencodePort) : Promise.resolve(undefined)
+        )),
+      ]);
+
+      const result = all.map((s, i) => ({
+        ...s,
+        online: statuses[i],
+        sessionStatus: sessionStatuses[i],
+      }));
+      return Response.json(result, { headers });
+    }
+
+    // DELETE /api/portal/:name — stop a portal instance
+    if (url.pathname.startsWith("/api/portal/") && req.method === "DELETE") {
+      const name = decodeURIComponent(url.pathname.slice("/api/portal/".length));
+      try {
+        spawnSync("bunx", ["openportal", "stop", "--name", name], { stdio: "ignore", timeout: 5000 });
+        spawnSync("bunx", ["openportal", "clean"], { stdio: "ignore", timeout: 5000 });
+        return Response.json({ ok: true }, { headers });
+      } catch (e) {
+        return Response.json({ ok: false, error: String(e) }, { status: 500, headers });
+      }
+    }
+
+    // POST /api/push/subscribe
+    if (url.pathname === "/api/push/subscribe" && req.method === "POST") {
+      try {
+        const sub = await req.json();
+        savePushSubscription(sub);
+        return Response.json({ ok: true }, { headers });
+      } catch {
+        return Response.json({ ok: false }, { status: 400, headers });
+      }
+    }
+
+    // GET /api/push/vapid-key
+    if (url.pathname === "/api/push/vapid-key") {
+      const vapid = getVapidKeys();
+      if (!vapid) return Response.json({ key: null }, { headers });
+      return Response.json({ key: vapid.publicKey }, { headers });
     }
 
     if (url.pathname === "/manifest.json")
@@ -241,7 +487,6 @@ if (import.meta.main) {
   let portalProc: ReturnType<typeof Bun.spawn> | null = null;
 
   if (hasPortal) {
-    // Clean up stale entries for this directory
     spawnSync("bunx", ["openportal", "stop", "--name", projectName], { stdio: "ignore", timeout: 5000 });
     spawnSync("bunx", ["openportal", "clean"], { stdio: "ignore", timeout: 5000 });
 
@@ -250,7 +495,6 @@ if (import.meta.main) {
       { stdio: ["ignore", "inherit", "inherit"] }
     );
 
-    // Give openportal a moment to register ports in ~/.portal.json
     await Bun.sleep(2000);
   }
 
@@ -262,7 +506,6 @@ if (import.meta.main) {
   console.log("Press Ctrl-C to stop.");
   console.log("");
 
-  // Teardown on exit
   const shutdown = () => {
     console.log("\nShutting down...");
     portalProc?.kill();
@@ -272,6 +515,5 @@ if (import.meta.main) {
   process.on("SIGINT", shutdown);
   process.on("SIGTERM", shutdown);
 
-  // Keep process alive
   await new Promise(() => {});
 }

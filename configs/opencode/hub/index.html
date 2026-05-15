@@ -23,6 +23,8 @@
       --text-muted: #888;
       --online: #4ade80;
       --offline: #444;
+      --stale: #f59e0b;
+      --running: #818cf8;
       --accent: #6366f1;
       --radius: 14px;
       --font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -44,11 +46,9 @@
       justify-content: space-between;
     }
 
-    header h1 {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+
+    #header-right { display: flex; align-items: center; gap: 8px; }
 
     #refresh-btn {
       background: none;
@@ -61,9 +61,23 @@
       transition: color 0.15s, border-color 0.15s;
     }
     #refresh-btn:active { color: var(--text); border-color: var(--text-muted); }
+    #refresh-btn.spinning { animation: spin 0.7s linear infinite; }
+
+    #notify-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      line-height: 1;
+    }
+    #notify-btn.active { color: var(--online); border-color: var(--online); }
 
     #hostname-badge {
-      margin: 0 20px 16px;
+      margin: 0 20px 8px;
       font-size: 12px;
       color: var(--text-muted);
       font-family: "SF Mono", "Fira Code", monospace;
@@ -74,6 +88,67 @@
       display: inline-block;
     }
 
+    #last-updated {
+      margin: 0 20px 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* ── Stats bar ── */
+    #stats-bar {
+      margin: 0 12px 20px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 60px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-size: 13px;
+      font-weight: 600;
+      font-family: "SF Mono", "Fira Code", monospace;
+    }
+
+    .stat-bar-track {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      width: 100%;
+      min-width: 60px;
+    }
+
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--accent);
+      transition: width 0.4s;
+    }
+
+    .stat-bar-fill.warn { background: var(--stale); }
+    .stat-bar-fill.crit { background: #f87171; }
+    .stat-bar-fill.battery-charging { background: var(--online); }
+
+    /* ── Grid ── */
     #grid {
       padding: 0 12px 32px;
       display: flex;
@@ -81,11 +156,7 @@
       gap: 24px;
     }
 
-    .section {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .section { display: flex; flex-direction: column; gap: 8px; }
 
     .section-label {
       padding: 0 4px;
@@ -118,6 +189,7 @@
       font-weight: 500;
     }
 
+    /* ── Cards ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -136,6 +208,8 @@
     }
     .card:active { background: var(--surface-hover); transform: scale(0.97); }
     .card.offline { opacity: 0.4; pointer-events: none; }
+    .card.stale { border-color: var(--stale); border-style: dashed; opacity: 0.75; }
+    .card.stale .status-dot { background: var(--stale); box-shadow: 0 0 6px var(--stale); }
 
     .card-icon { font-size: 26px; line-height: 1; }
     .card-icon--svg { font-size: 0; line-height: 0; display: flex; align-items: center; height: 26px; }
@@ -157,18 +231,39 @@
       min-width: 0;
     }
 
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 6px;
+      flex-wrap: wrap;
+    }
+
     .card-port {
       font-size: 11px;
       font-family: "SF Mono", "Fira Code", monospace;
       color: var(--text-muted);
-      margin-top: auto;
-      padding-top: 6px;
     }
 
+    .card-branch {
+      font-size: 10px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      border-radius: 3px;
+      padding: 1px 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 80px;
+    }
+
+    /* Status dot — top right */
     .status-dot {
       position: absolute;
       top: 12px;
-      right: 12px;
+      right: 30px; /* leave room for kill btn */
       width: 8px;
       height: 8px;
       border-radius: 50%;
@@ -176,6 +271,41 @@
       box-shadow: 0 0 6px var(--online);
     }
     .card.offline .status-dot { background: var(--offline); box-shadow: none; }
+    .status-dot.running {
+      background: var(--running);
+      box-shadow: 0 0 6px var(--running);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+
+    /* Kill button — top right corner */
+    .kill-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 18px;
+      text-align: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.15s, background 0.15s;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card:hover .kill-btn,
+    .card.stale .kill-btn { opacity: 1; }
+    .kill-btn:hover { background: #f8717130; color: #f87171; }
 
     #empty {
       display: none;
@@ -211,9 +341,14 @@
 <body>
   <header>
     <h1>🏠 Hub</h1>
-    <button id="refresh-btn" onclick="load()">↻ Refresh</button>
+    <div id="header-right">
+      <button id="notify-btn" title="Enable push notifications">🔔</button>
+      <button id="refresh-btn" onclick="manualRefresh()">↻ Refresh</button>
+    </div>
   </header>
   <div id="hostname-badge"></div>
+  <div id="last-updated"></div>
+  <div id="stats-bar" style="display:none"></div>
 
   <div id="spinner"><div class="spin"></div></div>
   <div id="grid"></div>
@@ -223,14 +358,6 @@
     const host = window.location.hostname;
     document.getElementById('hostname-badge').textContent = host;
 
-    // OpenCode logo SVG — color-scheme aware via currentColor
-    const OPENCODE_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
-      <rect x="1" y="5" width="6" height="14" rx="0" fill="currentColor" opacity="0.45"/>
-      <rect x="3" y="3" width="6" height="18" rx="0" fill="currentColor" opacity="0.9"/>
-    </svg>`;
-
-    // Inline the actual opencode wordmark paths, colour-adapted
-    // Real opencode logo paths, recoloured to currentColor (light parts) + currentColor at 35% (dark parts)
     const OPENCODE_ICON = `<svg viewBox="0 0 234 42" width="52" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0">
       <path d="M18 30H6V18H18V30Z" fill="currentColor" opacity="0.35"/>
       <path d="M18 12H6V30H18V12ZM24 36H0V6H24V36Z" fill="currentColor"/>
@@ -250,6 +377,13 @@
       <path d="M216 12V18H228V12H216ZM234 24H216V30H234V36H210V6H234V24Z" fill="currentColor"/>
     </svg>`;
 
+    let homeDir = '';
+    let refreshTimer = null;
+
+    function tildeify(path) {
+      return homeDir ? path.replace(homeDir, '~') : path;
+    }
+
     function serviceUrl(port) {
       return `${window.location.protocol}//${host}:${port}`;
     }
@@ -259,26 +393,50 @@
       return `<div class="card-icon">${svc.icon}</div>`;
     }
 
+    function killBtn(svc) {
+      if (!svc.instanceName) return '';
+      return `<button class="kill-btn" data-name="${svc.instanceName}" title="Stop instance" onclick="killPortal(event, '${svc.instanceName}')">✕</button>`;
+    }
+
+    function dotClass(svc) {
+      if (!svc.online) return '';
+      if (svc.sessionStatus === 'running') return ' running';
+      return '';
+    }
+
     function renderCard(svc) {
       const a = document.createElement('a');
-      a.className = 'card' + (svc.online ? '' : ' offline');
+      const staleClass = svc.stale ? ' stale' : '';
+      const offlineClass = (!svc.online && !svc.stale) ? ' offline' : '';
+      a.className = `card${staleClass}${offlineClass}`;
       a.href = serviceUrl(svc.port);
       a.target = '_blank';
       a.rel = 'noopener';
+
+      const branchBadge = svc.branch
+        ? `<span class="card-branch">⎇ ${svc.branch}</span>`
+        : '';
+
       a.innerHTML = `
-        <div class="status-dot"></div>
+        ${killBtn(svc)}
+        <div class="status-dot${dotClass(svc)}"></div>
         ${iconHtml(svc)}
         <div class="card-name">${svc.name}</div>
-        <div class="card-desc">${svc.description}</div>
-        <div class="card-port">:${svc.port}</div>
+        <div class="card-desc">${tildeify(svc.description)}</div>
+        <div class="card-meta">
+          <span class="card-port">:${svc.port}</span>
+          ${branchBadge}
+        </div>
       `;
       return a;
     }
 
-    let homeDir = '';
-
-    function tildeify(path) {
-      return homeDir ? path.replace(homeDir, '~') : path;
+    async function killPortal(e, name) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!confirm(`Stop "${name}"?`)) return;
+      await fetch(`/api/portal/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      load();
     }
 
     function renderGroup(grid, label, labelIcon, badge, services) {
@@ -312,43 +470,93 @@
       grid.appendChild(section);
     }
 
-    async function load() {
+    // ── Stats bar ──────────────────────────────────────────────────────────
+    function renderStats(stats) {
+      const bar = document.getElementById('stats-bar');
+      if (!stats || Object.keys(stats).length === 0) { bar.style.display = 'none'; return; }
+      bar.style.display = 'flex';
+      bar.innerHTML = '';
+
+      if (stats.battery) {
+        const b = stats.battery;
+        const pct = b.pct;
+        const fillClass = b.charging ? 'battery-charging' : pct < 20 ? 'crit' : pct < 40 ? 'warn' : '';
+        const label = b.charging ? `${pct}% ⚡` : b.remaining ? `${pct}% · ${b.remaining}` : `${pct}%`;
+        bar.innerHTML += `<div class="stat">
+          <div class="stat-label">Battery</div>
+          <div class="stat-value">${label}</div>
+          <div class="stat-bar-track"><div class="stat-bar-fill ${fillClass}" style="width:${pct}%"></div></div>
+        </div>`;
+      }
+
+      if (stats.cpu) {
+        const c = stats.cpu;
+        const fillClass = c.used > 80 ? 'crit' : c.used > 60 ? 'warn' : '';
+        bar.innerHTML += `<div class="stat">
+          <div class="stat-label">CPU</div>
+          <div class="stat-value">${c.used}%</div>
+          <div class="stat-bar-track"><div class="stat-bar-fill ${fillClass}" style="width:${c.used}%"></div></div>
+        </div>`;
+      }
+
+      if (stats.ram) {
+        const r = stats.ram;
+        const fillClass = r.pct > 90 ? 'crit' : r.pct > 75 ? 'warn' : '';
+        bar.innerHTML += `<div class="stat">
+          <div class="stat-label">RAM</div>
+          <div class="stat-value">${r.usedGB} / ${r.totalGB} GB</div>
+          <div class="stat-bar-track"><div class="stat-bar-fill ${fillClass}" style="width:${r.pct}%"></div></div>
+        </div>`;
+      }
+    }
+
+    // ── Main load ──────────────────────────────────────────────────────────
+    async function load(showSpinner = false) {
       const grid = document.getElementById('grid');
       const spinner = document.getElementById('spinner');
       const empty = document.getElementById('empty');
-      grid.innerHTML = '';
-      spinner.style.display = 'flex';
-      empty.style.display = 'none';
+
+      if (showSpinner) {
+        grid.innerHTML = '';
+        spinner.style.display = 'flex';
+        empty.style.display = 'none';
+      }
 
       try {
-        const [metaRes, servicesRes] = await Promise.all([
+        const [metaRes, servicesRes, statsRes] = await Promise.all([
           fetch('/api/meta'),
           fetch('/api/services'),
+          fetch('/api/stats'),
         ]);
         const meta = await metaRes.json();
         homeDir = meta.home ?? '';
         const services = await servicesRes.json();
+        const stats = await statsRes.json();
 
+        renderStats(stats);
         spinner.style.display = 'none';
 
+        // Update last-updated timestamp
+        const now = new Date();
+        document.getElementById('last-updated').textContent =
+          `Updated ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+
         if (services.length === 0) {
+          grid.innerHTML = '';
           empty.style.display = 'block';
           return;
         }
 
-        // Split evergreen (static, no group) from portal instances from Docker
         const evergreen = services.filter(s => s.static && !s.group);
         const portal = services.filter(s => s.static && s.group);
         const docker = services.filter(s => !s.static);
 
-        // Group portal instances by project name (svc.group)
         const portalByProject = new Map();
         for (const svc of portal) {
           if (!portalByProject.has(svc.group)) portalByProject.set(svc.group, []);
           portalByProject.get(svc.group).push(svc);
         }
 
-        // Group Docker by composeProject; ungrouped (no project) go last
         const byProject = new Map();
         const standalone = [];
         for (const svc of docker) {
@@ -360,22 +568,30 @@
           }
         }
 
-        renderGroup(grid, 'Evergreen', null, null, evergreen);
+        // Build new grid off-screen to avoid flicker
+        const newGrid = document.createElement('div');
+        newGrid.id = 'grid';
+        newGrid.style.cssText = grid.style.cssText;
+        newGrid.className = grid.className;
+
+        renderGroup(newGrid, 'Evergreen', null, null, evergreen);
 
         for (const [project, svcs] of portalByProject) {
-          svcs.sort((a, b) => b.online - a.online);
-          renderGroup(grid, project, '📁', null, svcs);
+          svcs.sort((a, b) => (b.online ? 1 : 0) - (a.online ? 1 : 0));
+          renderGroup(newGrid, project, '📁', null, svcs);
         }
 
         for (const [project, svcs] of byProject) {
-          svcs.sort((a, b) => b.online - a.online);
-          renderGroup(grid, project, '🐳', null, svcs);
+          svcs.sort((a, b) => (b.online ? 1 : 0) - (a.online ? 1 : 0));
+          renderGroup(newGrid, project, '🐳', null, svcs);
         }
 
         if (standalone.length) {
-          standalone.sort((a, b) => b.online - a.online);
-          renderGroup(grid, 'Docker', '🐳', null, standalone);
+          standalone.sort((a, b) => (b.online ? 1 : 0) - (a.online ? 1 : 0));
+          renderGroup(newGrid, 'Docker', '🐳', null, standalone);
         }
+
+        grid.replaceWith(newGrid);
 
       } catch (e) {
         spinner.style.display = 'none';
@@ -384,7 +600,49 @@
       }
     }
 
-    load();
+    function manualRefresh() {
+      const btn = document.getElementById('refresh-btn');
+      btn.classList.add('spinning');
+      load(false).finally(() => btn.classList.remove('spinning'));
+      resetAutoRefresh();
+    }
+
+    function resetAutoRefresh() {
+      clearInterval(refreshTimer);
+      refreshTimer = setInterval(() => load(false), 30_000);
+    }
+
+    // ── Push notifications ─────────────────────────────────────────────────
+    async function setupPush() {
+      if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+      const btn = document.getElementById('notify-btn');
+
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') return;
+
+      const keyRes = await fetch('/api/push/vapid-key');
+      const { key } = await keyRes.json();
+      if (!key) return; // VAPID not configured server-side
+
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: key,
+      });
+      await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sub),
+      });
+      btn.classList.add('active');
+      btn.title = 'Push notifications enabled';
+    }
+
+    document.getElementById('notify-btn').addEventListener('click', setupPush);
+
+    // ── Boot ───────────────────────────────────────────────────────────────
+    load(true);
+    resetAutoRefresh();
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');

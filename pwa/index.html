@@ -75,12 +75,30 @@
     }
 
     .section-label {
-      padding: 8px 20px 6px;
+      padding: 20px 20px 8px;
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text-muted);
+      grid-column: 1 / -1;
+    }
+
+    .section-label:first-child { padding-top: 8px; }
+
+    .compose-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      background: var(--border);
+      color: var(--text-muted);
+      border-radius: 4px;
+      padding: 1px 5px;
+      margin-left: 6px;
+      vertical-align: middle;
+      letter-spacing: 0;
+      text-transform: none;
+      font-weight: 500;
     }
 
     #grid {
@@ -208,6 +226,25 @@
       return a;
     }
 
+    function renderLabel(text, badge) {
+      const div = document.createElement('div');
+      div.className = 'section-label';
+      div.textContent = text;
+      if (badge) {
+        const span = document.createElement('span');
+        span.className = 'compose-badge';
+        span.textContent = badge;
+        div.appendChild(span);
+      }
+      return div;
+    }
+
+    function renderGroup(grid, label, badge, services) {
+      if (!services.length) return;
+      grid.appendChild(renderLabel(label, badge));
+      services.forEach(s => grid.appendChild(renderCard(s)));
+    }
+
     async function load() {
       const grid = document.getElementById('grid');
       const spinner = document.getElementById('spinner');
@@ -222,28 +259,52 @@
 
         spinner.style.display = 'none';
 
-        const online = services.filter(s => s.online);
-        const offline = services.filter(s => !s.online);
-
         if (services.length === 0) {
           empty.style.display = 'block';
           return;
         }
 
-        if (online.length) {
-          const label = document.createElement('div');
-          label.className = 'section-label';
-          label.textContent = 'Online';
-          grid.appendChild(label);
-          online.forEach(s => grid.appendChild(renderCard(s)));
+        // Split evergreen (static, no group) from portal instances from Docker
+        const evergreen = services.filter(s => s.static && !s.group);
+        const portal = services.filter(s => s.static && s.group);
+        const docker = services.filter(s => !s.static);
+
+        // Group portal instances by project name (svc.name)
+        const portalByProject = new Map();
+        for (const svc of portal) {
+          if (!portalByProject.has(svc.name)) portalByProject.set(svc.name, []);
+          portalByProject.get(svc.name).push(svc);
         }
-        if (offline.length) {
-          const label = document.createElement('div');
-          label.className = 'section-label';
-          label.textContent = 'Offline';
-          grid.appendChild(label);
-          offline.forEach(s => grid.appendChild(renderCard(s)));
+
+        // Group Docker by composeProject; ungrouped (no project) go last
+        const byProject = new Map();
+        const standalone = [];
+        for (const svc of docker) {
+          if (svc.composeProject) {
+            if (!byProject.has(svc.composeProject)) byProject.set(svc.composeProject, []);
+            byProject.get(svc.composeProject).push(svc);
+          } else {
+            standalone.push(svc);
+          }
         }
+
+        renderGroup(grid, 'Evergreen', null, evergreen);
+
+        for (const [project, svcs] of portalByProject) {
+          svcs.sort((a, b) => b.online - a.online);
+          renderGroup(grid, project, null, svcs);
+        }
+
+        for (const [project, svcs] of byProject) {
+          svcs.sort((a, b) => b.online - a.online);
+          renderGroup(grid, 'Docker', project, svcs);
+        }
+
+        if (standalone.length) {
+          standalone.sort((a, b) => b.online - a.online);
+          renderGroup(grid, 'Docker', null, standalone);
+        }
+
       } catch (e) {
         spinner.style.display = 'none';
         empty.textContent = 'Failed to load services';

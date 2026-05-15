@@ -9,32 +9,20 @@
  * Tailscale IP and MagicDNS both work without any config.
  */
 
-import { readFileSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
+import { homedir } from "os";
 
 const PORT = Number(process.env.DEV_HOME_PORT ?? 8080);
 const __dir = dirname(fileURLToPath(import.meta.url));
+const PORTAL_CONFIG = join(homedir(), ".portal.json");
 
 // ---------------------------------------------------------------------------
-// Static known services
+// Evergreen services (always shown, fixed ports)
 // ---------------------------------------------------------------------------
-const STATIC_SERVICES: Service[] = [
-  {
-    name: "OpenPortal",
-    port: 3000,
-    icon: "💻",
-    description: "Mobile-friendly OpenCode UI",
-    static: true,
-  },
-  {
-    name: "OpenCode",
-    port: 4096,
-    icon: "🤖",
-    description: "OpenCode API / web UI",
-    static: true,
-  },
+const EVERGREEN_SERVICES: Service[] = [
   {
     name: "Plannotator",
     port: 19432,
@@ -42,7 +30,54 @@ const STATIC_SERVICES: Service[] = [
     description: "Plan annotation & review",
     static: true,
   },
+  {
+    name: "Dev Home",
+    port: PORT,
+    icon: "🏠",
+    description: "This page",
+    static: true,
+  },
 ];
+
+// ---------------------------------------------------------------------------
+// Read live openportal instances from ~/.portal.json
+// ---------------------------------------------------------------------------
+function getPortalServices(): Service[] {
+  try {
+    if (!existsSync(PORTAL_CONFIG)) return [];
+    const config = JSON.parse(readFileSync(PORTAL_CONFIG, "utf-8"));
+    const services: Service[] = [];
+    for (const inst of config.instances ?? []) {
+      const dir = inst.directory ?? inst.name ?? "unknown";
+      const projectName = dir.split("/").pop() ?? inst.name;
+      // Web UI port
+      if (inst.port) {
+        services.push({
+          name: projectName,
+          port: inst.port,
+          icon: "💻",
+          description: `OpenPortal · ${dir}`,
+          static: true,
+          group: "OpenPortal",
+        });
+      }
+      // OpenCode API port (distinct from UI port)
+      if (inst.opencodePort && inst.opencodePort !== inst.port) {
+        services.push({
+          name: projectName,
+          port: inst.opencodePort,
+          icon: "🤖",
+          description: `OpenCode · ${dir}`,
+          static: true,
+          group: "OpenCode",
+        });
+      }
+    }
+    return services;
+  } catch {
+    return [];
+  }
+}
 
 interface Service {
   name: string;
@@ -50,13 +85,15 @@ interface Service {
   icon: string;
   description: string;
   static: boolean;
+  group?: string;
   containerName?: string;
+  composeProject?: string;
 }
 
 // ---------------------------------------------------------------------------
 // Docker port discovery
 // ---------------------------------------------------------------------------
-function getDockerServices(): Service[] {
+function getDockerServices(skipPorts: Set<number> = new Set()): Service[] {
   try {
     const raw = execSync(
       "docker ps --format '{{.Names}}\\t{{.Ports}}\\t{{.Image}}\\t{{.Label \"com.docker.compose.service\"}}\\t{{.Label \"com.docker.compose.project\"}}'",
@@ -70,8 +107,8 @@ function getDockerServices(): Service[] {
       const matches = [...(ports ?? "").matchAll(/0\.0\.0\.0:(\d+)->/g)];
       for (const m of matches) {
         const port = Number(m[1]);
-        // Skip ports already covered by static services
-        if (STATIC_SERVICES.some((s) => s.port === port)) continue;
+        // Skip ports already covered by evergreen/portal services
+        if (skipPorts.has(port)) continue;
         // Build a friendly name: prefer "project · service", fall back to container name
         const name = composeProject && composeService
           ? `${composeProject} · ${composeService}`
@@ -79,12 +116,13 @@ function getDockerServices(): Service[] {
         // Description: prefer named image over raw hash
         const imgDisplay = /^[0-9a-f]{12}$/.test(image) ? containerName : image;
         services.push({
-          name,
+          name: composeService || containerName,
           port,
           icon: "🐳",
-          description: `Docker · ${imgDisplay}`,
+          description: imgDisplay,
           static: false,
           containerName,
+          composeProject: composeProject || undefined,
         });
       }
     }
@@ -124,8 +162,14 @@ const server = Bun.serve({
     const url = new URL(req.url);
 
     if (url.pathname === "/api/services") {
-      const docker = getDockerServices();
-      const all = [...STATIC_SERVICES, ...docker];
+      const portal = getPortalServices();
+      const evergreen = EVERGREEN_SERVICES;
+      const allStaticPorts = new Set([
+        ...evergreen.map(s => s.port),
+        ...portal.map(s => s.port),
+      ]);
+      const docker = getDockerServices(allStaticPorts);
+      const all = [...evergreen, ...portal, ...docker];
       // Probe each port concurrently
       const statuses = await Promise.all(all.map((s) => isPortOpen(s.port)));
       const result = all.map((s, i) => ({ ...s, online: statuses[i] }));

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Start OpenCode + openportal mobile UI, accessible over Tailscale.
+# Start OpenCode + openportal mobile UI + Dev Home PWA, accessible over Tailscale.
 #
 # Security: openportal connects to OpenCode on localhost — no password needed
 # there. Tailscale provides network-level access control (only your tailnet
@@ -11,10 +11,15 @@
 #   2. Run this script from inside the project directory you want to work on.
 #
 # Access from phone (requires Tailscale connected on phone):
-#   - Mobile UI (openportal): http://<tailscale-ip>:3000
-#   - Raw OpenCode API/UI:    http://<tailscale-ip>:4096
+#   - Dev Home PWA:       http://<tailscale-ip>:8080  ← start here
+#   - Mobile UI:          http://<tailscale-ip>:3000
+#   - OpenCode API/UI:    http://<tailscale-ip>:4096
+#   - Plannotator UI:     http://<tailscale-ip>:19432
 
 set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PWA_DIR="${SCRIPT_DIR}/../pwa"
 
 # Ensure Homebrew binaries are on PATH (needed when script is launched outside a login shell)
 eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
@@ -28,19 +33,28 @@ export PLANNOTATOR_REMOTE=1
 export PLANNOTATOR_PORT=19432
 
 TAILSCALE_IP=$(tailscale ip -4 2>/dev/null || echo "<tailscale-ip>")
-echo "Starting OpenCode + openportal mobile UI..."
+echo "Starting dev services..."
+echo "  Dev Home PWA:    http://${TAILSCALE_IP}:8080  ← open this on your phone"
 echo "  Mobile UI:       http://${TAILSCALE_IP}:3000"
 echo "  OpenCode:        http://${TAILSCALE_IP}:4096"
 echo "  Plannotator UI:  http://${TAILSCALE_IP}:${PLANNOTATOR_PORT}"
 echo ""
-echo "Press Ctrl-C to stop."
+echo "Press Ctrl-C to stop all."
 echo ""
 
 # Clean up any stale openportal instances that might be holding ports
 bunx openportal stop 2>/dev/null || true
 bunx openportal clean 2>/dev/null || true
 
-# openportal manages the opencode server internally
-# Use current directory explicitly so openportal doesn't confuse stale instances
-exec bunx openportal --port 3000 --opencode-port 4096 --hostname 0.0.0.0 --directory "$(pwd)" --name "$(basename "$(pwd)")"
+# Start Dev Home PWA server in background
+bun run "${PWA_DIR}/server.ts" &
+PWA_PID=$!
+
+# Start openportal (manages opencode server internally)
+bunx openportal --port 3000 --opencode-port 4096 --hostname 0.0.0.0 --directory "$(pwd)" --name "$(basename "$(pwd)")" &
+PORTAL_PID=$!
+
+trap 'echo ""; echo "Shutting down..."; kill $PWA_PID $PORTAL_PID 2>/dev/null; wait' EXIT INT TERM
+
+wait $PWA_PID $PORTAL_PID
 

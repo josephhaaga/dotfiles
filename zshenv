@@ -2,8 +2,7 @@
 export PATH="/Users/josephhaaga/.local/bin:$PATH"
 export ZDOTDIR="$HOME/.config/zsh"
 
-# Raindrop Workshop — local debugger endpoint and session metadata
-export RAINDROP_LOCAL_DEBUGGER="http://localhost:5899/v1/"
+# Raindrop Workshop — session metadata (local_workshop_url lives in configs/opencode/raindrop.json)
 export RAINDROP_EVENT_METADATA='{"userId":"josephhaaga"}'
 
 # To set/update: security add-generic-password -a "$USER" -s opencode-server -w 'your-password'

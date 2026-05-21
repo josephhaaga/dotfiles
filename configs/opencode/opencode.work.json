@@ -13,7 +13,7 @@
     "vibe-mcp": {
       "type": "remote",
       "url": "https://mcp.vibe.buzzfeed.ai/mcp",
-      "enabled": true
+      "enabled": false
     },
     "slack": {
       "type": "remote",

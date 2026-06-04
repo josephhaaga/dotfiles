@@ -24,7 +24,7 @@
         "workshop",
         "mcp"
       ],
-      "enabled": true,
+      "enabled": false,
       "environment": {}
     }
   }

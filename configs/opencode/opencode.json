@@ -1,12 +1,17 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["@plannotator/opencode@latest"],
+  "plugin": ["@plannotator/opencode@latest", "@datadog/opencode-plugin"],
   "mcp": {
     "dev-mcp": {
       "type": "local",
       "command": ["/Users/josephhaaga/.config/opencode/dev-mcp"],
       "enabled": false,
       "environment": {}
+    },
+    "datadog": {
+      "type": "remote",
+      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp?referrer_ide=opencode-plugin&plugin_version=0.7.13",
+      "oauth": {}
     },
     "playwright": {
       "type": "local",

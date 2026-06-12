@@ -3,7 +3,6 @@
   "plugin": [
     "@plannotator/opencode@latest",
     "./local-plugins/hub.ts",
-    "@raindrop-ai/opencode-plugin",
     [
       "./local-plugins/raindrop-watchdog.ts",
       {
@@ -13,8 +12,8 @@
         "dbPath": "~/.raindrop/raindrop_workshop.db",
         "verifyDelayMs": 12000
       }
-    ]
-  ],
+    ],
+    "@raindrop-ai/opencode-plugin",
   "mcp": {
     "dev-mcp": {
       "type": "local",

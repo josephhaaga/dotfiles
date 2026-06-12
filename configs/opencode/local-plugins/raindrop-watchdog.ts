@@ -360,15 +360,17 @@ export default async function RaindropWatchdog(
       const session = sessions.get(input.sessionID);
       if (!session) return;
 
-      // Check if output field is missing (the chrome-devtools / MCP case)
+      // Check if output field is missing (the chrome-devtools / MCP case).
+      // Patch it to an empty string so @raindrop-ai/opencode-plugin doesn't
+      // throw "result.output is required" and print to the TUI.
       const hasMissingOutput = !("output" in (output as object)) || (output as { output?: unknown }).output === undefined;
       if (hasMissingOutput) {
+        (output as { output: string }).output = "";
         const turn = currentTurn(session);
         const existing = turn.toolSpans.find((s) => s.callID === input.callID);
         if (existing) {
           existing.missingOutput = true;
         } else {
-          // .after fired without a matching .before (shouldn't happen, but handle it)
           turn.toolSpans.push({
             callID: input.callID,
             tool: input.tool,

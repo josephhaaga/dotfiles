@@ -3,6 +3,7 @@
   "plugin": [
     "@plannotator/opencode@latest",
     "./local-plugins/hub.ts",
+    "@raindrop-ai/opencode-plugin",
     [
       "./local-plugins/raindrop-watchdog.ts",
       {

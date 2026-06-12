@@ -271,8 +271,11 @@ export default async function RaindropWatchdog(
   // Ensure log directory exists
   mkdirSync(join(alertLogPath, ".."), { recursive: true });
 
-  // Per-session in-memory state
+  // Per-session in-memory state.
+  // verifying tracks sessions currently in the verify delay so that
+  // session.idle + session.deleted don't both trigger runVerification.
   const sessions = new Map<string, PendingSession>();
+  const verifying = new Set<string>();
 
   function getOrCreateSession(sessionID: string): PendingSession {
     if (!sessions.has(sessionID)) {
@@ -296,6 +299,13 @@ export default async function RaindropWatchdog(
     const session = sessions.get(sessionID);
     if (!session) return;
 
+    // Guard against double-trigger (session.idle + session.deleted)
+    if (verifying.has(sessionID)) return;
+    verifying.add(sessionID);
+
+    // Remove from active sessions immediately so no more events accumulate
+    sessions.delete(sessionID);
+
     // Persist before async delay in case of crash
     savePending(pendingDir, session);
 
@@ -316,15 +326,15 @@ export default async function RaindropWatchdog(
       }
       logAlert(alertLogPath, "");
 
+      // Log only — never write to console.error/console.log since that
+      // renders into the OpenCode TUI and can block the text input.
       if (alertNotification) {
         const body = mismatches.map((m) => `• ${m.detail.slice(0, 80)}`).join("\n");
         await notify("Raindrop Watchdog", `${mismatches.length} missing span(s)\n${body}`);
       }
-
-      console.error(`[raindrop-watchdog] ${mismatches.length} span mismatch(es) — see ${alertLogPath}`);
     }
 
-    sessions.delete(sessionID);
+    verifying.delete(sessionID);
   }
 
   return {
@@ -431,7 +441,7 @@ export default async function RaindropWatchdog(
 
         // Fire-and-forget verification (don't block the hook)
         runVerification(sessionID).catch((err) => {
-          console.error(`[raindrop-watchdog] verification error: ${err}`);
+          logAlert(alertLogPath, `[error] verification error: ${err}`);
         });
       }
 
@@ -443,7 +453,7 @@ export default async function RaindropWatchdog(
         if (!sessionID || !sessions.has(sessionID)) return;
 
         runVerification(sessionID).catch((err) => {
-          console.error(`[raindrop-watchdog] verification error: ${err}`);
+          logAlert(alertLogPath, `[error] verification error: ${err}`);
         });
       }
     },

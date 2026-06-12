@@ -98,3 +98,6 @@ if [[ "$(hostname)" == "BF-002261" ]]; then
 else
   export OPENCODE_CONFIG="$HOME/.config/opencode/opencode.personal.json"
 fi
+
+# bun completions
+[ -s "/Users/josephhaaga/.bun/_bun" ] && source "/Users/josephhaaga/.bun/_bun"

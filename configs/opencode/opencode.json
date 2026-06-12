@@ -1,6 +1,21 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["@plannotator/opencode@latest", "@datadog/opencode-plugin"],
+  "plugin": [
+    "@plannotator/opencode@latest",
+    "@datadog/opencode-plugin",
+    "./local-plugins/hub.ts",
+    [
+      "./local-plugins/raindrop-watchdog.ts",
+      {
+        "alertNotification": false,
+        "alertLogPath": "~/.local/share/opencode/raindrop-watchdog.log",
+        "pendingDir": "~/.local/share/opencode/raindrop-watchdog",
+        "dbPath": "~/.raindrop/raindrop_workshop.db",
+        "verifyDelayMs": 12000
+      }
+    ],
+    "@raindrop-ai/opencode-plugin"
+  ],
   "mcp": {
     "dev-mcp": {
       "type": "local",

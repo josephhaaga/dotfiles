@@ -2,5 +2,8 @@
   "$schema": "https://opencode.ai/tui.json",
   "keybinds": {
     "session_background": "<leader>z"
+  },
+  "scroll_acceleration": {
+    "enabled": true
   }
 }

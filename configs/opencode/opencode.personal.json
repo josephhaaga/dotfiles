@@ -1,3 +1,11 @@
 {
-  "$schema": "https://opencode.ai/config.json"
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "slack": {
+      "enabled": false
+    },
+    "datadog": {
+      "enabled": false
+    }
+  }
 }

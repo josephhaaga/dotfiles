@@ -51,6 +51,9 @@
   "agent": {
     "title": {
       "model": "github-copilot/gpt-5.4-mini"
+    },
+    "plan": {
+      "model": "github-copilot/claude-opus-4.8"
     }
   }
 }

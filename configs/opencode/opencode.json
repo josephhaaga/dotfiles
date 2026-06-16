@@ -3,18 +3,7 @@
   "plugin": [
     "@plannotator/opencode@latest",
     "@datadog/opencode-plugin",
-    "./local-plugins/hub.ts",
-    [
-      "./local-plugins/raindrop-watchdog.ts",
-      {
-        "alertNotification": false,
-        "alertLogPath": "~/.local/share/opencode/raindrop-watchdog.log",
-        "pendingDir": "~/.local/share/opencode/raindrop-watchdog",
-        "dbPath": "~/.raindrop/raindrop_workshop.db",
-        "verifyDelayMs": 12000
-      }
-    ],
-    "@raindrop-ai/opencode-plugin"
+    "./local-plugins/hub.ts"
   ],
   "mcp": {
     "dev-mcp": {
@@ -36,16 +25,6 @@
     "chrome-devtools": {
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
-    },
-    "raindrop": {
-      "type": "local",
-      "command": [
-        "/Users/josephhaaga/.raindrop/bin/raindrop",
-        "workshop",
-        "mcp"
-      ],
-      "enabled": true,
-      "environment": {}
     }
   },
   "agent": {

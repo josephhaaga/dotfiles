@@ -57,3 +57,5 @@ cask "handy"
 cask "google-drive"
 cask "tailscale"
 cask "mitmproxy"
+# Discover, download, and run local LLMs
+cask "lm-studio"

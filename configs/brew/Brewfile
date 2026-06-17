@@ -3,6 +3,7 @@ tap "felixkratz/formulae"
 tap "heroku/brew"
 tap "koekeishiya/formulae"
 tap "warrensbox/tap"
+tap "josephhaaga/dotfiles", "file://#{File.expand_path("../..", __dir__)}", trusted: true
 
 brew "asciinema"
 brew "asciiquarium"
@@ -59,3 +60,4 @@ cask "tailscale"
 cask "mitmproxy"
 # Discover, download, and run local LLMs
 cask "lm-studio"
+cask "josephhaaga/dotfiles/opentypeless", postinstall: "/usr/bin/xattr -cr /Applications/OpenTypeless.app"

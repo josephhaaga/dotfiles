@@ -1,0 +1,62 @@
+{
+  "chord": "ctrl - v",
+  "defaults": {
+    "stt": {
+      "model": "ggml-large-v3-turbo.bin",
+      "language": "en"
+    },
+    "provider": "ollama"
+  },
+  "provider": {
+    "ollama": {
+      "type": "ollama",
+      "baseURL": "http://localhost:11434",
+      "model": "llama3.1:8b"
+    },
+    "openai": {
+      "type": "openai-compatible",
+      "baseURL": "https://api.openai.com/v1",
+      "model": "gpt-4o-mini",
+      "apiKey": "{env:OPENAI_API_KEY}"
+    },
+    "groq": {
+      "type": "openai-compatible",
+      "baseURL": "https://api.groq.com/openai/v1",
+      "model": "llama-3.3-70b-versatile",
+      "apiKey": "{file:~/.config/whisp/.groq-key}"
+    }
+  },
+  "modes": {
+    "ramble": {
+      "key": "r",
+      "label": "Ramble",
+      "icon": "text.bubble",
+      "description": "Clean up rambling speech into clear prose (local)",
+      "provider": "ollama",
+      "prompt": "Turn this rambling transcription into clear, well-punctuated prose. Remove filler words and false starts. Keep the original meaning and wording. Output only the cleaned text, with no preamble or commentary."
+    },
+    "code": {
+      "key": "c",
+      "label": "Code changes",
+      "icon": "chevron.left.forwardslash.chevron.right",
+      "description": "Summarize as a commit message / code-change note (local)",
+      "provider": "ollama",
+      "prompt": "Rewrite the transcript as a concise software commit message in imperative mood. Output only the message, with no preamble or commentary."
+    },
+    "email": {
+      "key": "e",
+      "label": "Email",
+      "icon": "envelope",
+      "description": "Professional email body (BYOK cloud)",
+      "provider": "openai",
+      "prompt": "Rewrite the transcript as a clear, professional email body. Do not add a greeting or sign-off unless dictated. Output only the email text, with no preamble or commentary."
+    },
+    "raw": {
+      "key": "w",
+      "label": "Raw",
+      "icon": "waveform",
+      "description": "Verbatim transcription, no rewrite",
+      "provider": "none"
+    }
+  }
+}

@@ -1,0 +1,2 @@
+# GGML Whisper model files (e.g. ggml-large-v3-turbo.bin) are downloaded here by
+# scripts/install.sh and are git-ignored. This file keeps the directory tracked.

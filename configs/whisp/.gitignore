@@ -1,0 +1,8 @@
+# whisp runtime artifacts (never commit these)
+models/*.bin
+models/*.gguf
+*.wav
+debug.log
+status.json
+# provider key files referenced via {file:...}
+.*-key

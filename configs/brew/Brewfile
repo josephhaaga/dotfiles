@@ -59,3 +59,9 @@ cask "tailscale"
 cask "mitmproxy"
 # Discover, download, and run local LLMs
 cask "lm-studio"
+
+# whisp: local, config-driven voice dictation with LLM rewrite
+brew "whisper-cpp"   # local STT (whisper-cli)
+brew "sox"           # mic capture (rec/sox)
+brew "ollama"        # local LLM rewrite backend (optional but default)
+cask "ubersicht"     # desktop widget host for the which-key / OSD overlay

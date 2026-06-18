@@ -9,6 +9,34 @@ alt + shift - r : \
     yabai --restart-service;
 
 
+####### whisp: voice dictation (modal chord) #############
+# Returning to the default mode clears the which-key overlay (unless a
+# recording/pipeline is mid-flight, which manages its own status).
+:: default : ~/.config/whisp/bin/whisp-status.sh default-enter
+# A capturing mode (@) so stray keys don't leak to apps while the which-key
+# overlay (Übersicht) is shown. Entering the mode renders the overlay.
+:: whisp @ : ~/.config/whisp/bin/whisp-status.sh chord
+
+# Enter the chord with Control + V (from the default mode).
+ctrl - v ; whisp
+
+# Pick a mode by letter (mirrors modes.json keys). Each runs the toggle, then
+# synthesizes Escape — which is bound below to return to the default mode.
+whisp < r : ~/.config/whisp/bin/whisp-record.sh ramble ; skhd -k "escape"
+whisp < c : ~/.config/whisp/bin/whisp-record.sh code   ; skhd -k "escape"
+whisp < e : ~/.config/whisp/bin/whisp-record.sh email  ; skhd -k "escape"
+whisp < w : ~/.config/whisp/bin/whisp-record.sh raw    ; skhd -k "escape"
+
+# Leave the chord without selecting: return to the default mode (clears overlay).
+whisp < escape ; default
+
+# Global stop while recording (outside the chord): stop + transcribe + paste.
+ctrl + shift - v : ~/.config/whisp/bin/whisp-record.sh stop
+
+# Global dismiss: clear the whisp overlay from anywhere (e.g. a stuck error).
+ctrl + alt - v : ~/.config/whisp/bin/whisp-status.sh idle
+
+
 ####### Application Blacklists #############
 #.blacklist [
 #  "IntelliJ IDEA"

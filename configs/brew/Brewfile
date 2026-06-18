@@ -3,7 +3,6 @@ tap "felixkratz/formulae"
 tap "heroku/brew"
 tap "koekeishiya/formulae"
 tap "warrensbox/tap"
-tap "josephhaaga/dotfiles", "file://#{File.expand_path("../..", __dir__)}", trusted: true
 
 brew "asciinema"
 brew "asciiquarium"
@@ -60,4 +59,9 @@ cask "tailscale"
 cask "mitmproxy"
 # Discover, download, and run local LLMs
 cask "lm-studio"
-cask "josephhaaga/dotfiles/opentypeless", postinstall: "/usr/bin/xattr -cr /Applications/OpenTypeless.app"
+
+# whisp: local, config-driven voice dictation with LLM rewrite
+brew "whisper-cpp"   # local STT (whisper-cli)
+brew "sox"           # mic capture (rec/sox)
+brew "ollama"        # local LLM rewrite backend (optional but default)
+cask "ubersicht"     # desktop widget host for the which-key / OSD overlay

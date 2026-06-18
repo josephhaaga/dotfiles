@@ -38,6 +38,47 @@ gh extension install wham/gh-slackdump 2>/dev/null || true
 yabai --start-service
 skhd --start-service
 
+# Set up whisp (local voice dictation with LLM rewrite)
+echo ""
+echo "=== whisp setup ==="
+WHISP_DIR="$HOME/.config/whisp"
+if [ -d "$WHISP_DIR" ]; then
+  # Make the pipeline scripts executable.
+  chmod +x "$WHISP_DIR"/bin/*.sh 2>/dev/null || true
+
+  # Symlink the Übersicht widget (its widgets dir is outside ~/.config).
+  UB_WIDGETS="$HOME/Library/Application Support/Übersicht/widgets"
+  mkdir -p "$UB_WIDGETS"
+  ln -sfn "$WHISP_DIR/ubersicht/whisp.widget" "$UB_WIDGETS/whisp.widget"
+  # Launch / refresh Übersicht so the overlay loads.
+  open -a "Übersicht" 2>/dev/null || \
+    echo "  (could not auto-launch Übersicht; open it manually once installed)"
+
+  # Download the default Whisper GGML model if missing (guarded; ~1.6 GB).
+  WHISP_MODEL="ggml-large-v3-turbo.bin"
+  WHISP_MODEL_PATH="$WHISP_DIR/models/$WHISP_MODEL"
+  if [ ! -f "$WHISP_MODEL_PATH" ]; then
+    echo "  Downloading Whisper model $WHISP_MODEL (~1.6 GB)…"
+    curl -fL --retry 3 -o "$WHISP_MODEL_PATH" \
+      "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/$WHISP_MODEL" \
+      || echo "  (model download failed; re-run or fetch $WHISP_MODEL manually into $WHISP_DIR/models/)"
+  fi
+
+  # Pull the default local LLM for rewrite (guarded).
+  if command -v ollama >/dev/null 2>&1; then
+    echo "  Pulling local LLM (llama3.1:8b) for rewrite…"
+    (ollama pull llama3.1:8b || echo "  (ollama pull failed; run 'ollama pull llama3.1:8b' later)")
+  fi
+
+  echo "  Permissions needed (one-time):"
+  echo "    - Microphone: System Settings > Privacy & Security > Microphone > enable skhd"
+  echo "    - Accessibility: enable skhd (already required for window mgmt)"
+  echo "    - Screen Recording: System Settings > Privacy & Security > Screen Recording > enable Übersicht"
+  echo "  Reload skhd to pick up the whisp chord:"
+  skhd --reload 2>/dev/null || skhd --restart-service 2>/dev/null || true
+  echo "  Use it: press Control+V, then a letter (r/c/e/w). Press again (or Control+Shift+V) to finish."
+fi
+
 # Set up Tailscale for remote OpenCode access
 echo ""
 echo "=== Tailscale setup ==="

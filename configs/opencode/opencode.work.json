@@ -7,9 +7,6 @@
     }
   },
   "mcp": {
-    "dev-mcp": {
-      "enabled": true
-    },
     "vibe-mcp": {
       "type": "remote",
       "url": "https://mcp.vibe.buzzfeed.ai/mcp",

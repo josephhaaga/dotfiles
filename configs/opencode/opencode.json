@@ -4,22 +4,25 @@
     "@plannotator/opencode@latest",
     "@datadog/opencode-plugin",
     "./local-plugins/hub.ts",
-    ["opencode-agent-profiler", {
-      "traceLog": "/tmp/ap-trace.log",
-      "captureContent": true,
-      "captureHeaders": true,
-      "maxAttrChars": 200000,
-      "hideInputs": false,
-      "hideOutputs": false,
-      "hideInputMessages": false,
-      "hideOutputMessages": false
-    }]
+    [
+      "opencode-agent-profiler",
+      {
+        "traceLog": "/tmp/ap-trace.log",
+        "captureContent": true,
+        "captureHeaders": true,
+        "maxAttrChars": 200000,
+        "hideInputs": false,
+        "hideOutputs": false,
+        "hideInputMessages": false,
+        "hideOutputMessages": false
+      }
+    ]
   ],
   "mcp": {
     "dev-mcp": {
       "type": "local",
       "command": ["/Users/josephhaaga/.config/opencode/dev-mcp"],
-      "enabled": false,
+      "enabled": true,
       "environment": {}
     },
     "datadog": {

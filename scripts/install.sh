@@ -28,6 +28,7 @@ ln -sf $HOME/Documents/dotfiles/.clerkrc $HOME/.clerkrc
 
 # Install Python CLI tools
 uv tool install --force git+https://github.com/josephhaaga/clerk.git
+uv tool install --force pre-commit
 
 # Set up oh-my-zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then

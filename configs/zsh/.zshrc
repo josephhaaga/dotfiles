@@ -1,5 +1,6 @@
 # Prevent duplicate entries in PATH
 typeset -U PATH path
+path=("$HOME/.local/bin" $path)
 
 # oh-my-zsh setup
 ## use XDG standard cache location

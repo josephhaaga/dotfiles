@@ -24,6 +24,10 @@ brew bundle --file=$HOME/Documents/dotfiles/configs/brew/Brewfile
 echo 'export ZDOTDIR="$HOME/.config/zsh"' >>$HOME/.zshenv
 
 ln -sf $HOME/Documents/dotfiles/configs $HOME
+ln -sf $HOME/Documents/dotfiles/.clerkrc $HOME/.clerkrc
+
+# Install Python CLI tools
+uv tool install --force git+https://github.com/josephhaaga/clerk.git
 
 # Set up oh-my-zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then

@@ -37,8 +37,7 @@ ln -s ~/Documents/dotfiles/.config ~
 # yabai: install scripting addition (enables most features)
 echo "$(whoami) ALL=(root) NOPASSWD: sha256:$(shasum -a 256 $(which yabai) | cut -d " " -f 1) $(which yabai) --load-sa" | sudo tee /private/etc/sudoers.d/yabai
 # start window manager (yabai) + hotkey manager (skhd)
-yabai --start-service
-skhd --start-service
+~/Documents/dotfiles/scripts/window-manager.sh start
 
 # re-install neovim to fix python-provider (powers many vim plugins)
 $ python3 -m pip install --user --upgrade pynvim
@@ -164,9 +163,15 @@ Run `brew bundle` in a directory containing a `Brewfile` to install all listed a
 
 Run `brew bundle dump` to generate a `Brewfile`
 
-Run `brew services` to see all services (including `skhd`, `yabai`, `spacebar` etc.
+`yabai` and `skhd` are installed from `koekeishiya/formulae` and managed through their native launchd commands.
 
-- `brew services stop --all` and `brew services start --all` usually fixes any issues
+```bash
+~/Documents/dotfiles/scripts/window-manager.sh status
+~/Documents/dotfiles/scripts/window-manager.sh restart
+~/Documents/dotfiles/scripts/window-manager.sh stop
+```
+
+The helper also cleans stale `com.koekeishiya.yabai` LaunchAgents left over from before the upstream service label changed to `com.asmvik.yabai`.
 
 [How to use Homebrew with multiple OS X users](https://stackoverflow.com/a/44481141)
 

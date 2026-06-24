@@ -40,8 +40,7 @@ fi
 gh extension install wham/gh-slackdump 2>/dev/null || true
 
 # Start essential services
-yabai --start-service
-skhd --start-service
+"$HOME/Documents/dotfiles/scripts/window-manager.sh" start
 
 # Set up Tailscale for remote OpenCode access
 echo ""

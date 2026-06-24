@@ -10,8 +10,7 @@ $HOME/Documents/dotfiles/scripts/load.sh
 brew bundle --file=$HOME/.config/brew/Brewfile
 
 # Restart services (if required)
-skhd --restart-service
-yabai --restart-service
+"$HOME/Documents/dotfiles/scripts/window-manager.sh" restart
 
 # Set ZDOTDIR
 echo 'export ZDOTDIR="$HOME/.config/zsh"' >>$HOME/.zshenv

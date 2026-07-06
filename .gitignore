@@ -7,5 +7,6 @@ configs/zsh/*
 !configs/zsh/.zshrc
 !configs/zsh/.secrets
 configs/httpie/sessions/
+configs/github-copilot/apps.json
 .aider*
 !.clerkrc

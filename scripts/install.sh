@@ -26,6 +26,14 @@ echo 'export ZDOTDIR="$HOME/.config/zsh"' >>$HOME/.zshenv
 ln -sf $HOME/Documents/dotfiles/configs $HOME
 ln -sf $HOME/Documents/dotfiles/.clerkrc $HOME/.clerkrc
 
+# Wire dotfiles git config into ~/.gitconfig via [include]
+GITCONFIG="$HOME/.gitconfig"
+INCLUDE_LINE="path = ~/configs/git/.gitconfig"
+if ! grep -qF "$INCLUDE_LINE" "$GITCONFIG" 2>/dev/null; then
+  printf '\n[include]\n\t%s\n' "$INCLUDE_LINE" >> "$GITCONFIG"
+  echo "Added [include] for configs/git/.gitconfig to ~/.gitconfig"
+fi
+
 # Install Python CLI tools
 uv tool install --force git+https://github.com/josephhaaga/clerk.git
 uv tool install --force pre-commit

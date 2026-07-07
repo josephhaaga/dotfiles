@@ -2,63 +2,45 @@
 
 # Check whether the local environment matches expected dotfiles configuration.
 # Exits non-zero if any check fails.
+#
+# Status logic lives in scripts/lib/status-checks.sh (shared with neofetch).
 
-PASS=0
-FAIL=1
 status=0
 
-check() {
-  local label="$1"
-  local result="$2"  # 0 = pass, 1 = fail
-  local detail="${3:-}"
-  if [ "$result" -eq 0 ]; then
-    echo "  [ok]  $label"
-  else
-    echo "  [!!]  $label${detail:+: $detail}"
-    status=1
-  fi
+# Resolve this script's directory so we can source the shared helper reliably.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/status-checks.sh
+. "$SCRIPT_DIR/lib/status-checks.sh"
+
+# Renderer callback for status_emit_all. See status-checks.sh for the arg contract.
+render() {
+  local kind="$1" section="$2" label="$3" result="$4" value="$5"
+  case "$kind" in
+    section)
+      echo ""
+      echo "$section"
+      ;;
+    check)
+      if [ "$result" -eq 0 ]; then
+        echo "  [ok]  $label${value:+  $value}"
+      else
+        echo "  [!!]  $label${value:+: $value}"
+        status=1
+      fi
+      ;;
+    info)
+      if [ -n "$label" ]; then
+        printf "  %-10s %s\n" "$label" "$value"
+      else
+        echo "  $value"
+      fi
+      ;;
+  esac
 }
 
 echo "=== dotfiles status ==="
-echo ""
 
-# --- Symlinks ---
-echo "Symlinks"
-[ -L "$HOME/configs" ] && [ "$(readlink "$HOME/configs")" = "$HOME/Documents/dotfiles/configs" ]
-check "~/configs -> dotfiles/configs" $?
-
-[ -L "$HOME/.clerkrc" ]
-check "~/.clerkrc symlink exists" $?
-
-# --- git config ---
-echo ""
-echo "git config"
-GITCONFIG="$HOME/.gitconfig"
-INCLUDE_LINE="path = ~/configs/git/.gitconfig"
-
-grep -qF "$INCLUDE_LINE" "$GITCONFIG" 2>/dev/null
-check "~/.gitconfig includes configs/git/.gitconfig" $?
-
-git config --get alias.glo >/dev/null 2>&1
-check "git alias 'glo' is resolvable" $?
-
-# --- Shell ---
-echo ""
-echo "Shell"
-grep -q 'ZDOTDIR' "$HOME/.zshenv" 2>/dev/null
-check "ZDOTDIR set in ~/.zshenv" $?
-
-# --- Tools ---
-echo ""
-echo "Tools"
-command -v brew >/dev/null 2>&1
-check "brew installed" $?
-
-command -v uv >/dev/null 2>&1
-check "uv installed" $?
-
-command -v gh >/dev/null 2>&1
-check "gh installed" $?
+status_emit_all render
 
 echo ""
 if [ "$status" -eq 0 ]; then

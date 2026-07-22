@@ -21,7 +21,7 @@
 # "check" items carry a pass/fail result. "info" items are plain key/value
 # details with no pass/fail. "section" items mark the start of a group.
 #
-# Any "check" (or a non-responding yabai) with result=1 means the overall
+# Any "check" (or a non-running window-manager service) with result=1 means the overall
 # environment is unhealthy; consumers can track that themselves by watching
 # the result field.
 
@@ -125,5 +125,23 @@ status_emit_all() {
     fi
   else
     _se "$cb" info "yabai" "" "" "not installed (skipped)"
+  fi
+
+  # --- skhd ---
+  _se "$cb" section "skhd" "" "" ""
+
+  if command -v skhd >/dev/null 2>&1; then
+    local skhd_ver skhd_running
+    skhd_ver="$(skhd --version 2>/dev/null)"
+    if pgrep -x skhd >/dev/null 2>&1; then
+      skhd_running="running"
+      r=0
+    else
+      skhd_running="not running"
+      r=1
+    fi
+    _se "$cb" check "skhd" "service" "$r" "${skhd_running}${skhd_ver:+ ($skhd_ver)}"
+  else
+    _se "$cb" info "skhd" "" "" "not installed (skipped)"
   fi
 }

@@ -25,6 +25,7 @@ echo 'export ZDOTDIR="$HOME/.config/zsh"' >>$HOME/.zshenv
 
 ln -sf $HOME/Documents/dotfiles/configs $HOME
 ln -sf $HOME/Documents/dotfiles/.clerkrc $HOME/.clerkrc
+ln -sf $HOME/configs/skhd/skhdrc $HOME/.skhdrc
 
 # Wire dotfiles git config into ~/.gitconfig via [include]
 GITCONFIG="$HOME/.gitconfig"

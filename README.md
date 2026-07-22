@@ -28,8 +28,8 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 # Restart Terminal.app to reload .zshrc
 rest
 
-# Symlink config files to user directory
-ln -s ~/Documents/dotfiles/.config ~
+# Install managed config symlinks without replacing local credentials or state
+bash scripts/install.sh
 
 # install tmux plugins
 # Run <C-b> + I to install Tmux plugins

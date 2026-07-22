@@ -1,24 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "permission": {
-    "external_directory": {
-      "~/Documents/code/mono/**": "allow",
-      "~/Documents/code/omni/**": "allow"
-    }
-  },
   "mcp": {
-    "vibe-mcp": {
+    "tribe-agent": {
       "type": "remote",
-      "url": "https://mcp.vibe.buzzfeed.ai/mcp",
-      "enabled": false
-    },
-    "slack": {
-      "type": "remote",
-      "url": "https://mcp.slack.com/mcp",
-      "oauth": {
-        "clientId": "2151144447.10922119588374"
-      },
-      "enabled": false
+      "url": "https://agent-mcp-production-db5b.up.railway.app/mcp",
+      "enabled": true
     }
   }
 }

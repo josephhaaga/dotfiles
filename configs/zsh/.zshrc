@@ -6,14 +6,7 @@ path=("$HOME/.local/bin" $path)
 ## use XDG standard cache location
 export ZSH_CACHE_DIR="$HOME/.cache/oh-my-zsh"
 mkdir -p "$ZSH_CACHE_DIR"
-## use XDG standard data location
-local omz_data_directory="$HOME/.local/share/oh-my-zsh"
-if [[ ! -e "$omz_data_directory" ]]; then
-  message="Warning: $omz_data_directory does not exist.
-  Did you forget to \`mv ~/.oh-my-zsh ~/.local/share/oh-my-zsh\`?"
-  echo "$message" >&2
-fi
-export ZSH="$omz_data_directory"
+export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME=""
 ZSH_DISABLE_COMPFIX=true
@@ -59,10 +52,10 @@ fi
 autoload -Uz add-zsh-hook
 
 # for `tldr`
-export TEALDEER_CONFIG_DIR="~/.config/tealdeer"
+export TEALDEER_CONFIG_DIR="$HOME/.config/tealdeer"
 
 # set Brewfile location for `brew bundle` commands
-export HOMEBREW_BREWFILE="~/.config/brew/Brewfile"
+export HOMEBREW_BREWFILE="$HOME/.config/brew/Brewfile"
 function brew() {
     if [[ "$1" == "bundle" ]]; then
         # Check if --file is specified
@@ -80,7 +73,7 @@ function brew() {
 }
 
 # set config file location for `bq` utility
-export BIGQUERYRC="~/.config/.bigqueryrc"
+export BIGQUERYRC="$HOME/.config/.bigqueryrc"
 
 eval "$(starship init zsh)"
 
@@ -93,12 +86,26 @@ http-prod()  { http --session=prod  --follow "api-public.buzzfeed.com$1"       "
 # Local secrets (gitignored)
 [[ -f "$ZDOTDIR/.secrets" ]] && source "$ZDOTDIR/.secrets"
 
-# Machine-specific config overrides
-if [[ "$(hostname)" == "BF-002261" ]]; then
-  export OPENCODE_CONFIG="$HOME/.config/opencode/opencode.work.json"
-else
-  export OPENCODE_CONFIG="$HOME/.config/opencode/opencode.personal.json"
-fi
+# OpenCode loads the global config first, then this selected profile as an
+# overlay. Override per invocation: OPENCODE_PROFILE=personal opencode.
+opencode() {
+  local profile="${OPENCODE_PROFILE:-work}" config
+
+  case "$profile" in
+    work)
+      config="$HOME/.config/opencode/opencode.work.json"
+      ;;
+    personal)
+      config="$HOME/.config/opencode/opencode.personal.json"
+      ;;
+    *)
+      print -u2 "Unknown OpenCode profile: $profile (use work or personal)"
+      return 2
+      ;;
+  esac
+
+  command env OPENCODE_CONFIG="$config" opencode "$@"
+}
 
 # bun completions
 [ -s "/Users/josephhaaga/.bun/_bun" ] && source "/Users/josephhaaga/.bun/_bun"

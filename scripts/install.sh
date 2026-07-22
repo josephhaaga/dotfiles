@@ -20,16 +20,59 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 brew bundle --file=$HOME/Documents/dotfiles/configs/brew/Brewfile
 
 # Symlink configuration files
+DOTFILES="$HOME/Documents/dotfiles"
+
+link_config() {
+  local source="$1" destination="$2"
+
+  mkdir -p "$(dirname "$destination")"
+  if [ -e "$destination" ] && [ ! -L "$destination" ]; then
+    mv "$destination" "$destination.pre-dotfiles"
+  fi
+  ln -sfn "$source" "$destination"
+}
+
 # Set ZDOTDIR
 echo 'export ZDOTDIR="$HOME/.config/zsh"' >>$HOME/.zshenv
 
-ln -sf $HOME/Documents/dotfiles/configs $HOME
-ln -sf $HOME/Documents/dotfiles/.clerkrc $HOME/.clerkrc
-ln -sf $HOME/configs/skhd/skhdrc $HOME/.skhdrc
+link_config "$DOTFILES/.clerkrc" "$HOME/.clerkrc"
+
+# Link only declarative configuration. gh, gcloud, and opencode keep local
+# state under ~/.config and must not be replaced by a repository symlink.
+for config in brew fish ghostty httpie neofetch nvim tealdeer tmux uv yabai; do
+  link_config "$DOTFILES/configs/$config" "$HOME/.config/$config"
+done
+link_config "$DOTFILES/configs/zsh/.zshrc" "$HOME/.config/zsh/.zshrc"
+link_config "$DOTFILES/configs/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
+link_config "$DOTFILES/configs/starship.toml" "$HOME/.config/starship.toml"
+link_config "$DOTFILES/configs/.bigqueryrc" "$HOME/.config/.bigqueryrc"
+
+# OpenCode keeps dependencies and credentials locally, but its declarative
+# configuration, commands, skills, and plugins are tracked in this repository.
+if [ -f "$HOME/.config/opencode/opencode.jsonc" ] && \
+   [ ! -L "$HOME/.config/opencode/opencode.jsonc" ]; then
+  mv "$HOME/.config/opencode/opencode.jsonc" \
+    "$HOME/.config/opencode/opencode.jsonc.pre-dotfiles"
+fi
+for config in opencode.json opencode.personal.json opencode.work.json; do
+  link_config "$DOTFILES/configs/opencode/$config" "$HOME/.config/opencode/$config"
+done
+for directory in commands skills hub local-plugins; do
+  link_config "$DOTFILES/configs/opencode/$directory" "$HOME/.config/opencode/$directory"
+done
+
+# These tools use fixed paths outside the XDG configuration directory.
+link_config "$DOTFILES/configs/skhd/skhdrc" "$HOME/.skhdrc"
+link_config "$DOTFILES/configs/tmux/tmux.conf" "$HOME/.tmux.conf"
+link_config "$DOTFILES/configs/spacebar/spacebarrc" "$HOME/.spacebarrc"
+
+# Keep the Dock hidden unless the pointer reaches the screen edge.
+defaults write com.apple.dock autohide -bool true
+killall Dock >/dev/null 2>&1 || true
 
 # Wire dotfiles git config into ~/.gitconfig via [include]
 GITCONFIG="$HOME/.gitconfig"
-INCLUDE_LINE="path = ~/configs/git/.gitconfig"
+INCLUDE_LINE="path = $DOTFILES/configs/git/.gitconfig"
 if ! grep -qF "$INCLUDE_LINE" "$GITCONFIG" 2>/dev/null; then
   printf '\n[include]\n\t%s\n' "$INCLUDE_LINE" >> "$GITCONFIG"
   echo "Added [include] for configs/git/.gitconfig to ~/.gitconfig"

@@ -41,10 +41,10 @@ status_emit_all() {
   # --- Symlinks ---
   _se "$cb" section "Symlinks" "" "" ""
 
-  if [ -L "$HOME/configs" ] && \
-     [ "$(readlink "$HOME/configs")" = "$HOME/Documents/dotfiles/configs" ]; then
+  if [ -L "$HOME/.config/yabai" ] && \
+     [ "$(readlink "$HOME/.config/yabai")" = "$HOME/Documents/dotfiles/configs/yabai" ]; then
     r=0; else r=1; fi
-  _se "$cb" check "Symlinks" "~/configs -> dotfiles/configs" "$r" ""
+  _se "$cb" check "Symlinks" "~/.config/yabai -> dotfiles config" "$r" ""
 
   if [ -L "$HOME/.clerkrc" ]; then r=0; else r=1; fi
   _se "$cb" check "Symlinks" "~/.clerkrc symlink exists" "$r" ""
@@ -52,9 +52,9 @@ status_emit_all() {
   # --- git config ---
   _se "$cb" section "git config" "" "" ""
 
-  if grep -qF "path = ~/configs/git/.gitconfig" "$HOME/.gitconfig" 2>/dev/null; then
+  if grep -qF "path = $HOME/Documents/dotfiles/configs/git/.gitconfig" "$HOME/.gitconfig" 2>/dev/null; then
     r=0; else r=1; fi
-  _se "$cb" check "git config" "~/.gitconfig includes configs/git/.gitconfig" "$r" ""
+  _se "$cb" check "git config" "~/.gitconfig includes dotfiles git config" "$r" ""
 
   if git config --get alias.glo >/dev/null 2>&1; then r=0; else r=1; fi
   _se "$cb" check "git config" "git alias 'glo' is resolvable" "$r" ""
@@ -77,7 +77,7 @@ status_emit_all() {
   # --- yabai (neofetch-style detail lines) ---
   _se "$cb" section "yabai" "" "" ""
 
-  local yabai_scripts="$HOME/configs/yabai/scripts"
+  local yabai_scripts="$HOME/.config/yabai/scripts"
   if command -v yabai >/dev/null 2>&1; then
     local ver running have_jq
     ver="$(yabai --version 2>/dev/null)"

@@ -1,0 +1,16 @@
+# Tribe work applications
+cask "slack"
+cask "zoom"
+cask "loom"
+cask "notion"
+cask "airtable"
+cask "miro"
+cask "granola"
+cask "wispr-flow"
+cask "1password"
+cask "claude"
+cask "chatgpt"
+cask "codex-app"
+
+# Sybill is not available as a Homebrew cask. Install it from https://www.sybill.ai/.
+# Tribe Hub is a web application and does not require local installation.

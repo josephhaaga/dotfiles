@@ -77,9 +77,9 @@ yabai -m rule --add app='Goland IDEA' title='Edit configuration' manage=off
 
 # Redirect same-app window splits: when a new window would split an existing
 # window of the same app, warp it onto the largest different-app window instead.
-# See configs/yabai/scripts/redirect-same-app-split.sh
+# See ~/.config/yabai/scripts/redirect-same-app-split.sh
 yabai -m signal --add event=window_created label=redirect_same_app_split \
-  action="$HOME/configs/yabai/scripts/redirect-same-app-split.sh"
+  action="$HOME/.config/yabai/scripts/redirect-same-app-split.sh"
 
 # Animations
 # yabai -m config window_animation_duration    0.9

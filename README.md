@@ -1,79 +1,27 @@
 # dotfiles
 
-Repeatable dev environment config
+Repeatable macOS development-environment configuration.
 
-## Installation
-
-```bash
-# Clone the repository
-cd ~/Documents
-git clone https://github.com/josephhaaga/dotfiles && cd dotfiles
-
-# Install Homebrew, a package manager for macOS
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# Brew dependencies
-brew bundle --file=.config/brew/Brewfile
-# Example packages: yabai (window manager), nvim (vim-based IDE), skhd (hotkey manager), ghostty (terminal), uv (CLI config)
-brew bundle
-
-# brew bundle --force cleanup
-# https://gist.github.com/ChristopherA/a579274536aab36ea9966f301ff14f3f
-
-# install oh-my-zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-# Restart Terminal.app to reload .zshrc
-rest
-
-# Install managed config symlinks without replacing local credentials or state
-bash scripts/install.sh
-
-# install tmux plugins
-# Run <C-b> + I to install Tmux plugins
-
-# yabai: install scripting addition (enables most features)
-echo "$(whoami) ALL=(root) NOPASSWD: sha256:$(shasum -a 256 $(which yabai) | cut -d " " -f 1) $(which yabai) --load-sa" | sudo tee /private/etc/sudoers.d/yabai
-# start window manager (yabai) + hotkey manager (skhd)
-~/Documents/dotfiles/scripts/window-manager.sh start
-
-# re-install neovim to fix python-provider (powers many vim plugins)
-$ python3 -m pip install --user --upgrade pynvim
-$ brew reinstall neovim
-
-# install Vim plugins via vim-plug
-vim -c ':PlugInstall'
-```
-
-## Quick Start
-
-Use the new scripts for quick setup and updates:
+## Setup
 
 ```bash
-# Install your entire environment from scratch
+git clone https://github.com/josephhaaga/dotfiles ~/Documents/dotfiles
+cd ~/Documents/dotfiles
 bash scripts/install.sh
-
-# Update your machine to the latest configuration
-bash scripts/update.sh
-
-# Install the configuration:
-bash scripts/install.sh
-
-# Update your setup as needed:
-bash scripts/update.sh
 ```
 
-Use the new scripts for quick setup and updates:
+`scripts/install.sh --work` also installs the work-only Brewfile overlay. It preserves local state and credentials while symlinking declarative configuration.
+
+## Day-to-day
 
 ```bash
-# Install your entire environment from scratch
-bash scripts/install.sh
-
-# Update your machine to the latest configuration
-bash scripts/update.sh
+bash scripts/update.sh                 # Update the base profile and managed services
+bash scripts/reconcile.sh              # Report undeclared Homebrew and App Store state
+bash scripts/validate.sh               # Validate syntax and scan secrets when gitleaks is installed
+bash scripts/validate.sh --check-installed  # Also compare installed packages to both Brewfiles
 ```
+
+Managed macOS preferences are in `scripts/macos-defaults.sh`; managed yabai/skhd services are controlled with `scripts/window-manager.sh`. See `docs/secrets.md` for the credential-migration plan.
 
 ## Prompts Directory
 

@@ -26,6 +26,11 @@
     "chrome-devtools": {
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
+    },
+    "glean": {
+      "type": "remote",
+      "url": "https://8ca70c0e-be.glean.com/mcp/glean-search",
+      "enabled": true
     }
   },
   "agent": {

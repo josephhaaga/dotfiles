@@ -1,7 +1,24 @@
 #!/bin/bash
 
-# Install dependencies and set up environment
-set -euxo pipefail
+# Install dependencies and set up environment.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES="$(cd "$SCRIPT_DIR/.." && pwd)"
+install_work=false
+
+if [ "${1:-}" = "--work" ]; then
+  install_work=true
+elif [ -n "${1:-}" ]; then
+  echo "Usage: $0 [--work]" >&2
+  exit 2
+fi
+
+append_once() {
+  local line="$1" file="$2"
+  touch "$file"
+  grep -qxF "$line" "$file" || printf '%s\n' "$line" >> "$file"
+}
 
 # Ensure Homebrew is installed
 if ! command -v brew &>/dev/null; then
@@ -9,19 +26,21 @@ if ! command -v brew &>/dev/null; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
-# Source Brew environment
-(
-  echo
-  echo 'eval "$(/opt/homebrew/bin/brew shellenv)"'
-) >>"$HOME/.zprofile"
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Keep Homebrew available in future login shells without duplicate entries.
+append_once 'eval "$(/opt/homebrew/bin/brew shellenv)"' "$HOME/.zprofile"
+eval "$(brew shellenv)"
 
 # Install Brew dependencies
-brew bundle --file=$HOME/Documents/dotfiles/configs/brew/Brewfile
+brew bundle --file="$DOTFILES/configs/brew/Brewfile"
+if [ "$install_work" = true ]; then
+  brew bundle --file="$DOTFILES/configs/brew/Brewfile.work"
+fi
+
+# Install the Plannotator CLI and OpenCode review commands. The OpenCode plugin
+# itself is declared in configs/opencode/opencode.json.
+curl -fsSL https://plannotator.ai/install.sh | bash
 
 # Symlink configuration files
-DOTFILES="$HOME/Documents/dotfiles"
-
 link_config() {
   local source="$1" destination="$2"
 
@@ -33,7 +52,7 @@ link_config() {
 }
 
 # Set ZDOTDIR
-echo 'export ZDOTDIR="$HOME/.config/zsh"' >>$HOME/.zshenv
+append_once 'export ZDOTDIR="$HOME/.config/zsh"' "$HOME/.zshenv"
 
 link_config "$DOTFILES/.clerkrc" "$HOME/.clerkrc"
 
@@ -66,9 +85,8 @@ link_config "$DOTFILES/configs/skhd/skhdrc" "$HOME/.skhdrc"
 link_config "$DOTFILES/configs/tmux/tmux.conf" "$HOME/.tmux.conf"
 link_config "$DOTFILES/configs/spacebar/spacebarrc" "$HOME/.spacebarrc"
 
-# Keep the Dock hidden unless the pointer reaches the screen edge.
-defaults write com.apple.dock autohide -bool true
-killall Dock >/dev/null 2>&1 || true
+# Apply versioned macOS preferences.
+"$DOTFILES/scripts/macos-defaults.sh"
 
 # Wire dotfiles git config into ~/.gitconfig via [include]
 GITCONFIG="$HOME/.gitconfig"
@@ -92,7 +110,7 @@ fi
 gh extension install wham/gh-slackdump 2>/dev/null || true
 
 # Start essential services
-"$HOME/Documents/dotfiles/scripts/window-manager.sh" start
+"$DOTFILES/scripts/window-manager.sh" start
 
 # Set up Tailscale for remote OpenCode access
 echo ""

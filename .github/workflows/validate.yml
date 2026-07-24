@@ -1,0 +1,14 @@
+name: Validate dotfiles
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  validate:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: brew install jq shellcheck gitleaks
+      - run: bash scripts/validate.sh

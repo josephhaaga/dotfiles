@@ -44,5 +44,22 @@ live in the vault's `AGENTS.md` / `CLAUDE.md`.
 
 ## Other tools (planned)
 
-Claude Code, Claude Desktop, and Codex will get the same Seekstone MCP wiring; their configs
-will be added here as each is integrated.
+Claude Code and Codex will get the same Seekstone MCP wiring; their configs will be added
+here as each is integrated.
+
+## Claude Desktop
+
+Claude Desktop's config (`~/Library/Application Support/Claude/claude_desktop_config.json`)
+lives outside `~/.config` and the app **rewrites it on launch**, so it is not symlinked.
+Instead:
+
+- **`configs/claude/desktop-mcp-servers.json`** — the tracked Obsidian MCP block.
+- **`configs/claude/install-desktop-mcp.sh`** — quits Claude Desktop (if running) and
+  `jq`-merges the block into the live config, preserving the app's own preferences. Run it
+  once per machine, then launch Claude Desktop.
+
+Capture on Desktop is **instruction-driven** (no session hooks): create a Project with the
+scribe instructions from the project repo (`scribe/claude-desktop/README.md`). Deterministic
+Desktop capture is deferred to the Phase 6 transcript daemon.
+
+Use the absolute npx path (`/opt/homebrew/bin/npx`) — GUI apps don't inherit the shell PATH.

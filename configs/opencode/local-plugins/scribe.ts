@@ -23,6 +23,10 @@ const VAULT =
   process.env.SEEKSTONE_VAULT ?? join(homedir(), "Documents", "obsidian-vault");
 const DAILY_DIR = join(VAULT, "Daily");
 
+// Which tool this scribe captures — stamped on entries so the daily note is unambiguous
+// when multiple tools (OpenCode, Claude Desktop, ...) write to the same note.
+const TOOL_NAME = "OpenCode";
+
 // Debounce so we don't write on every micro-idle; one checkpoint per window per session.
 const IDLE_DEBOUNCE_MS = 90_000;
 const lastWrite = new Map<string, number>(); // sessionID -> epoch ms
@@ -73,7 +77,7 @@ function ensureHeading(path: string, sessionID: string, directory: string) {
   const project = directory.split("/").pop() ?? directory;
   appendFileSync(
     path,
-    `\n## Session ${sessionID}\n*${project}* — started ${nowTime()}\n`,
+    `\n## Session ${sessionID} (${TOOL_NAME})\n*${project}* — started ${nowTime()}\n`,
   );
   headingWritten.add(key);
 }
@@ -81,7 +85,7 @@ function ensureHeading(path: string, sessionID: string, directory: string) {
 function appendBullet(sessionID: string, directory: string, text: string) {
   const path = ensureDaily();
   ensureHeading(path, sessionID, directory);
-  appendFileSync(path, `- \`${nowTime()}\` ${text}\n`);
+  appendFileSync(path, `- \`${nowTime()}\` **[${TOOL_NAME}]** ${text}\n`);
 }
 
 /**

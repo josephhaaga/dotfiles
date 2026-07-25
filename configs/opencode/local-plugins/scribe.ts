@@ -1,159 +1,96 @@
 /**
  * Scribe plugin — background knowledge-base capture for OpenCode.
  *
- * Writes incremental work logs to the Obsidian vault so a crashed or long-running
- * session still leaves a trail (per project requirement: turn-end + session-end + idle).
+ * Two-tier structure (see project docs/DECISIONS.md D11):
+ *   - Per turn (session.idle): append a CLEANED one-line summary of the turn to a per-session
+ *     subfile (Daily/sessions/<date>-opencode-<id>.md). No tool-action counts, no raw IDs.
+ *   - At session end (session.deleted): generate a 2-4 bullet executive summary of the session
+ *     and upsert it into the daily file, linking to the subfile.
  *
- * Capture is deterministic and file-direct (does not depend on the agent choosing to
- * call a tool): on session idle the plugin summarizes recent activity from the session
- * and appends a bullet to today's daily note under a per-session heading. On session
- * deletion it appends a rollup marker.
+ * All vault logic lives in scribe_core.py (shared with the Claude Code / Codex hooks) so there
+ * is one source of truth. This plugin shells out to it.
  *
- * Vault path comes from SEEKSTONE_VAULT (shared with the Seekstone MCP server) or falls
- * back to ~/Documents/obsidian-vault.
- *
- * Placed in ~/.config/opencode/local-plugins/ and registered in opencode.json.
+ * Vault path comes from SEEKSTONE_VAULT or falls back to ~/Documents/obsidian-vault.
  */
 
-import { appendFileSync, existsSync, mkdirSync, readFileSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
 
-const VAULT =
-  process.env.SEEKSTONE_VAULT ?? join(homedir(), "Documents", "obsidian-vault");
-const DAILY_DIR = join(VAULT, "Daily");
+const TOOL = "OpenCode";
+const CORE = join(
+  homedir(),
+  "Documents/code/setup-ai-native-dev-env/scribe/shared/scribe_core.py",
+);
 
-// Which tool this scribe captures — stamped on entries so the daily note is unambiguous
-// when multiple tools (OpenCode, Claude Desktop, ...) write to the same note.
-const TOOL_NAME = "OpenCode";
+// Debounce so we don't write on every micro-idle; one turn bullet per window per session.
+const IDLE_DEBOUNCE_MS = 60_000;
+// How often to (re)generate the executive summary mid-session. Upsert makes this idempotent.
+const SUMMARIZE_EVERY_MS = 5 * 60_000;
+const lastWrite = new Map<string, number>();
+const lastSummary = new Map<string, number>();
+const projectOf = new Map<string, string>();
 
-// Debounce so we don't write on every micro-idle; one checkpoint per window per session.
-const IDLE_DEBOUNCE_MS = 90_000;
-const lastWrite = new Map<string, number>(); // sessionID -> epoch ms
-const headingWritten = new Set<string>(); // sessionID that already have a heading today
-
-function todayStamp(): string {
-  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+function callCore(fn: string, args: string[]) {
+  // fn is one of: append_turn, summarize_session. Invoke via a tiny python -c shim.
+  const py = `import sys; sys.path.insert(0,'${join(homedir(), "Documents/code/setup-ai-native-dev-env/scribe/shared")}'); import scribe_core as s; s.${fn}(*sys.argv[1:])`;
+  Bun.spawn(["python3", "-c", py, ...args], {
+    stdio: ["ignore", "ignore", "ignore"],
+    detached: true,
+  });
 }
 
-function dailyPath(): string {
-  return join(DAILY_DIR, `${todayStamp()}.md`);
-}
-
-function nowTime(): string {
-  return new Date().toLocaleTimeString("en-US", { hour12: false });
-}
-
-function ensureDaily(): string {
-  const path = dailyPath();
-  if (!existsSync(DAILY_DIR)) mkdirSync(DAILY_DIR, { recursive: true });
-  if (!existsSync(path)) {
-    const stamp = todayStamp();
-    appendFileSync(
-      path,
-      `---\ntype: daily\ndate: ${stamp}\ntags: [daily]\n---\n# ${stamp}\n\n## Log\n\n## Sessions\n`,
-    );
-  }
-  return path;
-}
-
-function sessionKey(sessionID: string): string {
-  return `${todayStamp()}::${sessionID}`;
-}
-
-function ensureHeading(path: string, sessionID: string, directory: string) {
-  const key = sessionKey(sessionID);
-  if (headingWritten.has(key)) return;
-  // Guard against a heading already present from a previous run today.
-  try {
-    const existing = readFileSync(path, "utf-8");
-    if (existing.includes(`## Session ${sessionID}`)) {
-      headingWritten.add(key);
-      return;
-    }
-  } catch {
-    /* file may not exist yet */
-  }
-  const project = directory.split("/").pop() ?? directory;
-  appendFileSync(
-    path,
-    `\n## Session ${sessionID} (${TOOL_NAME})\n*${project}* — started ${nowTime()}\n`,
-  );
-  headingWritten.add(key);
-}
-
-function appendBullet(sessionID: string, directory: string, text: string) {
-  const path = ensureDaily();
-  ensureHeading(path, sessionID, directory);
-  appendFileSync(path, `- \`${nowTime()}\` **[${TOOL_NAME}]** ${text}\n`);
-}
-
-/**
- * Summarize recent session activity into one short line. Best-effort: pulls the last
- * user prompt and a count of tool actions from the SDK if available; otherwise a
- * generic checkpoint. Kept terse on purpose.
- */
-async function summarize(
-  client: any,
-  sessionID: string,
-): Promise<string> {
+async function summarizePrompt(client: any, sessionID: string): Promise<string> {
   try {
     const res = await client.session.messages({ path: { id: sessionID } });
     const messages = (res?.data ?? res ?? []) as any[];
     const lastUser = [...messages]
       .reverse()
       .find((m) => (m.info?.role ?? m.role) === "user");
-    let prompt = "";
-    const parts = lastUser?.parts ?? [];
-    for (const p of parts) {
+    for (const p of lastUser?.parts ?? []) {
       if (p.type === "text" && p.text) {
-        prompt = p.text;
-        break;
+        return p.text.replace(/\s+/g, " ").trim().slice(0, 280);
       }
     }
-    prompt = prompt.replace(/\s+/g, " ").trim().slice(0, 140);
-    const toolCount = messages
-      .flatMap((m: any) => m.parts ?? [])
-      .filter((p: any) => p.type === "tool").length;
-    if (prompt) return `checkpoint — "${prompt}" (${toolCount} tool actions)`;
-    return `checkpoint — ${toolCount} tool actions`;
   } catch {
-    return "checkpoint";
+    /* ignore */
   }
+  return "worked on the current task";
 }
 
 export const ScribePlugin = async ({ client, directory }: any) => {
+  const project = directory.split("/").pop() ?? directory;
   return {
     event: async ({ event }: any) => {
       const type = event?.type;
       if (!type) return;
 
-      // Turn-end / idle checkpoint (session.idle fires after each assistant response).
       if (type === "session.idle") {
-        const sessionID = event.properties?.sessionID ?? event.properties?.info?.id;
+        const sessionID =
+          event.properties?.sessionID ?? event.properties?.info?.id;
         if (!sessionID) return;
-        const last = lastWrite.get(sessionID) ?? 0;
-        if (Date.now() - last < IDLE_DEBOUNCE_MS) return;
-        lastWrite.set(sessionID, Date.now());
-        const line = await summarize(client, sessionID);
-        try {
-          appendBullet(sessionID, directory, line);
-        } catch {
-          /* never crash the session over a log write */
+        projectOf.set(sessionID, project);
+        const now = Date.now();
+        if (now - (lastWrite.get(sessionID) ?? 0) >= IDLE_DEBOUNCE_MS) {
+          lastWrite.set(sessionID, now);
+          const turn = await summarizePrompt(client, sessionID);
+          callCore("append_turn", [TOOL, sessionID, project, turn]);
+        }
+        // Periodically refresh the daily-file executive summary (idempotent upsert), so the
+        // daily view stays current even for long sessions that never emit session.deleted.
+        if (now - (lastSummary.get(sessionID) ?? 0) >= SUMMARIZE_EVERY_MS) {
+          lastSummary.set(sessionID, now);
+          callCore("summarize_session", [TOOL, sessionID, project]);
         }
         return;
       }
 
-      // Session end — rollup marker. (A deeper LLM rollup is handled by agent
-      // instructions in AGENTS.md; here we guarantee a boundary line lands.)
       if (type === "session.deleted") {
-        const sessionID = event.properties?.sessionID ?? event.properties?.info?.id;
+        const sessionID =
+          event.properties?.sessionID ?? event.properties?.info?.id;
         if (!sessionID) return;
-        try {
-          appendBullet(sessionID, directory, `session ended`);
-        } catch {
-          /* ignore */
-        }
+        const proj = projectOf.get(sessionID) ?? project;
+        // Final executive summary for the daily file.
+        callCore("summarize_session", [TOOL, sessionID, proj]);
       }
     },
   };

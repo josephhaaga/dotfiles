@@ -15,12 +15,23 @@
 
 import { join } from "path";
 import { homedir } from "os";
+import { existsSync } from "fs";
 
 const TOOL = "OpenCode";
-const CORE = join(
+const SHARED_DIR = join(
   homedir(),
-  "Documents/code/setup-ai-native-dev-env/scribe/shared/scribe_core.py",
+  "Documents/code/setup-ai-native-dev-env/scribe/shared",
 );
+const CORE = join(SHARED_DIR, "scribe_core.py");
+
+// GUI/launchd-spawned OpenCode may not have Homebrew on PATH, so resolve python3 to an
+// absolute path (falling back to bare "python3" if none of the common ones exist).
+const PYTHON =
+  [
+    "/opt/homebrew/bin/python3",
+    "/usr/local/bin/python3",
+    "/usr/bin/python3",
+  ].find((p) => existsSync(p)) ?? "python3";
 
 // Debounce so we don't write on every micro-idle; one turn bullet per window per session.
 const IDLE_DEBOUNCE_MS = 60_000;
@@ -32,11 +43,15 @@ const projectOf = new Map<string, string>();
 
 function callCore(fn: string, args: string[]) {
   // fn is one of: append_turn, summarize_session. Invoke via a tiny python -c shim.
-  const py = `import sys; sys.path.insert(0,'${join(homedir(), "Documents/code/setup-ai-native-dev-env/scribe/shared")}'); import scribe_core as s; s.${fn}(*sys.argv[1:])`;
-  Bun.spawn(["python3", "-c", py, ...args], {
-    stdio: ["ignore", "ignore", "ignore"],
-    detached: true,
-  });
+  const py = `import sys; sys.path.insert(0, ${JSON.stringify(SHARED_DIR)}); import scribe_core as s; s.${fn}(*sys.argv[1:])`;
+  try {
+    Bun.spawn([PYTHON, "-c", py, ...args], {
+      stdio: ["ignore", "ignore", "ignore"],
+      detached: true,
+    });
+  } catch {
+    /* never let a scribe spawn failure disrupt the session */
+  }
 }
 
 async function summarizePrompt(client: any, sessionID: string): Promise<string> {

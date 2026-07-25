@@ -44,7 +44,21 @@ live in the vault's `AGENTS.md` / `CLAUDE.md`.
 
 ## Other tools (planned)
 
-Codex will get the same Seekstone MCP wiring; its config will be added here once integrated.
+All four tools are now integrated: OpenCode, Claude Desktop, Claude Code, and Codex.
+
+## Codex
+
+Codex config lives in `~/.codex/`. The CLI now ships bundled inside **ChatGPT.app** (the
+standalone `codex-app` cask is deprecated); the installer symlinks it to
+`/opt/homebrew/bin/codex`.
+
+- **`configs/codex/hooks.json`** — the Stop scribe hook.
+- **`configs/codex/install-codex.sh`** — symlinks the CLI, adds the Seekstone MCP
+  (`codex mcp add`), and installs the hook. Idempotent.
+
+Capture is **deterministic** (Codex supports Claude-Code-style lifecycle hooks). The scribe
+(`scribe/codex/codex_scribe.py` in the project repo) writes attributed entries. After install:
+`codex login`, then trust the hook via `/hooks` (Codex re-flags it whenever the script changes).
 
 ## Claude Code
 

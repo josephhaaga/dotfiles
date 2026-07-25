@@ -1,0 +1,16 @@
+{
+  "description": "Obsidian scribe: log each turn to the knowledge base.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/homebrew/bin/python3 \"/Users/josephhaaga/Documents/code/setup-ai-native-dev-env/scribe/codex/codex_scribe.py\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

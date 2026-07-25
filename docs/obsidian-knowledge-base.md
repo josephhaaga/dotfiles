@@ -63,3 +63,18 @@ scribe instructions from the project repo (`scribe/claude-desktop/README.md`). D
 Desktop capture is deferred to the Phase 6 transcript daemon.
 
 Use the absolute npx path (`/opt/homebrew/bin/npx`) — GUI apps don't inherit the shell PATH.
+
+## Phase 6 daemon (deterministic Claude Desktop capture)
+
+Claude Desktop has no client-side hook, and cloud Connectors/Desktop-Extensions can't trigger
+capture either (see the project repo's `docs/DECISIONS.md` D8). The robust solution is a local
+background daemon that reads Claude Desktop's IndexedDB conversation store and appends new
+messages to the daily note.
+
+- Lives in the project repo: `scribe/daemon/claude_desktop_scribe.py` +
+  `install.sh` (installs a launchd agent `ai.scribe.claude-desktop`, 30s poll, KeepAlive).
+- Install: `SEEKSTONE_VAULT=~/Documents/obsidian-vault \
+  ~/Documents/code/setup-ai-native-dev-env/scribe/daemon/install.sh`
+- Logs: `~/Library/Logs/obsidian-scribe/`. State: `~/.local/state/obsidian-scribe/`.
+- Caveat: parses undocumented IndexedDB internals; may need updating if Claude Desktop changes
+  its storage format. Fails safe (logs nothing rather than crashing).

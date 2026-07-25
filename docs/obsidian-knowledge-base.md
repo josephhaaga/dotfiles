@@ -44,8 +44,20 @@ live in the vault's `AGENTS.md` / `CLAUDE.md`.
 
 ## Other tools (planned)
 
-Claude Code and Codex will get the same Seekstone MCP wiring; their configs will be added
-here as each is integrated.
+Codex will get the same Seekstone MCP wiring; its config will be added here once integrated.
+
+## Claude Code
+
+Claude Code stores config in `~/.claude/` (outside `~/.config`), so it's wired via a helper
+rather than symlinked:
+
+- **`configs/claude/claude-code-settings.json`** — tracked hooks (Stop + SessionEnd).
+- **`configs/claude/install-claude-code.sh`** — adds the Seekstone MCP (user scope) via
+  `claude mcp add` and `jq`-merges the hooks into `~/.claude/settings.json`. Idempotent.
+
+Capture here is **deterministic** (real hooks, like OpenCode): the `Stop` hook fires every turn
+and the scribe (`scribe/claude-code/claude_code_scribe.py` in the project repo) appends an
+attributed entry to the daily note. Log in to Claude Code (`/login`) for hooks to fire.
 
 ## Claude Desktop
 

@@ -1,0 +1,32 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/homebrew/bin/python3",
+            "args": [
+              "/Users/josephhaaga/Documents/code/setup-ai-native-dev-env/scribe/claude-code/claude_code_scribe.py"
+            ],
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/opt/homebrew/bin/python3",
+            "args": [
+              "/Users/josephhaaga/Documents/code/setup-ai-native-dev-env/scribe/claude-code/claude_code_scribe.py"
+            ],
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

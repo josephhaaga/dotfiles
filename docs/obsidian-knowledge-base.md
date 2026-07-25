@@ -90,17 +90,15 @@ Desktop capture is deferred to the Phase 6 transcript daemon.
 
 Use the absolute npx path (`/opt/homebrew/bin/npx`) — GUI apps don't inherit the shell PATH.
 
-## Phase 6 daemon (deterministic Claude Desktop capture)
+## Phase 6 daemon (deterministic Claude Desktop capture) — REMOVED
 
-Claude Desktop has no client-side hook, and cloud Connectors/Desktop-Extensions can't trigger
-capture either (see the project repo's `docs/DECISIONS.md` D8). The robust solution is a local
-background daemon that reads Claude Desktop's IndexedDB conversation store and appends new
-messages to the daily note.
+A background daemon that read Claude Desktop's IndexedDB was built and then **removed**: that
+store is dominated by the composer input-box draft, so it captured unsent text (including
+Getting-Started tutorial suggestions), not sent messages. There's no reliable on-disk way to
+tell sent from draft. See the project repo `docs/DECISIONS.md` D9.
 
-- Lives in the project repo: `scribe/daemon/claude_desktop_scribe.py` +
-  `install.sh` (installs a launchd agent `ai.scribe.claude-desktop`, 30s poll, KeepAlive).
-- Install: `SEEKSTONE_VAULT=~/Documents/obsidian-vault \
-  ~/Documents/code/setup-ai-native-dev-env/scribe/daemon/install.sh`
-- Logs: `~/Library/Logs/obsidian-scribe/`. State: `~/.local/state/obsidian-scribe/`.
-- Caveat: parses undocumented IndexedDB internals; may need updating if Claude Desktop changes
-  its storage format. Fails safe (logs nothing rather than crashing).
+Claude Desktop auto-capture is therefore **not** deterministic. Use either:
+- the `obsidian-scribe` **skill** (on request: "log this") — reads the real conversation, and
+- Phase 3 Project instructions.
+
+Deterministic per-turn capture is reliable for **OpenCode, Claude Code, and Codex** (real hooks).

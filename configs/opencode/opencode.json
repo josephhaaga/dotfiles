@@ -3,6 +3,7 @@
   "plugin": [
     "@plannotator/opencode@latest",
     "./local-plugins/hub.ts",
+    "./local-plugins/scribe.ts",
     [
       "opencode-agent-profiler",
       {
@@ -30,6 +31,14 @@
     "glean": {
       "type": "remote",
       "url": "https://8ca70c0e-be.glean.com/mcp/glean-search",
+      "enabled": true
+    },
+    "obsidian": {
+      "type": "local",
+      "command": ["npx", "-y", "seekstone"],
+      "environment": {
+        "SEEKSTONE_VAULT": "/Users/josephhaaga/Documents/obsidian-vault"
+      },
       "enabled": true
     }
   },

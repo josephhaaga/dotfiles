@@ -22,16 +22,15 @@ const SHARED_DIR = join(
   homedir(),
   "Documents/code/setup-ai-native-dev-env/scribe/shared",
 );
-const CORE = join(SHARED_DIR, "scribe_core.py");
+const CLI = join(SHARED_DIR, "scribe_cli.py");
 
-// GUI/launchd-spawned OpenCode may not have Homebrew on PATH, so resolve python3 to an
-// absolute path (falling back to bare "python3" if none of the common ones exist).
-const PYTHON =
-  [
-    "/opt/homebrew/bin/python3",
-    "/usr/local/bin/python3",
-    "/usr/bin/python3",
-  ].find((p) => existsSync(p)) ?? "python3";
+// Run the scribe via `uv run` — uv self-manages a pinned Python interpreter (PEP 723 inline
+// metadata in scribe_cli.py), so this works even if no system python3 is on PATH. Resolve uv
+// absolutely since GUI/launchd-spawned OpenCode may lack Homebrew on PATH.
+const UV =
+  ["/opt/homebrew/bin/uv", "/usr/local/bin/uv", `${homedir()}/.local/bin/uv`].find(
+    (p) => existsSync(p),
+  ) ?? "uv";
 
 // Debounce so we don't write on every micro-idle; one turn bullet per window per session.
 const IDLE_DEBOUNCE_MS = 60_000;
@@ -42,10 +41,9 @@ const lastSummary = new Map<string, number>();
 const projectOf = new Map<string, string>();
 
 function callCore(fn: string, args: string[]) {
-  // fn is one of: append_turn, summarize_session. Invoke via a tiny python -c shim.
-  const py = `import sys; sys.path.insert(0, ${JSON.stringify(SHARED_DIR)}); import scribe_core as s; s.${fn}(*sys.argv[1:])`;
+  // fn is one of: append_turn, summarize_session. Invoke via `uv run scribe_cli.py`.
   try {
-    Bun.spawn([PYTHON, "-c", py, ...args], {
+    Bun.spawn([UV, "run", "--script", CLI, fn, ...args], {
       stdio: ["ignore", "ignore", "ignore"],
       detached: true,
     });

@@ -10,11 +10,14 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VAULT="${SEEKSTONE_VAULT:-$HOME/Documents/obsidian-vault}"
+PROJECT_DIR="${SCRIBE_PROJECT_DIR:-$HOME/Documents/code/setup-ai-native-dev-env}"
 CODEX_BIN="/Applications/ChatGPT.app/Contents/Resources/codex"
 CODEX_HOME="$HOME/.codex"
-TRACKED_HOOKS="$SCRIPT_DIR/hooks.json"
+SCRIBE_PY="$PROJECT_DIR/scribe/codex/codex_scribe.py"
+UV="$(command -v uv || echo /opt/homebrew/bin/uv)"
 
 [ -x "$CODEX_BIN" ] || { echo "Codex binary not found at $CODEX_BIN (install ChatGPT.app)" >&2; exit 1; }
+[ -f "$SCRIBE_PY" ] || { echo "scribe script missing: $SCRIBE_PY (clone the project repo there)" >&2; exit 1; }
 
 # 1. Put codex on PATH.
 ln -sf "$CODEX_BIN" /opt/homebrew/bin/codex
@@ -24,9 +27,19 @@ echo "Linked codex -> $CODEX_BIN"
 "$CODEX_BIN" mcp remove obsidian 2>/dev/null || true
 "$CODEX_BIN" mcp add obsidian --env "SEEKSTONE_VAULT=$VAULT" -- npx -y seekstone
 
-# 3. Scribe Stop hook.
+# 3. Scribe Stop hook — generated for THIS machine (portable, no committed absolute paths).
+#    Runs via `uv run` so no system python3 is required.
 mkdir -p "$CODEX_HOME"
-cp "$TRACKED_HOOKS" "$CODEX_HOME/hooks.json"
+cat > "$CODEX_HOME/hooks.json" <<JSON
+{
+  "description": "Obsidian scribe: log each turn to the knowledge base.",
+  "hooks": {
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "$UV run --script \"$SCRIBE_PY\"", "timeout": 60 } ] }
+    ]
+  }
+}
+JSON
 
 echo "Codex wired:"
 echo "  MCP:   obsidian (Seekstone) -> $VAULT"

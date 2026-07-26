@@ -8,8 +8,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BLOCK="$SCRIPT_DIR/desktop-mcp-servers.json"
 CFG="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+VAULT="${SEEKSTONE_VAULT:-$HOME/Documents/obsidian-vault}"
+NPX="$(command -v npx || echo /opt/homebrew/bin/npx)"
 
 command -v jq >/dev/null || { echo "jq required" >&2; exit 1; }
 
@@ -22,8 +23,14 @@ fi
 mkdir -p "$(dirname "$CFG")"
 [ -f "$CFG" ] || echo '{}' > "$CFG"
 
-# Deep-merge: existing config first, tracked mcpServers block second (block wins on conflict).
-tmp="$(mktemp)"
-jq -s '.[0] * .[1]' "$CFG" "$BLOCK" > "$tmp" && mv "$tmp" "$CFG"
+# Generate the MCP block for THIS machine (portable; no committed absolute paths).
+block="$(cat <<JSON
+{ "mcpServers": { "obsidian": { "command": "$NPX", "args": ["-y", "seekstone"], "env": { "SEEKSTONE_VAULT": "$VAULT" } } } }
+JSON
+)"
 
-echo "Merged Obsidian MCP into $CFG. Launch Claude Desktop to connect."
+# Deep-merge: existing config first, generated mcpServers block second (block wins on conflict).
+tmp="$(mktemp)"
+jq -s '.[0] * .[1]' "$CFG" <(printf '%s' "$block") > "$tmp" && mv "$tmp" "$CFG"
+
+echo "Merged Obsidian MCP into $CFG (vault: $VAULT). Launch Claude Desktop to connect."

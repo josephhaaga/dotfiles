@@ -129,5 +129,19 @@ echo "       http://<your-mac-magicdns-name>:4096"
 echo "     For the mobile-friendly UI, also run: bunx openportal  (port 3000)"
 echo ""
 
+# Wire the Obsidian AI scribe (MCP + capture hooks + launchd agents) if the project repo is
+# present. The scribe is developed in its own repo; this just delegates to its installer.
+SCRIBE_INSTALL="${SCRIBE_PROJECT_DIR:-$HOME/Documents/code/setup-ai-native-dev-env}/scribe/install.sh"
+if [ -x "$SCRIBE_INSTALL" ]; then
+  echo ""
+  echo "=== Obsidian AI scribe ==="
+  bash "$SCRIBE_INSTALL" || echo "scribe install skipped/failed (non-fatal)"
+else
+  echo ""
+  echo "Obsidian AI scribe not installed: clone"
+  echo "  https://github.com/josephhaaga/setup-ai-native-dev-env"
+  echo "  to ~/Documents/code/setup-ai-native-dev-env, then run its scribe/install.sh"
+fi
+
 # Final message
 echo "Installation complete! Please restart your terminal for changes to take effect."

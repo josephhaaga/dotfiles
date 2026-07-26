@@ -52,26 +52,28 @@ Codex config lives in `~/.codex/`. The CLI now ships bundled inside **ChatGPT.ap
 standalone `codex-app` cask is deprecated); the installer symlinks it to
 `/opt/homebrew/bin/codex`.
 
-- **`configs/codex/hooks.json`** — the Stop scribe hook.
-- **`configs/codex/install-codex.sh`** — symlinks the CLI, adds the Seekstone MCP
-  (`codex mcp add`), and installs the hook. Idempotent.
+- **`scribe/codex/install.sh`** (project repo) — symlinks the CLI, adds the Seekstone MCP
+  (`codex mcp add`), and generates the Stop hook (`~/.codex/hooks.json`) from `$HOME`. Idempotent.
 
 Capture is **deterministic** (Codex supports Claude-Code-style lifecycle hooks). The scribe
 (`scribe/codex/codex_scribe.py` in the project repo) writes attributed entries. After install:
 `codex login`, then trust the hook via `/hooks` (Codex re-flags it whenever the script changes).
 
-## Claude Code
+## Install
 
-Claude Code stores config in `~/.claude/` (outside `~/.config`), so it's wired via a helper
-rather than symlinked:
+The scribe is developed in its own repo and installs itself. `scripts/install.sh` calls the
+project's `scribe/install.sh` automatically when the repo is present at
+`~/Documents/code/setup-ai-native-dev-env`. To (re)wire it manually:
 
-- **`configs/claude/claude-code-settings.json`** — tracked hooks (Stop + SessionEnd).
-- **`configs/claude/install-claude-code.sh`** — adds the Seekstone MCP (user scope) via
-  `claude mcp add` and `jq`-merges the hooks into `~/.claude/settings.json`. Idempotent.
+```bash
+~/Documents/code/setup-ai-native-dev-env/scribe/install.sh              # tools + catch-up agent
+~/Documents/code/setup-ai-native-dev-env/scribe/install.sh --with-synthesis   # + end-of-day KB staging
+```
 
-Capture here is **deterministic** (real hooks, like OpenCode): the `Stop` hook fires every turn
-and the scribe (`scribe/claude-code/claude_code_scribe.py` in the project repo) appends an
-attributed entry to the daily note. Log in to Claude Code (`/login`) for hooks to fire.
+All machine-specific config (Claude Code/Codex hooks, Claude Desktop MCP block, launchd plists)
+is GENERATED from `$HOME` at install time — nothing with absolute paths is committed. Scripts
+run via `uv run` (no system python3 needed). Each tool's installer lives beside its scribe
+script in the project repo (`scribe/<tool>/install.sh`).
 
 ## Claude Desktop
 
@@ -79,10 +81,9 @@ Claude Desktop's config (`~/Library/Application Support/Claude/claude_desktop_co
 lives outside `~/.config` and the app **rewrites it on launch**, so it is not symlinked.
 Instead:
 
-- **`configs/claude/desktop-mcp-servers.json`** — the tracked Obsidian MCP block.
-- **`configs/claude/install-desktop-mcp.sh`** — quits Claude Desktop (if running) and
-  `jq`-merges the block into the live config, preserving the app's own preferences. Run it
-  once per machine, then launch Claude Desktop.
+- **`scribe/claude-desktop/install.sh`** (project repo) — quits Claude Desktop (if running) and
+  `jq`-merges a generated Obsidian MCP block into the live config, preserving the app's own
+  preferences. Run it once per machine, then launch Claude Desktop.
 
 Capture on Desktop is **instruction-driven** (no session hooks): create a Project with the
 scribe instructions from the project repo (`scribe/claude-desktop/README.md`). Deterministic

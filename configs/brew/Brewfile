@@ -58,7 +58,7 @@ brew "charmbracelet/tap/crush"
 cask "handy"
 cask "google-chrome"
 cask "google-drive"
-cask "tailscale"
+cask "tailscale-app"
 cask "mitmproxy"
 # Discover, download, and run local LLMs
 cask "lm-studio"

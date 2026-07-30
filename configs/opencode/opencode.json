@@ -3,7 +3,6 @@
   "plugin": [
     "@plannotator/opencode@latest",
     "./local-plugins/hub.ts",
-    "./local-plugins/scribe.ts",
     [
       "opencode-agent-profiler",
       {

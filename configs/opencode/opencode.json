@@ -27,9 +27,9 @@
       "type": "local",
       "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--browserUrl=http://127.0.0.1:9222"]
     },
-    "glean": {
+    "agent-mcp": {
       "type": "remote",
-      "url": "https://8ca70c0e-be.glean.com/mcp/glean-search",
+      "url": "https://agent-mcp-production-db5b.up.railway.app/mcp",
       "enabled": true
     },
     "obsidian": {

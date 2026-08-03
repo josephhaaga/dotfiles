@@ -10,3 +10,4 @@ configs/httpie/sessions/
 configs/github-copilot/apps.json
 .aider*
 !.clerkrc
+.playwright-mcp/

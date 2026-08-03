@@ -23,13 +23,6 @@ bash scripts/validate.sh --check-installed  # Also compare installed packages to
 
 Managed macOS preferences are in `scripts/macos-defaults.sh`; managed yabai/skhd services are controlled with `scripts/window-manager.sh`. See `docs/secrets.md` for the credential-migration plan.
 
-## Prompts Directory
-
-The `prompts/` directory is for storing reusable prompt templates and workflows. Subdirectories include:
-
-- `actions/`: Task-specific prompts, e.g., refactoring, committing, or testing.
-- `rules/`: Guidelines for coding styles, standards, or language-specific rules.
-
 To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 
 - If you don't see anything, open `tmux` and then try running `tmux source ~/.tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
@@ -43,13 +36,7 @@ To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 
 ## TODO
 
-- better articulate dependencies that cause `.zshrc` errors on Terminal start
-  - `brew` installs neovim, but we need to set the global python and re-install neovim so YouCompleteMe installs can compile
-- install zsh
-- install oh-my-zsh
-- update .zshrc
 - scripts (e.g. journal, tomorrow, notes) are on path, or aliased
-- figure out the .oh-my-zsh submodule, and find a better location for josephhaaga.zsh-theme
 - profile and speed up new window/tab creation
 
 ## Tutorials
@@ -111,7 +98,7 @@ Run `brew bundle` in a directory containing a `Brewfile` to install all listed a
 
 Run `brew bundle dump` to generate a `Brewfile`
 
-`yabai` and `skhd` are installed from `koekeishiya/formulae` and managed through their native launchd commands.
+`yabai` and `skhd` are installed from `asmvik/formulae` and managed through their native launchd commands.
 
 ```bash
 ~/Documents/dotfiles/scripts/window-manager.sh status
@@ -152,10 +139,6 @@ I use neovim and `vim-plug`, a popular plugin manager written by [junegunn](http
 The default shell in OS X is now `zsh`. I use a popular customization framework called `oh-my-zsh` for terminal theming, handy aliases etc.
 
 **Reload** by running `omz reload`
-
-**Customize PS1** by altering `prompt_context()` in `josephhaaga.zsh-theme`
-
-- the `%m` characters are called "prompt sequences" ([see "Expansion of Prompt Sequences" in `man zshmisc`](https://stackoverflow.com/questions/13660636/what-is-percent-tilde-in-zsh))
 
 ### Terminal.app
 

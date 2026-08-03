@@ -83,7 +83,6 @@ done
 # These tools use fixed paths outside the XDG configuration directory.
 link_config "$DOTFILES/configs/skhd/skhdrc" "$HOME/.skhdrc"
 link_config "$DOTFILES/configs/tmux/tmux.conf" "$HOME/.tmux.conf"
-link_config "$DOTFILES/configs/spacebar/spacebarrc" "$HOME/.spacebarrc"
 
 # Apply versioned macOS preferences.
 "$DOTFILES/scripts/macos-defaults.sh"

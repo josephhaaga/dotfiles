@@ -16,10 +16,9 @@ fi
 
 bash -n "$DOTFILES"/scripts/*.sh "$DOTFILES"/scripts/lib/*.sh
 
-# Zed configuration uses JSONC despite its .json extension.
 while IFS= read -r -d '' file; do
   jq empty "$file"
-done < <(find "$DOTFILES/configs" -path "$DOTFILES/configs/zed" -prune -o -name '*.json' -print0)
+done < <(find "$DOTFILES/configs" -name '*.json' -print0)
 
 brew bundle list --file="$DOTFILES/configs/brew/Brewfile" >/dev/null
 brew bundle list --file="$DOTFILES/configs/brew/Brewfile.work" >/dev/null

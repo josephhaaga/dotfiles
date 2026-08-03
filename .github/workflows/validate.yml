@@ -10,5 +10,5 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - run: brew install jq shellcheck gitleaks
+      - run: brew install jq shellcheck gitleaks chezmoi
       - run: bash scripts/validate.sh

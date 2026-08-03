@@ -1,0 +1,7 @@
+#!/bin/bash
+set -euo pipefail
+
+# Cheap and idempotent, so this runs on every `chezmoi apply` rather than
+# being onchange-gated. See scripts/macos-defaults.sh in the dotfiles repo
+# for the actual managed preferences.
+"{{ .dotfilesRepo }}/scripts/macos-defaults.sh"

@@ -20,11 +20,18 @@ while IFS= read -r -d '' file; do
   jq empty "$file"
 done < <(find "$DOTFILES/configs" -name '*.json' -print0)
 
-brew bundle list --file="$DOTFILES/configs/brew/Brewfile" >/dev/null
-brew bundle list --file="$DOTFILES/configs/brew/Brewfile.work" >/dev/null
-if [ "$check_installed" = true ]; then
-  brew bundle check --file="$DOTFILES/configs/brew/Brewfile"
-  brew bundle check --file="$DOTFILES/configs/brew/Brewfile.work"
+# Validate the chezmoi-rendered Brewfile if it's already been applied to this
+# machine; packages.yaml itself has no direct syntax check beyond being valid
+# YAML, which `chezmoi execute-template` would catch on the next apply.
+if [ -f "$HOME/.config/brew/Brewfile" ]; then
+  brew bundle list --file="$HOME/.config/brew/Brewfile" >/dev/null
+  if [ "$check_installed" = true ]; then
+    brew bundle check --file="$HOME/.config/brew/Brewfile"
+  fi
+fi
+
+if command -v chezmoi >/dev/null 2>&1; then
+  chezmoi execute-template < "$DOTFILES/home/dot_config/brew/Brewfile.tmpl" >/dev/null
 fi
 
 if command -v shellcheck >/dev/null 2>&1; then

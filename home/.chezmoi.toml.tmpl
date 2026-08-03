@@ -1,0 +1,10 @@
+{{- $work := promptBoolOnce . "work" "Is this a work machine (installs the work Brewfile overlay)" false -}}
+encryption = "age"
+
+[age]
+    identity = {{ joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" | quote }}
+    recipient = "age1774gqzxpa62n66eyzmqp5qtz5k0c2dn46dz0t0cqtjk33xt2zgdsvetnpq"
+
+[data]
+    work = {{ $work }}
+    dotfilesRepo = {{ joinPath .chezmoi.homeDir "Documents" "dotfiles" | quote }}

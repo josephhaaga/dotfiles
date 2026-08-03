@@ -1,31 +1,40 @@
 # dotfiles
 
-Repeatable macOS development-environment configuration.
+Repeatable macOS development-environment configuration, managed with [chezmoi](https://www.chezmoi.io).
 
 ## Setup
 
 ```bash
-git clone https://github.com/josephhaaga/dotfiles ~/Documents/dotfiles
-cd ~/Documents/dotfiles
-bash scripts/install.sh
+brew install chezmoi age
+ln -s ~/Documents/dotfiles ~/.local/share/chezmoi   # keep the git repo at this fixed path
+mkdir -p ~/.config/chezmoi
+# Restore the age private key from 1Password to ~/.config/chezmoi/key.txt (chmod 600)
+# before running init, or secrets won't decrypt. See docs/secrets.md.
+chezmoi init --apply
 ```
 
-`scripts/install.sh --work` also installs the work-only Brewfile overlay. It preserves local state and credentials while symlinking declarative configuration.
+`chezmoi init` prompts once for whether this is a work machine (`work = true/false`, stored in `~/.config/chezmoi/chezmoi.toml`) and persists your answer — see `AGENTS.md` for what that controls. `chezmoi apply` then symlinks nothing; it renders/copies every managed file from `home/` to `$HOME`, installs Homebrew if missing, runs `brew bundle` from the declared package list, and runs the one-time setup scripts (oh-my-zsh, Plannotator, `uv` CLIs, `gh` extensions).
 
 ## Day-to-day
 
 ```bash
-bash scripts/update.sh                 # Update the base profile and managed services
+chezmoi diff                           # Preview pending changes before applying
+chezmoi apply                          # Apply local edits under home/ to $HOME
+chezmoi update                         # git pull + apply — the new scripts/update.sh
+bash scripts/load.sh                   # Pull latest for both dotfiles and journal repos
 bash scripts/reconcile.sh              # Report undeclared Homebrew and App Store state
 bash scripts/validate.sh               # Validate syntax and scan secrets when gitleaks is installed
-bash scripts/validate.sh --check-installed  # Also compare installed packages to both Brewfiles
+bash scripts/validate.sh --check-installed  # Also compare installed packages to the rendered Brewfile
+bash scripts/status.sh                 # Health check: yabai/skhd, git config, chezmoi drift
 ```
 
-Managed macOS preferences are in `scripts/macos-defaults.sh`; managed yabai/skhd services are controlled with `scripts/window-manager.sh`. See `docs/secrets.md` for the credential-migration plan.
+To edit a dotfile day-to-day, prefer `chezmoi edit --apply <target-path>` (e.g. `chezmoi edit --apply ~/.config/nvim/init.lua`) over editing the deployed file directly — chezmoi renders `home/` to `$HOME`, it doesn't symlink, so direct edits to the deployed file won't make it back into this repo without `chezmoi re-add`.
+
+Managed macOS preferences are in `scripts/macos-defaults.sh`; managed yabai/skhd services are controlled with `scripts/window-manager.sh` (both are invoked automatically by chezmoi's `.chezmoiscripts/`, but can be run standalone too). See `docs/secrets.md` for how encrypted files are handled.
 
 To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 
-- If you don't see anything, open `tmux` and then try running `tmux source ~/.tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
+- If you don't see anything, open `tmux` and then try running `tmux source ~/.config/tmux/tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
 
 ## Resources
 

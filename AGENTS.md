@@ -15,7 +15,7 @@
 
 - `~/.config/gh` and `~/.config/gcloud` are **not** chezmoi-managed. They retain local state (OAuth tokens, active gcloud config) and must never be added under `home/`.
 - After changing OpenCode config, commands, skills, or plugins under `home/dot_config/opencode/`, restart OpenCode; configuration is loaded only at startup.
-- Do not add plaintext credentials. `home/dot_config/zsh/encrypted_private_dot_secrets.age` and `home/dot_config/opencode/encrypted_opencode.personal.json.age` are encrypted with chezmoi's native age support (see `docs/secrets.md`) and must stay encrypted — never re-add their plaintext equivalents to the repo.
+- Do not add plaintext credentials. `home/dot_config/zsh/encrypted_private_dot_secrets.age` and `home/dot_config/opencode/encrypted_opencode.personal.json.age` are encrypted with chezmoi's native age support (see `docs/secrets.md`) and must stay encrypted — never re-add their plaintext equivalents to the repo. They are only managed on work machines.
 - To edit an encrypted file: `chezmoi decrypt < home/dot_config/<path>.age`, edit, then `chezmoi encrypt < <edited> > home/dot_config/<path>.age` (or use `chezmoi edit --apply <target-path>`, which round-trips this automatically).
 
 ## Homebrew And Services

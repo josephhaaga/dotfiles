@@ -7,11 +7,11 @@ This repository uses chezmoi's native [age](https://www.chezmoi.io/user-guide/en
 - `home/dot_config/zsh/encrypted_private_dot_secrets.age` -> `~/.config/zsh/.secrets`
 - `home/dot_config/opencode/encrypted_opencode.personal.json.age` -> `~/.config/opencode/opencode.personal.json`
 
-Neither currently holds a real credential (both are placeholder content as of the chezmoi migration), but they're encrypted anyway since they're the designated places for personal secrets going forward.
+Neither currently holds a real credential (both are placeholder content as of the chezmoi migration), but they're encrypted anyway since they're the designated places for work secrets going forward. Personal machines ignore both files and do not require an age key.
 
 ## Key management
 
-- The encryption key is an age keypair. The private key lives at `~/.config/chezmoi/key.txt` (mode `600`, never committed) and must be present before running `chezmoi init`/`chezmoi apply` on any machine.
+- The encryption key is an age keypair. On work machines, the private key lives at `~/.config/chezmoi/key.txt` (mode `600`, never committed) and must be present before running `chezmoi init`/`chezmoi apply`.
 - **Back up `~/.config/chezmoi/key.txt` in 1Password.** Losing it means losing access to every encrypted file in this repo — there is no recovery path otherwise.
 - The **public** recipient key is not secret and is committed in `home/.chezmoi.toml.tmpl` (the `[age]` section), so any machine with the private key restored to `~/.config/chezmoi/key.txt` can decrypt on `chezmoi init`/`apply` without further setup.
 

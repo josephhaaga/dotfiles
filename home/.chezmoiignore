@@ -1,0 +1,4 @@
+{{- if not .work }}
+.config/opencode/opencode.personal.json
+.config/zsh/.secrets
+{{- end }}

@@ -8,12 +8,12 @@ Repeatable macOS development-environment configuration, managed with [chezmoi](h
 brew install chezmoi age
 ln -s ~/Documents/dotfiles ~/.local/share/chezmoi   # keep the git repo at this fixed path
 mkdir -p ~/.config/chezmoi
-# Restore the age private key from 1Password to ~/.config/chezmoi/key.txt (chmod 600)
-# before running init, or secrets won't decrypt. See docs/secrets.md.
+# On work machines, restore the age private key from 1Password to
+# ~/.config/chezmoi/key.txt (chmod 600). Personal machines do not need a key.
 chezmoi init --apply
 ```
 
-`chezmoi init` prompts once for whether this is a work machine (`work = true/false`, stored in `~/.config/chezmoi/chezmoi.toml`) and persists your answer — see `AGENTS.md` for what that controls. `chezmoi apply` then symlinks nothing; it renders/copies every managed file from `home/` to `$HOME`, installs Homebrew if missing, runs `brew bundle` from the declared package list, and runs the setup scripts (oh-my-zsh, Plannotator updates, `uv` CLIs, `gh` extensions).
+`chezmoi init` prompts once for whether this is a work machine (`work = true/false`, stored in `~/.config/chezmoi/chezmoi.toml`) and persists your answer — see `AGENTS.md` for what that controls. Work machines require the age key to decrypt their managed secrets; personal machines skip those files and need no 1Password account or key. `chezmoi apply` then symlinks nothing; it renders/copies every managed file from `home/` to `$HOME`, installs Homebrew if missing, runs `brew bundle` from the declared package list, and runs the setup scripts (oh-my-zsh, Plannotator updates, `uv` CLIs, `gh` extensions).
 
 After this bootstrap, use `dotfiles install` as the user-facing equivalent of `chezmoi apply`.
 

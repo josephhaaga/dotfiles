@@ -47,11 +47,11 @@ status_emit_all() {
   if command -v chezmoi >/dev/null 2>&1; then
     if chezmoi verify "$HOME/.config/yabai/yabairc" >/dev/null 2>&1; then
       r=0; else r=1; fi
-    _se "$cb" check "chezmoi" "~/.config/yabai/yabairc matches source" "$r" ""
+    _se "$cb" check "chezmoi" "$HOME/.config/yabai/yabairc matches source" "$r" ""
 
     if chezmoi verify "$HOME/.clerkrc" >/dev/null 2>&1; then
       r=0; else r=1; fi
-    _se "$cb" check "chezmoi" "~/.clerkrc matches source" "$r" ""
+    _se "$cb" check "chezmoi" "$HOME/.clerkrc matches source" "$r" ""
   else
     _se "$cb" info "chezmoi" "" "" "chezmoi not installed (skipped)"
   fi
@@ -61,7 +61,7 @@ status_emit_all() {
 
   if grep -qF "path = $HOME/.config/git/dotfiles.gitconfig" "$HOME/.gitconfig" 2>/dev/null; then
     r=0; else r=1; fi
-  _se "$cb" check "git config" "~/.gitconfig includes dotfiles git config" "$r" ""
+  _se "$cb" check "git config" "$HOME/.gitconfig includes dotfiles git config" "$r" ""
 
   if git config --get alias.glo >/dev/null 2>&1; then r=0; else r=1; fi
   _se "$cb" check "git config" "git alias 'glo' is resolvable" "$r" ""

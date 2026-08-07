@@ -11,6 +11,7 @@ for issue in $issues; do
   
   # Check for ":" character and wrap the prefix in backticks if not already done
   if [[ "$title" == *":"* && "$title" != *\`* ]]; then
+    # shellcheck disable=SC2016
     new_title=$(echo "$title" | sed -E 's/^([^:]+):/`\1`:/')
     
     # Update the issue with the new title

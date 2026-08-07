@@ -13,7 +13,7 @@ mkdir -p ~/.config/chezmoi
 chezmoi init --apply
 ```
 
-`chezmoi init` prompts once for whether this is a work machine (`work = true/false`, stored in `~/.config/chezmoi/chezmoi.toml`) and persists your answer — see `AGENTS.md` for what that controls. `chezmoi apply` then symlinks nothing; it renders/copies every managed file from `home/` to `$HOME`, installs Homebrew if missing, runs `brew bundle` from the declared package list, and runs the one-time setup scripts (oh-my-zsh, Plannotator, `uv` CLIs, `gh` extensions).
+`chezmoi init` prompts once for whether this is a work machine (`work = true/false`, stored in `~/.config/chezmoi/chezmoi.toml`) and persists your answer — see `AGENTS.md` for what that controls. `chezmoi apply` then symlinks nothing; it renders/copies every managed file from `home/` to `$HOME`, installs Homebrew if missing, runs `brew bundle` from the declared package list, and runs the setup scripts (oh-my-zsh, Plannotator updates, `uv` CLIs, `gh` extensions).
 
 After this bootstrap, use `dotfiles install` as the user-facing equivalent of `chezmoi apply`.
 

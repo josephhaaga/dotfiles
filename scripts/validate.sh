@@ -41,7 +41,14 @@ if command -v chezmoi >/dev/null 2>&1; then
       ;;
   esac
 
-  chezmoi apply --dry-run --source "$DOTFILES/home" --destination "${TMPDIR%/}/chezmoi-validate-$$" --override-data "{\"dotfilesRepo\":\"$DOTFILES\",\"work\":false}" >/dev/null
+  personal_ignore="$(chezmoi execute-template --source "$DOTFILES/home" --override-data '{"work":false}' < "$DOTFILES/home/.chezmoiignore")"
+  case "$personal_ignore" in
+    *".config/opencode/opencode.personal.json"*".config/zsh/.secrets"*) ;;
+    *)
+      echo "personal chezmoi configuration must ignore encrypted files" >&2
+      exit 1
+      ;;
+  esac
 fi
 
 if command -v shellcheck >/dev/null 2>&1; then

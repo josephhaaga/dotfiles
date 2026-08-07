@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+case "${1:-}" in
+  install)
+    chezmoi apply
+    ;;
+  update)
+    chezmoi apply
+    command brew update
+    command brew upgrade
+    command brew bundle check --file="$HOME/.config/brew/Brewfile"
+    "$HOME/.local/bin/brew-prompt-status" --refresh
+    ;;
+  "")
+    exec nvim -c 'Neotree' -s - "$(chezmoi source-path)"
+    ;;
+  help|-h|--help)
+    cat <<'EOF'
+Usage: dotfiles [install|update]
+
+  install Apply the declared chezmoi configuration.
+  update  Apply declared configuration, then update and upgrade Homebrew packages.
+EOF
+    ;;
+  *)
+    printf 'Unknown dotfiles command: %s\n' "$1" >&2
+    exit 2
+    ;;
+esac

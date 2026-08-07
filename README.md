@@ -15,12 +15,16 @@ chezmoi init --apply
 
 `chezmoi init` prompts once for whether this is a work machine (`work = true/false`, stored in `~/.config/chezmoi/chezmoi.toml`) and persists your answer — see `AGENTS.md` for what that controls. `chezmoi apply` then symlinks nothing; it renders/copies every managed file from `home/` to `$HOME`, installs Homebrew if missing, runs `brew bundle` from the declared package list, and runs the one-time setup scripts (oh-my-zsh, Plannotator, `uv` CLIs, `gh` extensions).
 
+After this bootstrap, use `dotfiles install` as the user-facing equivalent of `chezmoi apply`.
+
 ## Day-to-day
 
 ```bash
 chezmoi diff                           # Preview pending changes before applying
 chezmoi apply                          # Apply local edits under home/ to $HOME
 chezmoi update                         # git pull + apply — the new scripts/update.sh
+dotfiles install                       # Apply the declared dotfiles configuration
+dotfiles update                        # Apply configuration and upgrade Homebrew packages
 bash scripts/load.sh                   # Pull latest for both dotfiles and journal repos
 bash scripts/reconcile.sh              # Report undeclared Homebrew and App Store state
 bash scripts/validate.sh               # Validate syntax and scan secrets when gitleaks is installed

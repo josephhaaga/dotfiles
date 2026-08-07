@@ -1,3 +1,9 @@
 [gcloud]
 # format = 'on [$project]($style) '
 format = ''
+
+[custom.homebrew]
+command = '~/.local/bin/brew-prompt-status'
+when = 'command -v brew >/dev/null && test -f ~/.config/brew/Brewfile'
+format = '[$output]($style) '
+style = 'bold yellow'

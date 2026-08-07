@@ -34,6 +34,8 @@ bash scripts/status.sh                 # Health check: yabai/skhd, git config, c
 
 To edit a dotfile day-to-day, prefer `chezmoi edit --apply <target-path>` (e.g. `chezmoi edit --apply ~/.config/nvim/init.lua`) over editing the deployed file directly — chezmoi renders `home/` to `$HOME`, it doesn't symlink, so direct edits to the deployed file won't make it back into this repo without `chezmoi re-add`.
 
+See [agent instructions](docs/agent-instructions.md) for the shared Claude Code/OpenCode guidance layout and the `AGENTS.md`-first project convention.
+
 Managed macOS preferences are in `scripts/macos-defaults.sh`; managed yabai/skhd services are controlled with `scripts/window-manager.sh` (both are invoked automatically by chezmoi's `.chezmoiscripts/`, but can be run standalone too). See `docs/secrets.md` for how encrypted files are handled.
 
 To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.

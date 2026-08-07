@@ -32,6 +32,16 @@ fi
 
 if command -v chezmoi >/dev/null 2>&1; then
   chezmoi execute-template --source "$DOTFILES/home" --override-data "{\"dotfilesRepo\":\"$DOTFILES\",\"work\":false}" < "$DOTFILES/home/dot_config/brew/Brewfile.tmpl" >/dev/null
+
+  personal_config="$(chezmoi execute-template --init < "$DOTFILES/home/.chezmoi.toml.tmpl")"
+  case "$personal_config" in
+    *"[age]"*)
+      echo "personal chezmoi configuration must not require an age identity" >&2
+      exit 1
+      ;;
+  esac
+
+  chezmoi apply --dry-run --source "$DOTFILES/home" --destination "${TMPDIR%/}/chezmoi-validate-$$" --override-data '{"work":false}' >/dev/null
 fi
 
 if command -v shellcheck >/dev/null 2>&1; then

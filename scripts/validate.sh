@@ -41,7 +41,7 @@ if command -v chezmoi >/dev/null 2>&1; then
       ;;
   esac
 
-  chezmoi apply --dry-run --source "$DOTFILES/home" --destination "${TMPDIR%/}/chezmoi-validate-$$" --override-data '{"work":false}' >/dev/null
+  chezmoi apply --dry-run --source "$DOTFILES/home" --destination "${TMPDIR%/}/chezmoi-validate-$$" --override-data "{\"dotfilesRepo\":\"$DOTFILES\",\"work\":false}" >/dev/null
 fi
 
 if command -v shellcheck >/dev/null 2>&1; then

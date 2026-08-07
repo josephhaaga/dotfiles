@@ -40,6 +40,11 @@ To install tmux plugins, open `tmux` and hit **Prefix** + <kbd>I</kbd>.
 
 - If you don't see anything, open `tmux` and then try running `tmux source ~/.config/tmux/tmux.conf` [as per the tpm README](https://github.com/tmux-plugins/tpm/blob/b699a7e01c253ffb7818b02d62bce24190ec1019/README.md?plain=1#L39)
 
+## Keyboard conventions
+
+- Wispr Flow push-to-talk: <kbd>Control</kbd> + <kbd>Option</kbd> + <kbd>W</kbd>. Configure this manually in Wispr Flow's per-device Settings; it has no supported config-file interface.
+- HerdR prefix: <kbd>Control</kbd> + <kbd>Option</kbd> + <kbd>G</kbd>. This avoids Ghostty and tmux's <kbd>Control</kbd> + <kbd>B</kbd> prefix mappings, Wispr Flow, and the skhd/Yabai bindings.
+
 ## Resources
 
 [How to install Vim plugins](https://linuxhint.com/vim_install_plugins/)  

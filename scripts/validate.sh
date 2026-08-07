@@ -31,7 +31,7 @@ if [ -f "$HOME/.config/brew/Brewfile" ]; then
 fi
 
 if command -v chezmoi >/dev/null 2>&1; then
-  chezmoi execute-template --source "$DOTFILES/home" < "$DOTFILES/home/dot_config/brew/Brewfile.tmpl" >/dev/null
+  chezmoi execute-template --source "$DOTFILES/home" --override-data "{\"dotfilesRepo\":\"$DOTFILES\"}" < "$DOTFILES/home/dot_config/brew/Brewfile.tmpl" >/dev/null
 fi
 
 if command -v shellcheck >/dev/null 2>&1; then

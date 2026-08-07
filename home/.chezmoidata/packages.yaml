@@ -24,6 +24,7 @@ packages:
     - git-lfs
     - gnupg
     - go
+    - herdr
     - jq
     - lolcat
     - mas
@@ -70,11 +71,13 @@ packages:
     - lm-studio
     - josephhaaga/dotfiles/opentypeless
     - 1password
+    - 1password-cli
     - airtable
     - chatgpt
     - claude
     - claude-code
     - codex-app
+    - docker-desktop
     - granola
     - linear
     - loom

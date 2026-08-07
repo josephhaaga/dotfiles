@@ -43,7 +43,7 @@ if command -v chezmoi >/dev/null 2>&1; then
 
   personal_ignore="$(chezmoi execute-template --source "$DOTFILES/home" --override-data '{"work":false}' < "$DOTFILES/home/.chezmoiignore")"
   case "$personal_ignore" in
-    *".config/opencode/opencode.personal.json"*".config/zsh/.secrets"*) ;;
+    *".config/opencode/opencode.personal.json.age"*".config/zsh/.secrets.age"*) ;;
     *)
       echo "personal chezmoi configuration must ignore encrypted files" >&2
       exit 1

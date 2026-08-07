@@ -3,21 +3,28 @@
 # Report Homebrew and App Store state that is not declared in this repository.
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DOTFILES="$(cd "$SCRIPT_DIR/.." && pwd)"
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
-brew bundle list --file="$DOTFILES/configs/brew/Brewfile" --formula --cask |
+# packages.yaml (rendered to ~/.config/brew/Brewfile by chezmoi) is the single
+# source of truth for both shared and work-only packages; the `work` template
+# var determines whether work_casks are included on this machine.
+while IFS= read -r package; do
+  printf '%s\n' "${package##*/}"
+done < <(brew bundle list --file="$HOME/.config/brew/Brewfile" --formula --cask) |
   sort -u > "$tmpdir/declared"
-brew bundle list --file="$DOTFILES/configs/brew/Brewfile.work" --cask |
-  sort -u >> "$tmpdir/declared"
-sort -u -o "$tmpdir/declared" "$tmpdir/declared"
 
-{ brew list --formula; brew list --cask; } | sort -u > "$tmpdir/installed"
+{ brew list --formula; brew list --cask; } |
+    while IFS= read -r package; do
+      printf '%s\n' "${package##*/}"
+    done | sort -u > "$tmpdir/installed"
+{ brew leaves; brew list --cask; } |
+  while IFS= read -r package; do
+    printf '%s\n' "${package##*/}"
+  done | sort -u > "$tmpdir/unmanaged"
 
 echo "== Homebrew installed but undeclared =="
-comm -23 "$tmpdir/installed" "$tmpdir/declared" || true
+comm -23 "$tmpdir/unmanaged" "$tmpdir/declared" || true
 echo "== Declared but not installed =="
 comm -13 "$tmpdir/installed" "$tmpdir/declared" || true
 

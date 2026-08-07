@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# Keep Homebrew work off the prompt's critical path. A stale status starts a
+# detached refresh; subsequent prompts display the last completed result.
+set -euo pipefail
+
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/dotfiles"
+cache_file="$cache_dir/brew-prompt-status"
+lock_dir="$cache_dir/brew-prompt-status.lock"
+brewfile="$HOME/.config/brew/Brewfile"
+refresh_after=21600
+tmpdir=""
+
+cleanup() {
+  [ -z "$tmpdir" ] || rm -rf "$tmpdir"
+  rmdir "$lock_dir" 2>/dev/null || true
+}
+
+cache_is_fresh() {
+  [ -f "$cache_file" ] || return 1
+  local modified now
+  modified="$(stat -f %m "$cache_file" 2>/dev/null || stat -c %Y "$cache_file")"
+  now="$(date +%s)"
+  [ $((now - modified)) -lt "$refresh_after" ]
+}
+
+refresh() {
+  mkdir -p "$cache_dir"
+  mkdir "$lock_dir" 2>/dev/null || exit 0
+  trap cleanup EXIT
+
+  command brew update --quiet >/dev/null 2>&1 || true
+
+  local updates missing extra status
+  tmpdir="$(mktemp -d)"
+
+  while IFS= read -r package; do
+    printf '%s\n' "${package##*/}"
+  done < <(command brew bundle list --file="$brewfile" --formula --cask) | sort -u > "$tmpdir/declared"
+  { command brew list --formula; command brew list --cask; } |
+    while IFS= read -r package; do
+      printf '%s\n' "${package##*/}"
+    done | sort -u > "$tmpdir/installed"
+  { command brew leaves; command brew list --cask; } |
+    while IFS= read -r package; do
+      printf '%s\n' "${package##*/}"
+    done | sort -u > "$tmpdir/unmanaged"
+
+  updates="$(command brew outdated | wc -l | tr -d ' ')"
+  missing="$(comm -13 "$tmpdir/installed" "$tmpdir/declared" | wc -l | tr -d ' ')"
+  extra="$(comm -23 "$tmpdir/unmanaged" "$tmpdir/declared" | wc -l | tr -d ' ')"
+
+  status=""
+  [ "$updates" -eq 0 ] || status="${updates}u"
+  [ "$missing" -eq 0 ] || status="${status:+$status }${missing}m"
+  [ "$extra" -eq 0 ] || status="${status:+$status }${extra}e"
+  printf '%s\n' "$status" > "$cache_file"
+}
+
+if [ "${1:-}" = "--refresh" ]; then
+  refresh
+  exit 0
+fi
+
+if ! cache_is_fresh && [ ! -d "$lock_dir" ]; then
+  mkdir -p "$cache_dir"
+  nohup "$0" --refresh >/dev/null 2>&1 &
+fi
+
+[ -f "$cache_file" ] && cat "$cache_file"

@@ -1,7 +1,0 @@
-# Optional work-only overlay. Install after Brewfile with:
-#   scripts/install.sh --work
-# Shared applications belong in Brewfile so they are declared only once.
-cask "zoom"
-
-# Sybill is not available as a Homebrew cask. Install it from https://www.sybill.ai/.
-# Tribe Hub is a web application and does not require local installation.

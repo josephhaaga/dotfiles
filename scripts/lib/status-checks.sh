@@ -38,23 +38,30 @@ status_emit_all() {
 
   local r
 
-  # --- Symlinks ---
-  _se "$cb" section "Symlinks" "" "" ""
+  # --- chezmoi-managed files ---
+  # chezmoi copies/renders files rather than symlinking, so "is this file
+  # correct" now means "does it match chezmoi's source state", checked with
+  # `chezmoi verify` (exits non-zero on drift or if untracked/missing).
+  _se "$cb" section "chezmoi" "" "" ""
 
-  if [ -L "$HOME/.config/yabai" ] && \
-     [ "$(readlink "$HOME/.config/yabai")" = "$HOME/Documents/dotfiles/configs/yabai" ]; then
-    r=0; else r=1; fi
-  _se "$cb" check "Symlinks" "~/.config/yabai -> dotfiles config" "$r" ""
+  if command -v chezmoi >/dev/null 2>&1; then
+    if chezmoi verify "$HOME/.config/yabai/yabairc" >/dev/null 2>&1; then
+      r=0; else r=1; fi
+    _se "$cb" check "chezmoi" "$HOME/.config/yabai/yabairc matches source" "$r" ""
 
-  if [ -L "$HOME/.clerkrc" ]; then r=0; else r=1; fi
-  _se "$cb" check "Symlinks" "~/.clerkrc symlink exists" "$r" ""
+    if chezmoi verify "$HOME/.clerkrc" >/dev/null 2>&1; then
+      r=0; else r=1; fi
+    _se "$cb" check "chezmoi" "$HOME/.clerkrc matches source" "$r" ""
+  else
+    _se "$cb" info "chezmoi" "" "" "chezmoi not installed (skipped)"
+  fi
 
   # --- git config ---
   _se "$cb" section "git config" "" "" ""
 
-  if grep -qF "path = $HOME/Documents/dotfiles/configs/git/.gitconfig" "$HOME/.gitconfig" 2>/dev/null; then
+  if grep -qF "path = $HOME/.config/git/dotfiles.gitconfig" "$HOME/.gitconfig" 2>/dev/null; then
     r=0; else r=1; fi
-  _se "$cb" check "git config" "~/.gitconfig includes dotfiles git config" "$r" ""
+  _se "$cb" check "git config" "$HOME/.gitconfig includes dotfiles git config" "$r" ""
 
   if git config --get alias.glo >/dev/null 2>&1; then r=0; else r=1; fi
   _se "$cb" check "git config" "git alias 'glo' is resolvable" "$r" ""

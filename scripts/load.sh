@@ -10,16 +10,15 @@ for repo in "${repos[@]}"; do
 
   git -C "$repo" fetch origin >/dev/null 2>&1
   LOCAL=$(git -C "$repo" rev-parse @)
-  REMOTE=$(git -C "$repo" rev-parse @{u})
-  BASE=$(git -C "$repo" merge-base @ @{u})
+  REMOTE=$(git -C "$repo" rev-parse "@{u}")
+  BASE=$(git -C "$repo" merge-base @ "@{u}")
 
   if [ "$LOCAL" = "$REMOTE" ]; then
     # Up to date
     MESSAGE=$(gum style --italic --margin "0 1" "No updates to pull.")
   elif [ "$LOCAL" = "$BASE" ]; then
     # Behind
-    PULL=$(git -C "$repo" pull >/dev/null 2>&1)
-    if [ "$PULL" = 0 ]; then
+    if git -C "$repo" pull >/dev/null 2>&1; then
       MESSAGE=$(gum style --italic --margin "0 1" "Pulled latest changes")
     else
       echo "Failed to update $repo. Please check the error." >&2

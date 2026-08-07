@@ -1,0 +1,94 @@
+# Declarative package list. Edited by hand; consumed by
+# dot_config/brew/Brewfile.tmpl and .chezmoiscripts/run_onchange_install-packages.sh.tmpl.
+# Run `chezmoi apply` after changing this file to install/update packages.
+packages:
+  taps:
+    - heroku/brew
+    - asmvik/formulae
+    - josephhaaga/dotfiles
+
+  brews:
+    - asciinema
+    - asciiquarium
+    - bash
+    - bat
+    - cmake
+    - cog
+    - cowsay
+    - duckdb
+    - gnutls
+    - ffmpeg
+    - fswatch
+    - gh
+    - git-filter-repo
+    - git-lfs
+    - gnupg
+    - go
+    - herdr
+    - jq
+    - lolcat
+    - mas
+    - neovim
+    - node
+    - ponysay
+    - redis
+    - ripgrep
+    - sops
+    - shellcheck
+    - gitleaks
+    - tealdeer
+    - tree
+    - uv
+    - wget
+    - yarn
+    - heroku/brew/heroku
+    - asmvik/formulae/skhd
+    - asmvik/formulae/yabai
+    - anomalyco/tap/opencode
+    - oven-sh/bun/bun
+    - starship
+    - gum
+    - tmux
+    - azure-cli
+    - httpie
+    - fd
+    - charmbracelet/tap/crush
+    - chezmoi
+    - age
+
+  casks:
+    - font-fontawesome
+    - font-hack-nerd-font
+    - font-monaspace
+    - ghostty
+    - gcloud-cli
+    - font-jetbrains-mono
+    - handy
+    - google-chrome
+    - google-drive
+    - tailscale-app
+    - mitmproxy
+    - lm-studio
+    - josephhaaga/dotfiles/opentypeless
+    - 1password
+    - 1password-cli
+    - airtable
+    - chatgpt
+    - claude
+    - claude-code
+    - codex-app
+    - docker-desktop
+    - granola
+    - linear
+    - loom
+    - notion
+    - slack
+    - wispr-flow
+    - obsidian
+    - opencode-desktop
+
+  # Only installed when the "work" machine prompt (see .chezmoi.toml.tmpl) is true.
+  # Sybill (https://www.sybill.ai/) has no cask and must be installed manually.
+  # Tribe Hub is a web app and needs no local install.
+  work_casks:
+    - zoom

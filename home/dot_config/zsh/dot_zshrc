@@ -1,0 +1,110 @@
+# Prevent duplicate entries in PATH
+typeset -U PATH path
+path=("$HOME/.local/bin" $path)
+
+# oh-my-zsh setup
+## use XDG standard cache location
+export ZSH_CACHE_DIR="$HOME/.cache/oh-my-zsh"
+mkdir -p "$ZSH_CACHE_DIR"
+export ZSH="$HOME/.oh-my-zsh"
+
+ZSH_THEME=""
+ZSH_DISABLE_COMPFIX=true
+
+plugins=(
+    git
+    httpie
+    jira
+    shrink-path
+    uv
+)
+
+source $ZSH/oh-my-zsh.sh
+
+
+# User configuration
+# DEFAULT_USER=`whoami`
+
+# Python environment
+export PYTHONDONTWRITEBYTECODE=1
+
+# Custom Aliases
+alias vim="nvim"
+alias vi="nvim"
+alias vimdiff='nvim -d'
+export EDITOR=nvim
+alias lx="ls -latch | vi -"
+alias save="~/Documents/dotfiles/scripts/save.sh"
+alias load="~/Documents/dotfiles/scripts/load.sh"
+alias notes="vi ~/Documents/Journal/notes"
+alias ideas="vi ~/Documents/Journal/notes/Ideas.md"
+alias fish="asciiquarium"
+alias speedread="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/speedread.rb"
+alias brb="osascript ~/Documents/dotfiles/scripts/lock_and_sleep.applescript"
+alias slackmd="~/Documents/dotfiles/scripts/slackmd.sh"
+
+# zsh-histdb
+if test -f $HOME/.oh-my-zsh/custom/plugins/zsh-histdb/sqlite-history.zsh; then
+    HISTDB_TABULATE_CMD=(sed -e $'s/\x1f/\t/g')
+    source $HOME/.oh-my-zsh/custom/plugins/zsh-histdb/sqlite-history.zsh
+fi
+autoload -Uz add-zsh-hook
+
+# for `tldr`
+export TEALDEER_CONFIG_DIR="$HOME/.config/tealdeer"
+
+# set Brewfile location for `brew bundle` commands
+export HOMEBREW_BREWFILE="$HOME/.config/brew/Brewfile"
+function brew() {
+    if [[ "$1" == "bundle" ]]; then
+        # Check if --file is specified
+        if [[ "$*" != *"--file"* ]]; then
+            # Add --file ./some/path if not specified
+            command brew bundle --file $HOMEBREW_BREWFILE "${@:2}"
+        else
+            # Run the command as is
+            command brew "$@"
+        fi
+    else
+        # Run the command as is for other brew commands
+        command brew "$@"
+    fi
+}
+
+# set config file location for `bq` utility
+export BIGQUERYRC="$HOME/.config/.bigqueryrc"
+
+eval "$(starship init zsh)"
+
+# HTTPie environment functions
+unalias http-dev http-stage http-prod 2>/dev/null
+http-dev()   { http --session=dev   --follow "dev.buzzfeed.io$1"               "${@:2}"; }
+http-stage() { http --session=stage --follow "api-public-stage.buzzfeed.com$1" "${@:2}"; }
+http-prod()  { http --session=prod  --follow "api-public.buzzfeed.com$1"       "${@:2}"; }
+
+# Local secrets (gitignored)
+[[ -f "$ZDOTDIR/.secrets" ]] && source "$ZDOTDIR/.secrets"
+
+# OpenCode loads the global config first, then this selected profile as an
+# overlay. Override per invocation: OPENCODE_PROFILE=personal opencode.
+opencode() {
+  local profile="${OPENCODE_PROFILE:-work}" config
+
+  case "$profile" in
+    work)
+      config="$HOME/.config/opencode/opencode.work.json"
+      ;;
+    personal)
+      config="$HOME/.config/opencode/opencode.personal.json"
+      ;;
+    *)
+      print -u2 "Unknown OpenCode profile: $profile (use work or personal)"
+      return 2
+      ;;
+  esac
+
+  command env OPENCODE_CONFIG="$config" opencode "$@"
+}
+
+# bun completions
+[ -s "/Users/josephhaaga/.bun/_bun" ] && source "/Users/josephhaaga/.bun/_bun"

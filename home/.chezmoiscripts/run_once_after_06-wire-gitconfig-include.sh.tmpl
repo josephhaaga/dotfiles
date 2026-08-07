@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+
+# Wires the dotfiles-managed git config (aliases, etc.) into ~/.gitconfig via
+# [include], leaving the rest of ~/.gitconfig (user.name/email, local-only
+# settings) untouched. See dot_config/git/dotfiles.gitconfig for the managed
+# content.
+gitconfig="$HOME/.gitconfig"
+include_line="path = {{ .chezmoi.homeDir }}/.config/git/dotfiles.gitconfig"
+touch "$gitconfig"
+if ! grep -qF "$include_line" "$gitconfig"; then
+  printf '\n[include]\n\t%s\n' "$include_line" >>"$gitconfig"
+  echo "Added [include] for dot_config/git/dotfiles.gitconfig to ~/.gitconfig"
+fi

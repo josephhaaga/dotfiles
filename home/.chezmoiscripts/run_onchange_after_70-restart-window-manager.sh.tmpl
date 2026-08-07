@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+
+# yabairc hash: {{ include "dot_config/yabai/executable_yabairc" | sha256sum }}
+# skhdrc hash: {{ include "executable_dot_skhdrc" | sha256sum }}
+# Only restarts yabai/skhd when their config actually changes, so routine
+# `chezmoi apply` runs for unrelated dotfiles don't disrupt window state.
+"{{ .dotfilesRepo }}/scripts/window-manager.sh" restart

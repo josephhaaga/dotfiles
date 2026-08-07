@@ -1,7 +1,6 @@
 .vim/*
 *.swp
 .DS_Store
-.config/zed/conversations/
 .opencode/*
 configs/zsh/*
 !configs/zsh/.zshrc

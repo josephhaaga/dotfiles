@@ -1,4 +1,5 @@
 {{- if not .work }}
-.config/opencode/opencode.personal.json
-.config/zsh/.secrets
+# Without an age configuration, chezmoi treats encrypted sources as .age targets.
+.config/opencode/opencode.personal.json.age
+.config/zsh/.secrets.age
 {{- end }}

@@ -5,9 +5,13 @@ global source. Project instructions are committed with each project.
 
 ## Global Instructions
 
-`home/dot_config/opencode/AGENTS.md` deploys to
+`home/dot_config/opencode/AGENTS.md.tmpl` deploys to
 `~/.config/opencode/AGENTS.md`. It is the canonical source for personal
 instructions that apply in every repository.
+
+The Slack guidance in this file is rendered only when chezmoi's `work` data
+value is `true`; personal-machine deployments omit it. Guidance not inside the
+template conditional applies on every machine.
 
 OpenCode discovers that file as its native global rules file. Do not add it to
 the `instructions` array in `opencode.json`.
@@ -23,7 +27,7 @@ chezmoi edit --apply ~/.config/opencode/AGENTS.md
 ```
 
 Alternatively, edit the source directly at
-`home/dot_config/opencode/AGENTS.md`, inspect `chezmoi diff`, and run
+`home/dot_config/opencode/AGENTS.md.tmpl`, inspect `chezmoi diff`, and run
 `chezmoi apply`.
 
 ## Project Instructions

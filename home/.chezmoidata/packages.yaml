@@ -81,6 +81,7 @@ packages:
     - granola
     - linear
     - loom
+    - microsoft-teams
     - notion
     - slack
     - wispr-flow

@@ -75,6 +75,7 @@ function brew() {
 export BIGQUERYRC="$HOME/.config/.bigqueryrc"
 
 eval "$(starship init zsh)"
+"$HOME/.local/bin/brew-session-notice"
 
 # HTTPie environment functions
 unalias http-dev http-stage http-prod 2>/dev/null

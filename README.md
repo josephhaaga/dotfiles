@@ -24,7 +24,7 @@ chezmoi diff                           # Preview pending changes before applying
 chezmoi apply                          # Apply local edits under home/ to $HOME
 chezmoi update                         # git pull + apply — the new scripts/update.sh
 dotfiles install                       # Apply the declared dotfiles configuration
-dotfiles update                        # Apply configuration and upgrade Homebrew packages
+dotfiles upgrade                       # Apply configuration and upgrade Homebrew packages
 bash scripts/load.sh                   # Pull latest for both dotfiles and journal repos
 bash scripts/reconcile.sh              # Report undeclared Homebrew and App Store state
 bash scripts/validate.sh               # Validate syntax and scan secrets when gitleaks is installed

@@ -71,17 +71,7 @@ function brew() {
     fi
 }
 
-# set config file location for `bq` utility
-export BIGQUERYRC="$HOME/.config/.bigqueryrc"
-
-eval "$(starship init zsh)"
 "$HOME/.local/bin/brew-session-notice"
-
-# HTTPie environment functions
-unalias http-dev http-stage http-prod 2>/dev/null
-http-dev()   { http --session=dev   --follow "dev.buzzfeed.io$1"               "${@:2}"; }
-http-stage() { http --session=stage --follow "api-public-stage.buzzfeed.com$1" "${@:2}"; }
-http-prod()  { http --session=prod  --follow "api-public.buzzfeed.com$1"       "${@:2}"; }
 
 # Local secrets (gitignored)
 [[ -f "$ZDOTDIR/.secrets" ]] && source "$ZDOTDIR/.secrets"
@@ -109,3 +99,6 @@ opencode() {
 
 # bun completions
 [ -s "/Users/josephhaaga/.bun/_bun" ] && source "/Users/josephhaaga/.bun/_bun"
+
+
+eval "$(starship init zsh)"

@@ -25,7 +25,12 @@
     },
     "chrome-devtools": {
       "type": "local",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest", "--browserUrl=http://127.0.0.1:9222"]
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--browserUrl=http://127.0.0.1:9222"
+      ]
     },
     "agent-mcp": {
       "type": "remote",
@@ -42,12 +47,6 @@
     }
   },
   "agent": {
-    "title": {
-      "model": "github-copilot/gpt-5.4-mini"
-    },
-    "plan": {
-      "model": "github-copilot/claude-opus-4.8"
-    },
     "ask": {
       "mode": "primary",
       "description": "Answers questions with repository and web research without modifying the workspace.",
@@ -73,9 +72,10 @@
         },
         "webfetch": "allow",
         "websearch": "allow",
-        "todowrite": "allow"
+        "todowrite": "allow",
+        "agent-mcp_*": "allow"
       },
-      "prompt": "Answer questions through research and analysis. Do not modify the workspace or any user files. You may write only under /tmp/opencode-ask/ when retaining web-fetch results or calculation notes. The only permitted shell command is mkdir -p /tmp/opencode-ask to create that directory. Do not run Python, use other shell commands, delegate tasks, or invoke tools other than the explicitly permitted read and web-research tools."
+      "prompt": "Answer questions through research and analysis. Do not modify the workspace or any user files. You may write only under /tmp/opencode-ask/ when retaining web-fetch results or calculation notes. The only permitted shell command is mkdir -p /tmp/opencode-ask to create that directory. You may use Agent MCP only to discover and call read-only lookup tools; do not use it to write, delete, send, or otherwise modify external data. Do not run Python, use other shell commands, delegate tasks, or invoke tools other than the explicitly permitted read and research tools."
     }
   }
 }

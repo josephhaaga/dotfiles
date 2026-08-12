@@ -27,6 +27,7 @@ dotfiles install                       # Apply the declared dotfiles configurati
 dotfiles upgrade                       # Apply configuration and upgrade Homebrew packages
 herdr-pr "describe the change"         # New worktree, OpenCode implementation, draft PR
 herdr-pr --branch fix/login "describe the change"  # Override the proposed branch name
+terminal-browser open <url>            # Open a browser in the terminal
 bash scripts/load.sh                   # Pull latest for both dotfiles and journal repos
 bash scripts/reconcile.sh              # Report undeclared Homebrew and App Store state
 bash scripts/validate.sh               # Validate syntax and scan secrets when gitleaks is installed
@@ -41,6 +42,8 @@ To edit a dotfile day-to-day, prefer `chezmoi edit --apply <target-path>` (e.g. 
 From a clean Git repository pane in Herdr, run `herdr-pr "describe the change"`. It asks OpenCode to propose a branch name from `AGENTS.md` and repository guidance, creates and focuses a Herdr worktree, then launches OpenCode with `--auto` to implement, test, commit, push, and create a draft GitHub PR. Use `--branch <name>` to override the proposed branch. The PR URL is sent through a desktop notification and remains in the OpenCode response.
 
 The shortcut is <kbd>Control</kbd> + <kbd>Option</kbd> + <kbd>G</kbd>, then <kbd>Shift</kbd> + <kbd>F</kbd>. Apply this configuration with `chezmoi apply`, then run `herdr server reload-config` in an active Herdr session.
+
+`terminal-browser` is installed by its official checksum-verifying installer during `chezmoi apply`. It works in Ghostty splits; Herdr support requires a release newer than the stable Homebrew `0.8.0` build because it depends on Herdr's graphics socket API.
 
 See [agent instructions](docs/agent-instructions.md) for the shared Claude Code/OpenCode guidance layout and the `AGENTS.md`-first project convention.
 

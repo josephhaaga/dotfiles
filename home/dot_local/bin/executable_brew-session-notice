@@ -1,9 +1,20 @@
 #!/usr/bin/env bash
 
-# Check for upgrades once per interactive shell rather than on every prompt.
+# Check for upgrades once per day rather than on every interactive shell.
 set -euo pipefail
 
 command -v brew >/dev/null 2>&1 || exit 0
+
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/brew-session-notice"
+stamp_file="$cache_dir/last-checked"
+today="$(date +%F)"
+
+if [ -r "$stamp_file" ] && [ "$(<"$stamp_file")" = "$today" ]; then
+    exit 0
+fi
+
+mkdir -p "$cache_dir"
+printf '%s\n' "$today" > "$stamp_file"
 
 command brew update --quiet >/dev/null 2>&1 || true
 outdated="$(command brew outdated 2>/dev/null || true)"

@@ -25,6 +25,8 @@ chezmoi apply                          # Apply local edits under home/ to $HOME
 chezmoi update                         # git pull + apply — the new scripts/update.sh
 dotfiles install                       # Apply the declared dotfiles configuration
 dotfiles upgrade                       # Apply configuration and upgrade Homebrew packages
+herdr-pr "describe the change"         # New worktree, OpenCode implementation, draft PR
+herdr-pr --branch fix/login "describe the change"  # Override the proposed branch name
 bash scripts/load.sh                   # Pull latest for both dotfiles and journal repos
 bash scripts/reconcile.sh              # Report undeclared Homebrew and App Store state
 bash scripts/validate.sh               # Validate syntax and scan secrets when gitleaks is installed
@@ -33,6 +35,12 @@ bash scripts/status.sh                 # Health check: yabai/skhd, git config, c
 ```
 
 To edit a dotfile day-to-day, prefer `chezmoi edit --apply <target-path>` (e.g. `chezmoi edit --apply ~/.config/nvim/init.lua`) over editing the deployed file directly — chezmoi renders `home/` to `$HOME`, it doesn't symlink, so direct edits to the deployed file won't make it back into this repo without `chezmoi re-add`.
+
+### Herdr draft PRs
+
+From a clean Git repository pane in Herdr, run `herdr-pr "describe the change"`. It asks OpenCode to propose a branch name from `AGENTS.md` and repository guidance, creates and focuses a Herdr worktree, then launches OpenCode with `--auto` to implement, test, commit, push, and create a draft GitHub PR. Use `--branch <name>` to override the proposed branch. The PR URL is sent through a desktop notification and remains in the OpenCode response.
+
+The shortcut is <kbd>Control</kbd> + <kbd>Option</kbd> + <kbd>G</kbd>, then <kbd>Shift</kbd> + <kbd>F</kbd>. Apply this configuration with `chezmoi apply`, then run `herdr server reload-config` in an active Herdr session.
 
 See [agent instructions](docs/agent-instructions.md) for the shared Claude Code/OpenCode guidance layout and the `AGENTS.md`-first project convention.
 

@@ -14,7 +14,8 @@ elif [ -n "${1:-}" ]; then
   exit 2
 fi
 
-bash -n "$DOTFILES"/scripts/*.sh "$DOTFILES"/scripts/lib/*.sh
+bash -n "$DOTFILES"/scripts/*.sh "$DOTFILES"/scripts/lib/*.sh \
+  "$DOTFILES"/home/dot_local/bin/executable_herdr-pr
 
 while IFS= read -r -d '' file; do
   jq empty "$file"
@@ -52,7 +53,8 @@ if command -v chezmoi >/dev/null 2>&1; then
 fi
 
 if command -v shellcheck >/dev/null 2>&1; then
-  shellcheck "$DOTFILES"/scripts/*.sh "$DOTFILES"/scripts/lib/*.sh
+  shellcheck "$DOTFILES"/scripts/*.sh "$DOTFILES"/scripts/lib/*.sh \
+    "$DOTFILES"/home/dot_local/bin/executable_herdr-pr
 fi
 
 if command -v gitleaks >/dev/null 2>&1; then

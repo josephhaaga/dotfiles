@@ -1,0 +1,23 @@
+onboarding = false
+
+[ui]
+agent_panel_sort = "spaces"
+show_agent_labels_on_pane_borders = true
+
+[ui.toast]
+delivery = "terminal"
+
+[theme]
+name = "catppuccin"
+auto_switch = false
+
+[keys]
+prefix = "ctrl+alt+g"
+
+[[keys.command]]
+key = "prefix+shift+f"
+type = "popup"
+command = "herdr-pr --cwd \"$HERDR_ACTIVE_PANE_CWD\""
+description = "Create worktree and draft PR with OpenCode"
+width = "80%"
+height = "40%"

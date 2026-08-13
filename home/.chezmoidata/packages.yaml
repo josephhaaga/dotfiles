@@ -6,7 +6,6 @@ packages:
     - heroku/brew
     - asmvik/formulae
     - josephhaaga/dotfiles
-    - textualize/homebrew
 
   brews:
     - asciinema
@@ -20,7 +19,6 @@ packages:
     - gnutls
     - ffmpeg
     - fswatch
-    - frogmouth
     - gh
     - git-filter-repo
     - git-lfs

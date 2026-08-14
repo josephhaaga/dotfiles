@@ -19,11 +19,6 @@
     ]
   ],
   "mcp": {
-    "playwright": {
-      "type": "local",
-      "command": ["npx", "@playwright/mcp@latest"],
-      "enabled": false
-    },
     "agent-mcp": {
       "type": "remote",
       "url": "https://agent-mcp-production-db5b.up.railway.app/mcp",

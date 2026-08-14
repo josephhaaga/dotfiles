@@ -47,6 +47,9 @@
       "enabled": true
     }
   },
+  "tools": {
+    "gitnexus_api_impact": false
+  },
   "agent": {
     "ask": {
       "mode": "primary",

@@ -82,7 +82,6 @@ packages:
     - josephhaaga/dotfiles/opentypeless
     - 1password
     - 1password-cli
-    - airtable
     - chatgpt
     - claude
     - claude-code

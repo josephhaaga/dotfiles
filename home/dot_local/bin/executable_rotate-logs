@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# Rotate the agent-harness logs that nothing else rotates.
+#
+# opencode and the agent profiler both append to a single fixed path forever,
+# so without this they grow without bound (opencode.log reached 340 MB before
+# this script existed).
+#
+# Deployed to ~/.local/bin rather than run from scripts/ in the dotfiles repo
+# because the com.josephhaaga.rotate-logs LaunchAgent that drives it cannot
+# read ~/Documents without Full Disk Access.
+set -euo pipefail
+
+max_bytes="${ROTATE_LOGS_MAX_BYTES:-52428800}" # 50 MiB
+keep="${ROTATE_LOGS_KEEP:-3}"
+
+logs=(
+  "$HOME/.local/share/opencode/log/opencode.log"
+  "/tmp/ap-trace.log"
+)
+
+rotate() {
+  local log="$1"
+  local size i
+
+  [ -f "$log" ] || return 0
+
+  size="$(stat -f %z "$log")"
+  if [ "$size" -le "$max_bytes" ]; then
+    return 0
+  fi
+
+  # Drop the oldest generation, then shift the survivors down one slot.
+  rm -f "$log.$keep.gz"
+  for ((i = keep - 1; i >= 1; i--)); do
+    if [ -f "$log.$i.gz" ]; then
+      mv -f "$log.$i.gz" "$log.$((i + 1)).gz"
+    fi
+  done
+
+  # Copy-then-truncate rather than rename: opencode and the profiler hold these
+  # files open, and renaming the inode would send their writes into the rotated
+  # copy instead of a fresh log.
+  cp "$log" "$log.1"
+  : >"$log"
+  gzip -f "$log.1"
+
+  printf 'rotated %s (%s bytes)\n' "$log" "$size"
+}
+
+for log in "${logs[@]}"; do
+  rotate "$log"
+done

@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euo pipefail
+
+# plist hash: {{ include "private_Library/LaunchAgents/com.josephhaaga.rotate-logs.plist.tmpl" | sha256sum }}
+# Re-bootstraps the log rotation agent only when its plist changes, so routine
+# `chezmoi apply` runs don't churn launchd.
+uid="$(id -u)"
+plist="$HOME/Library/LaunchAgents/com.josephhaaga.rotate-logs.plist"
+
+launchctl bootout "gui/$uid" "$plist" >/dev/null 2>&1 || true
+launchctl bootstrap "gui/$uid" "$plist"

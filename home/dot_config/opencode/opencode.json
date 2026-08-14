@@ -8,13 +8,13 @@
       "opencode-agent-profiler",
       {
         "traceLog": "/tmp/ap-trace.log",
-        "captureContent": true,
-        "captureHeaders": true,
-        "maxAttrChars": 200000,
-        "hideInputs": false,
-        "hideOutputs": false,
-        "hideInputMessages": false,
-        "hideOutputMessages": false
+        "captureContent": false,
+        "captureHeaders": false,
+        "maxAttrChars": 4000,
+        "hideInputs": true,
+        "hideOutputs": true,
+        "hideInputMessages": true,
+        "hideOutputMessages": true
       }
     ]
   ],
@@ -22,16 +22,7 @@
     "playwright": {
       "type": "local",
       "command": ["npx", "@playwright/mcp@latest"],
-      "enabled": true
-    },
-    "chrome-devtools": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--browserUrl=http://127.0.0.1:9222"
-      ]
+      "enabled": false
     },
     "agent-mcp": {
       "type": "remote",
@@ -49,6 +40,12 @@
   },
   "tools": {
     "gitnexus_api_impact": false
+  },
+  "permission": {
+    "task": {
+      "build": "deny",
+      "plan": "deny"
+    }
   },
   "agent": {
     "ask": {

@@ -77,7 +77,14 @@ function brew() {
 [[ -f "$ZDOTDIR/.secrets" ]] && source "$ZDOTDIR/.secrets"
 
 # OpenCode loads the global config first, then this selected profile as an
-# overlay. Override per invocation: OPENCODE_PROFILE=personal opencode.
+# overlay. OPENCODE_CONFIG merges into the base config -- it can add settings
+# but never remove them, so profiles hold optional extras only.
+# Override per invocation: OPENCODE_PROFILE=personal opencode.
+#
+# The browser profile adds the Playwright and Chrome DevTools MCP servers,
+# which cost roughly 25-35k tokens of tool descriptions per session. They are
+# kept out of the base config so only browser work pays for them:
+#   OPENCODE_PROFILE=browser opencode
 opencode() {
   local profile="${OPENCODE_PROFILE:-work}" config
 
@@ -88,13 +95,23 @@ opencode() {
     personal)
       config="$HOME/.config/opencode/opencode.personal.json"
       ;;
+    browser)
+      config="$HOME/.config/opencode/opencode.browser.json"
+      ;;
     *)
-      print -u2 "Unknown OpenCode profile: $profile (use work or personal)"
+      print -u2 "Unknown OpenCode profile: $profile (use work, personal or browser)"
       return 2
       ;;
   esac
 
-  command env OPENCODE_CONFIG="$config" opencode "$@"
+  # OMO's anonymous PostHog telemetry is on unless disabled. oh-my-openagent.json
+  # sets telemetry:false, which covers every launch path; this belt-and-braces
+  # env var also covers launches that bypass that config file.
+  command env \
+    OPENCODE_CONFIG="$config" \
+    OPENCODE_EXPERIMENTAL_PLAN_MODE=1 \
+    OMO_DISABLE_POSTHOG=1 \
+    opencode "$@"
 }
 
 # bun completions

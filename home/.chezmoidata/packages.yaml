@@ -6,6 +6,14 @@ packages:
     - heroku/brew
     - asmvik/formulae
     - josephhaaga/dotfiles
+    - can1357/tap
+
+  # Homebrew 6 refuses to load third-party formulae until the tap is trusted.
+  # Listing a tap here renders `trusted: true`, letting it run its own formula
+  # code -- only add one you trust. josephhaaga/dotfiles is trusted in
+  # Brewfile.tmpl instead, because it also needs a file:// URL.
+  trusted_taps:
+    - can1357/tap
 
   brews:
     - asciinema
@@ -45,6 +53,8 @@ packages:
     - asmvik/formulae/skhd
     - asmvik/formulae/yabai
     - anomalyco/tap/opencode
+    - pi-coding-agent
+    - can1357/tap/omp
     - oven-sh/bun/bun
     - starship
     - gum

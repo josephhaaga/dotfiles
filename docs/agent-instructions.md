@@ -20,6 +20,15 @@ the `instructions` array in `opencode.json`.
 an import of `~/.config/opencode/AGENTS.md`. Claude Code expands that import,
 so it receives the same global guidance without a copied second version.
 
+`omp` (oh-my-pi) needs no wiring. Its `opencode` discovery provider reads
+`~/.config/opencode/AGENTS.md` directly at user scope, so the canonical file is
+already in context for every session.
+
+`pi` reads `~/.pi/agent/AGENTS.md` as plain Markdown and does not expand
+`@path` imports the way Claude Code does. `home/dot_pi/private_agent/symlink_AGENTS.md.tmpl`
+therefore deploys that path as a symlink to the canonical file. Pi resolves it
+transparently and reports `[Context] ~/.pi/agent/AGENTS.md` at startup.
+
 Edit the canonical source, not either deployed target:
 
 ```sh

@@ -3,6 +3,8 @@
 {{- range .packages.taps }}
 {{- if eq . "josephhaaga/dotfiles" }}
 tap "josephhaaga/dotfiles", {{ printf "file://%s" $.dotfilesRepo | quote }}, trusted: true
+{{- else if has . $.packages.trusted_taps }}
+tap {{ . | quote }}, trusted: true
 {{- else }}
 tap {{ . | quote }}
 {{- end }}

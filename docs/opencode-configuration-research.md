@@ -106,7 +106,26 @@ opencode run --format json "say ok" \
   | python3 -c "import json,sys; [print(o['part']['tokens']) for o in map(json.loads, filter(str.strip, sys.stdin)) if isinstance(o.get('part'),dict) and 'tokens' in o.get('part',{})]"
 ```
 
-Add `--pure` for the no-plugin floor. To A/B an alternative config without touching your live one, export it as `OPENCODE_CONFIG_CONTENT` (highest-precedence inline layer) for the duration of the run.
+Add `--pure` for the no-plugin floor.
+
+**Caveat on A/B methodology.** `OPENCODE_CONFIG_CONTENT` and `OPENCODE_CONFIG` are **merge layers, not replacements** — verified on 1.18.15 by passing `{"plugin":[],"mcp":{}}` and observing that `opencode mcp list` was byte-identical to a normal run. They can *add* config but never remove it.
+
+That makes them valid for **additive** tests only, which is what the table above measures: the "before" row was produced by merging the old config back on top, re-adding the two browser MCP servers. To measure a *subtraction*, edit the real config file and restore it afterwards, or use `--pure` for the total-plugin floor.
+
+### Second pass
+
+Follow-up changes made from the same research:
+
+5. **Disabled OMO's anonymous PostHog telemetry.** Reading `shouldDisablePostHog` in the installed bundle shows three independent switches: config `telemetry: false`, `OMO_DISABLE_POSTHOG=1`, or `OMO_SEND_ANONYMOUS_TELEMETRY` set to `0`/`false`/`no`. Both a config file (`home/dot_config/opencode/oh-my-openagent.json`) and the env var are set — the config file covers every launch path, and the env var covers launches that bypass it. The redundancy is deliberate: the config file was observed disappearing once after being written, so relying on it alone is not safe. The canonical filename is used rather than the legacy `oh-my-opencode.json` to avoid triggering the plugin's config-migration copy, which would create untracked chezmoi drift.
+6. **Moved the browser MCP servers into an opt-in profile.** The `opencode()` shell wrapper already selected between `work` and `personal` profiles via `OPENCODE_CONFIG`, but both were empty scaffolds. Since that variable is a *merge* layer, it is exactly the right mechanism for optional extras: the base config stays lean, and `OPENCODE_PROFILE=browser opencode` adds Playwright and Chrome DevTools when UI work needs them. This replaces the dead `"enabled": false` stub, which cost nothing but also provided nothing.
+
+   Measured, confirming the design: `work` (default) 52,476 tokens; `browser` 66,564. The browser profile costs **+14,088 tokens**, matching the original saving to within one token — the cost is now paid only when browser tooling is actually wanted.
+7. **Enabled `OPENCODE_EXPERIMENTAL_PLAN_MODE=1`** in the same wrapper. Confirmed present in the 1.18.15 binary. The default plan mode is only a preset that strips edit tools; the experimental one writes plans to markdown, which is the externalised-state half of the Research-Plan-Implement pattern above.
+
+Considered and rejected:
+
+- **Dynamic Context Pruning plugin** and **`OPENCODE_DISABLE_AUTOCOMPACT=1`** — adding a plugin contradicts this document's own finding that the problem is bloat, not missing capability, and disabling autocompact without a replacement degrades long sessions rather than improving them.
+- **Research/plan/implement command files** — OMO already supplies Prometheus (plan builder) and Atlas (plan executor) primary agents, so these would duplicate existing routing.
 
 ### Worth keeping
 

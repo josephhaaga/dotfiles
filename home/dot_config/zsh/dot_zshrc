@@ -2,6 +2,12 @@
 typeset -U PATH path
 path=("$HOME/.local/bin" $path)
 
+# The OpenCode 2 beta has no Homebrew formula, so it is installed by hand to
+# ~/.opencode/bin and is intentionally absent from packages.yaml. Only this
+# PATH entry is managed, so `chezmoi apply` cannot drop it the way it would
+# drop the installer's own edit to this file.
+path=("$HOME/.opencode/bin" $path)
+
 # oh-my-zsh setup
 ## use XDG standard cache location
 export ZSH_CACHE_DIR="$HOME/.cache/oh-my-zsh"

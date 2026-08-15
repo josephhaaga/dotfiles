@@ -80,6 +80,7 @@ packages:
     - gzip
     - jq
     - gtk3
+    - libatomic
     - libX11
     - libXcomposite
     - libXdamage

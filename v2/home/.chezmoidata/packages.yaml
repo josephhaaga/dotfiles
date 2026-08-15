@@ -18,6 +18,10 @@ packages:
     tealdeer: "1.8.1"
     uv: "0.12.4"
 
+  mise_server:
+    "cargo:tree-sitter-cli": "0.26.12"
+    rust: "1.97.1"
+
   npm:
     "@opencode-ai/cli": "0.0.0-next-17444"
     tree-sitter-cli: "0.26.12"

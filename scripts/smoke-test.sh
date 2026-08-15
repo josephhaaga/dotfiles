@@ -41,7 +41,7 @@ kubectl version --client >/dev/null
 
 zsh -lic true
 if command -v nvim >/dev/null 2>&1; then
-  nvim --headless '+Lazy! sync' '+lua vim.wait(30000)' \
+  nvim --headless '+Lazy! restore' '+lua vim.wait(30000)' \
     '+lua print("Neovim configuration loaded")' +qa
 fi
 

@@ -15,7 +15,7 @@ if [ -z "$profile" ]; then
   fi
 fi
 
-required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship gh opencode2 kubectl neofetch)
+required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship gh opencode2 kubectl neofetch tree-sitter)
 status=0
 
 for command_name in "${required[@]}"; do
@@ -27,8 +27,13 @@ for command_name in "${required[@]}"; do
   fi
 done
 
+herdr --version >/dev/null
+opencode2 --version >/dev/null
+kubectl version --client >/dev/null
+
 zsh -lic true
 if command -v nvim >/dev/null 2>&1; then
+  nvim --headless '+Lazy! sync' +qa
   nvim --headless '+lua print("Neovim configuration loaded")' +qa
 fi
 

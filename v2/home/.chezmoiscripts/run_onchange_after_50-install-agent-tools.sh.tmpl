@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
+npm_packages=(
+{{- range $package, $version := .packages.npm }}
+  {{ printf "%s@%s" $package $version | quote }}
+{{- end }}
+)
+npm install --global --prefix "$HOME/.local" --ignore-scripts=false "${npm_packages[@]}"
+
+plannotator_version="0.27.3"
+curl -fsSL https://plannotator.ai/install.sh |
+  bash -s -- --version "$plannotator_version" --non-interactive
+
+# The vendor installer verifies release checksums before replacing the binary.
+curl -fsSL https://terminal-browser.sh/install | bash

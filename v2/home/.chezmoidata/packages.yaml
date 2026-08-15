@@ -11,15 +11,20 @@ packages:
     kubectl: "1.36.3"
     neovim: "0.12.4"
     node: "26.7.0"
-    "npm:@opencode-ai/cli": "0.0.0-next-17444"
     ripgrep: "15.2.0"
     shellcheck: "0.11.0"
     starship: "1.26.0"
     tealdeer: "1.8.1"
     uv: "0.12.4"
 
+  npm:
+    "@opencode-ai/cli": "0.0.0-next-17444"
+    tree-sitter-cli: "0.26.12"
+
   macos:
     taps:
+      - asmvik/formulae
+    trusted_taps:
       - asmvik/formulae
     brews:
       - age

@@ -18,6 +18,10 @@ packages:
     tealdeer: "1.8.1"
     uv: "0.12.4"
 
+  mise_server:
+    "cargo:tree-sitter-cli": "0.26.12"
+    rust: "1.97.1"
+
   npm:
     "@opencode-ai/cli": "0.0.0-next-17444"
     tree-sitter-cli: "0.26.12"
@@ -69,19 +73,19 @@ packages:
     - at-spi2-atk
     - atk
     - bash
+    - clang
     - cmake
     - cronie
     - cups-libs
-    - curl
     - docker
     - gcc
     - gcc-c++
     - git
     - git-lfs
-    - gnupg2
     - gzip
     - jq
     - gtk3
+    - libatomic
     - libX11
     - libXcomposite
     - libXdamage

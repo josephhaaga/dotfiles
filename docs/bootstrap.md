@@ -13,7 +13,9 @@ The detected profile is `desktop`.
 ## Amazon Linux 2023
 
 ```bash
-git clone git@github.com:josephhaaga/dotfiles.git ~/Documents/dotfiles
+sudo dnf install -y git
+mkdir -p ~/Documents
+git clone https://github.com/josephhaaga/dotfiles.git ~/Documents/dotfiles
 cd ~/Documents/dotfiles
 ./setup
 ```

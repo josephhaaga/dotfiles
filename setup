@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+umask 022
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source_dir="$repo_dir/v2/home"
@@ -27,4 +28,4 @@ if ! command -v chezmoi >/dev/null 2>&1; then
   export PATH="$bin_dir:$PATH"
 fi
 
-exec chezmoi init --apply --source "$source_dir"
+exec chezmoi init --apply --force --source "$source_dir"

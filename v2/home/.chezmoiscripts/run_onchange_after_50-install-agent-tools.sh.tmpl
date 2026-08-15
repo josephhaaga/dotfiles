@@ -6,7 +6,9 @@ export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
 
 npm_packages=(
 {{- range $package, $version := .packages.npm }}
+{{- if or (ne $.profile "server") (ne $package "tree-sitter-cli") }}
   {{ printf "%s@%s" $package $version | quote }}
+{{- end }}
 {{- end }}
 )
 npm install --global --prefix "$HOME/.local" --ignore-scripts=false "${npm_packages[@]}"

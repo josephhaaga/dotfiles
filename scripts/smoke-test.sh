@@ -33,8 +33,8 @@ kubectl version --client >/dev/null
 
 zsh -lic true
 if command -v nvim >/dev/null 2>&1; then
-  nvim --headless '+Lazy! sync' +qa
-  nvim --headless '+lua print("Neovim configuration loaded")' +qa
+  nvim --headless '+Lazy! sync' '+lua vim.wait(30000)' \
+    '+lua print("Neovim configuration loaded")' +qa
 fi
 
 if [ "$profile" != container ]; then

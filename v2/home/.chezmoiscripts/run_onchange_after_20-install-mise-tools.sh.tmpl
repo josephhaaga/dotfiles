@@ -9,7 +9,17 @@ if command -v mise >/dev/null 2>&1; then
 elif [ -x "$HOME/.local/bin/mise" ]; then
   mise_bin="$HOME/.local/bin/mise"
 else
-  curl -fsSL https://mise.run | MISE_INSTALL_PATH="$HOME/.local/bin/mise" sh
+  installer="$(mktemp)"
+  trap 'rm -f "$installer"' EXIT
+  curl -fsSL https://mise.run -o "$installer"
+  expected="18ec854e24388880277a84e73434114eb80cdf2066afcf3671fed2682cb1ea4a"
+  if command -v sha256sum >/dev/null 2>&1; then
+    actual="$(sha256sum "$installer" | awk '{print $1}')"
+  else
+    actual="$(shasum -a 256 "$installer" | awk '{print $1}')"
+  fi
+  [ "$actual" = "$expected" ] || { printf '%s\n' 'mise installer checksum mismatch' >&2; exit 1; }
+  MISE_VERSION=v2026.8.6 MISE_INSTALL_PATH="$HOME/.local/bin/mise" sh "$installer"
   mise_bin="$HOME/.local/bin/mise"
 fi
 

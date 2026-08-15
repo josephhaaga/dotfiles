@@ -23,7 +23,7 @@ case "$profile" in
     ;;
 esac
 
-required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship gh opencode2 kubectl neofetch tree-sitter)
+required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode2 kubectl neofetch tree-sitter)
 status=0
 
 for command_name in "${required[@]}"; do

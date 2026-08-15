@@ -1,0 +1,43 @@
+typeset -U PATH path
+path=("$HOME/.local/bin" "$HOME/.local/share/mise/shims" $path)
+
+export EDITOR=nvim
+export VISUAL=nvim
+export PYTHONDONTWRITEBYTECODE=1
+export TEALDEER_CONFIG_DIR="$HOME/.config/tealdeer"
+
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=60000
+SAVEHIST=50000
+setopt HIST_IGNORE_DUPS HIST_IGNORE_SPACE SHARE_HISTORY
+
+autoload -Uz compinit
+compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
+
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
+
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
+
+alias vim=nvim
+alias vi=nvim
+alias vimdiff='nvim -d'
+alias ll='ls -lah'
+alias fish=asciiquarium
+
+# OpenCode V2 installs as opencode2 while it remains in beta.
+if command -v opencode2 >/dev/null 2>&1; then
+  alias opencode=opencode2
+fi
+
+if command -v kubectl >/dev/null 2>&1; then
+  source <(kubectl completion zsh)
+  alias k=kubectl
+fi

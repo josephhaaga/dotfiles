@@ -12,15 +12,15 @@
 {{- if ne .profile "desktop" }}
 # macOS-only configuration and applications.
 .config/ghostty
+.skhdrc
 .config/skhd
 .config/yabai
 .config/brew
-.config/neofetch/config.conf
 Library
 {{- end }}
 
-{{- if eq .profile "container" }}
-# Container images do not run host services or carry desktop-only workflows.
+{{- if ne .profile "desktop" }}
+# Headless profiles do not carry the macOS-only Slack export workflow.
 .local/bin/slackmd
 .local/lib/dotfiles/format_slackdump_as_md.py
 {{- end }}

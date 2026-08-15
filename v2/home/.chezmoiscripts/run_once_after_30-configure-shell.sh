@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+# Keep $HOME literal so zsh evaluates it when loading ~/.zshenv.
+# shellcheck disable=SC2016
 line='export ZDOTDIR="$HOME/.config/zsh"'
 touch "$HOME/.zshenv"
 grep -qxF "$line" "$HOME/.zshenv" || printf '%s\n' "$line" >> "$HOME/.zshenv"

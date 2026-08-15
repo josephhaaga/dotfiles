@@ -31,7 +31,8 @@ verify_installer "b644951c8d556414dacc4a7d70e1b6fd7e5674111ed3f533575aadb1b33424
   printf '%s\n' 'Plannotator installer checksum mismatch' >&2
   exit 1
 }
-bash "$installer" --version "$plannotator_version" --non-interactive
+bash "$installer" --version "$plannotator_version" --non-interactive \
+  --skip-skills --skip-codex --skip-gemini --skip-kiro --skip-opencode
 
 curl -fsSL https://terminal-browser.sh/install -o "$installer"
 verify_installer "fb1d1b77f38b02772a4b62bf30a73a989a1f4edd7fa5b2a53161676989a453d4" || {

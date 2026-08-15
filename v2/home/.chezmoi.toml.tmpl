@@ -1,4 +1,5 @@
 {{- $profile := "" -}}
+{{- $unsupported := "" -}}
 {{- if eq .chezmoi.os "darwin" -}}
 {{-   $profile = "desktop" -}}
 {{- else if or (env "CODESPACES") (env "REMOTE_CONTAINERS") (env "container") (stat "/.dockerenv") -}}
@@ -8,13 +9,16 @@
 {{-   if eq $release "amzn:2023" -}}
 {{-     $profile = "server" -}}
 {{-   else -}}
-{{-     fail (printf "unsupported Linux release %q; set DOTFILES_PROFILE=container only inside a dev container" $release) -}}
+{{-     $unsupported = printf "unsupported Linux release %q; set DOTFILES_PROFILE=container only inside a dev container" $release -}}
 {{-   end -}}
 {{- else -}}
-{{-   fail (printf "unsupported operating system %q" .chezmoi.os) -}}
+{{-   $unsupported = printf "unsupported operating system %q" .chezmoi.os -}}
 {{- end -}}
 {{- if env "DOTFILES_PROFILE" -}}
 {{-   $profile = env "DOTFILES_PROFILE" -}}
+{{- end -}}
+{{- if not $profile -}}
+{{-   fail $unsupported -}}
 {{- end -}}
 {{- if not (has $profile (list "desktop" "server" "container")) -}}
 {{-   fail (printf "invalid DOTFILES_PROFILE %q; expected desktop, server, or container" $profile) -}}

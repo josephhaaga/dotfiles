@@ -5,7 +5,12 @@ set -euo pipefail
 {{ if eq .profile "desktop" -}}
 if ! command -v brew >/dev/null 2>&1; then
   printf '%s\n' 'Installing Homebrew...'
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  installer="$(mktemp)"
+  trap 'rm -f "$installer"' EXIT
+  curl -fsSL \
+    https://raw.githubusercontent.com/Homebrew/install/cced90146ea6d3057c03a636b668fef177415eb3/install.sh \
+    -o "$installer"
+  /bin/bash "$installer"
 fi
 {{ else -}}
 mkdir -p "$HOME/.local/bin"

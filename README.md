@@ -8,15 +8,15 @@ The v2 source supports:
 - Amazon Linux 2023 development servers.
 - Non-root Linux development containers.
 
-## Safety During Review
+## Safe Preview
 
-v2 lives under `v2/home/` while `.chezmoiroot` continues to point at the legacy `home/` source. Checking out this branch does not change deployed dotfiles or uninstall applications.
+The active chezmoi source is `v2/home/`. The legacy `home/` source remains in the repository for rollback but is no longer applied.
 
 Preview the desktop profile without applying it:
 
 ```bash
 chezmoi apply --dry-run \
-  --source "$PWD/v2/home" \
+  --source "$PWD" \
   --override-data '{"profile":"desktop"}'
 ```
 
@@ -55,7 +55,7 @@ Alternatively, SSH first and run `herdr`. Detaching leaves remote panes and agen
 ```bash
 bash scripts/validate.sh
 bash scripts/smoke-test.sh
-chezmoi apply --source "$PWD/v2/home"
+chezmoi apply --source "$PWD"
 ```
 
 ## Documentation

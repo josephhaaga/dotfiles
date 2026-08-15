@@ -45,10 +45,10 @@ DOTFILES_PROFILE=container ./setup
 
 ## Safe preview
 
-The current repository still points `.chezmoiroot` at the legacy `home/` tree. Preview v2 without changing `$HOME`:
+Preview the active source without changing `$HOME`:
 
 ```bash
-chezmoi apply --dry-run --source "$PWD/v2/home" --override-data '{"profile":"desktop"}'
+chezmoi apply --dry-run --source "$PWD" --override-data '{"profile":"desktop"}'
 ```
 
 `./setup` is the explicit action that applies v2.

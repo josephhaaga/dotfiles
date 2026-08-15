@@ -2,9 +2,9 @@
 
 ## Workflow
 
-- The new cross-platform chezmoi source is `v2/home/`. It supports the `desktop`, `server`, and `container` profiles described in `docs/profiles.md`.
-- `.chezmoiroot` intentionally remains `home` until the reviewed cutover. Editing v2 does not update `$HOME`; `setup` is the explicit v2 apply path.
-- Preview v2 with `chezmoi apply --dry-run --source "$PWD/v2/home" --override-data '{"profile":"desktop"}'`.
+- The active cross-platform chezmoi source is `v2/home/`. It supports the `desktop`, `server`, and `container` profiles described in `docs/profiles.md`.
+- `.chezmoiroot` points to `v2/home`; `setup` remains the explicit bootstrap path.
+- Preview v2 with `chezmoi apply --dry-run --source "$PWD" --override-data '{"profile":"desktop"}'`.
 - chezmoi copies and renders files; it does not symlink them. Do not edit deployed files while developing v2.
 - `v2/home/.chezmoidata/packages.yaml` is the package and portable-tool source of truth. Homebrew owns macOS packages, DNF owns Amazon Linux system packages, and mise owns portable tools and runtimes.
 - There is no work/personal split. Platform profiles control only capabilities such as GUI applications, services, and local-vault integration.

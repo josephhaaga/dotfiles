@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source_dir="$repo_dir/v2/home"
+
+if [ ! -d "$source_dir" ]; then
+  printf 'v2 chezmoi source not found: %s\n' "$source_dir" >&2
+  exit 1
+fi
+
+if ! command -v chezmoi >/dev/null 2>&1; then
+  bin_dir="$HOME/.local/bin"
+  mkdir -p "$bin_dir"
+  sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$bin_dir"
+  export PATH="$bin_dir:$PATH"
+fi
+
+exec chezmoi init --apply --source "$source_dir"

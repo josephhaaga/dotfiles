@@ -1,0 +1,13 @@
+{{- $profile := "server" -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{-   $profile = "desktop" -}}
+{{- else if or (env "CODESPACES") (env "REMOTE_CONTAINERS") (env "container") (stat "/.dockerenv") -}}
+{{-   $profile = "container" -}}
+{{- end -}}
+{{- if env "DOTFILES_PROFILE" -}}
+{{-   $profile = env "DOTFILES_PROFILE" -}}
+{{- end -}}
+
+[data]
+    profile = {{ $profile | quote }}
+    managedSecrets = false

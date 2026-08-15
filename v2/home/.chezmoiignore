@@ -1,0 +1,26 @@
+# Source-only files.
+.chezmoidata
+
+# Authentication and mutable runtime state are never managed.
+.config/gh
+.config/gcloud
+.config/opencode/auth.json
+.docker/config.json
+.local/share/opencode/auth.json
+.zsh_history
+
+{{- if ne .profile "desktop" }}
+# macOS-only configuration and applications.
+.config/ghostty
+.config/skhd
+.config/yabai
+.config/brew
+.config/neofetch/config.conf
+Library
+{{- end }}
+
+{{- if eq .profile "container" }}
+# Container images do not run host services or carry desktop-only workflows.
+.local/bin/slackmd
+.local/lib/dotfiles/format_slackdump_as_md.py
+{{- end }}

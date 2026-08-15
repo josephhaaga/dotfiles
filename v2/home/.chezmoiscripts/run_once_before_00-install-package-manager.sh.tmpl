@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+{{ if eq .profile "desktop" -}}
+if ! command -v brew >/dev/null 2>&1; then
+  printf '%s\n' 'Installing Homebrew...'
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+{{ else -}}
+mkdir -p "$HOME/.local/bin"
+{{ end -}}

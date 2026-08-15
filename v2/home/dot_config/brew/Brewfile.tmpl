@@ -1,0 +1,12 @@
+# Generated from .chezmoidata/packages.yaml. Edit the inventory, not this file.
+{{- range .packages.macos.taps }}
+tap {{ . | quote }}
+{{- end }}
+
+{{ range .packages.macos.brews }}
+brew {{ . | quote }}
+{{- end }}
+
+{{ range .packages.macos.casks }}
+cask {{ . | quote }}
+{{- end }}

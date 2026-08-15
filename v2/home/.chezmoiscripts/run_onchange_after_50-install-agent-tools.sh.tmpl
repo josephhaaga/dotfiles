@@ -31,7 +31,9 @@ verify_installer "b644951c8d556414dacc4a7d70e1b6fd7e5674111ed3f533575aadb1b33424
   printf '%s\n' 'Plannotator installer checksum mismatch' >&2
   exit 1
 }
-bash "$installer" --version "$plannotator_version" --non-interactive \
+# The vendor installer has no Pi opt-out and updates Pi whenever it is on PATH.
+PATH="$HOME/.local/share/mise/shims:/usr/bin:/bin:/usr/sbin:/sbin" \
+  bash "$installer" --version "$plannotator_version" --non-interactive \
   --skip-skills --skip-codex --skip-gemini --skip-kiro --skip-opencode
 
 curl -fsSL https://terminal-browser.sh/install -o "$installer"

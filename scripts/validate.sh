@@ -83,6 +83,12 @@ if [ -d "$V2_SOURCE" ]; then
 
   python3 -m py_compile "$V2_SOURCE/dot_local/lib/dotfiles/format_slackdump_as_md.py"
 
+  if DOTFILES_PROFILE=invalid chezmoi execute-template --source "$V2_SOURCE" \
+    < "$V2_SOURCE/.chezmoi.toml.tmpl" >/dev/null 2>&1; then
+    echo "v2 accepted an invalid profile" >&2
+    exit 1
+  fi
+
   for profile in desktop server container; do
     data="{\"profile\":\"$profile\"}"
 
@@ -105,6 +111,9 @@ if [ -d "$V2_SOURCE" ]; then
         < "$template" | bash -n
     done < <(find "$V2_SOURCE/.chezmoiscripts" -type f -name '*.sh.tmpl' -print0)
   done
+
+  chezmoi execute-template --source "$V2_SOURCE" --override-data '{"profile":"desktop"}' \
+    < "$V2_SOURCE/dot_config/brew/Brewfile.tmpl" | ruby -c >/dev/null
 
   if grep -Rqi --exclude='*.spl' 'tmux' "$V2_SOURCE"; then
     echo "v2 must not contain tmux configuration or dependencies" >&2

@@ -46,14 +46,13 @@ def get_slack_cookie() -> str | None:
         return None
 
     try:
-        tmp = tempfile.mktemp(suffix=".db")
-        shutil.copy2(cookie_path, tmp)
-        conn = sqlite3.connect(tmp)
-        row = conn.cursor().execute(
-            "SELECT encrypted_value FROM cookies WHERE name = 'd' AND host_key = '.slack.com'"
-        ).fetchone()
-        conn.close()
-        os.unlink(tmp)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp = Path(tmp_dir) / "Cookies.db"
+            shutil.copy2(cookie_path, tmp)
+            with sqlite3.connect(tmp) as conn:
+                row = conn.cursor().execute(
+                    "SELECT encrypted_value FROM cookies WHERE name = 'd' AND host_key = '.slack.com'"
+                ).fetchone()
     except Exception as e:
         print(f"Warning: Could not read Slack cookie DB: {e}", file=sys.stderr)
         return None
@@ -75,21 +74,18 @@ def get_slack_cookie() -> str | None:
 
 
 def make_opener(cookie: str | None) -> urllib.request.OpenerDirector:
-    """Build a urllib opener that attaches the Slack cookie on every request, including redirects."""
+    """Build an opener that sends the Slack cookie only to slack.com hosts."""
 
-    class CookieRedirectHandler(urllib.request.HTTPRedirectHandler):
-        def redirect_request(self, req, fp, code, msg, headers, newurl):
-            new_req = super().redirect_request(req, fp, code, msg, headers, newurl)
-            if new_req and cookie:
-                new_req.add_header("Cookie", f"d={cookie}")
-            return new_req
+    class SlackHTTPSHandler(urllib.request.HTTPSHandler):
+        def https_open(self, req):
+            hostname = urllib.parse.urlparse(req.full_url).hostname or ""
+            if cookie and (hostname == "slack.com" or hostname.endswith(".slack.com")):
+                req.add_unredirected_header("Cookie", f"d={cookie}")
+            return super().https_open(req)
 
     opener = urllib.request.build_opener(
-        CookieRedirectHandler,
-        urllib.request.HTTPSHandler(context=_SSL_CONTEXT),
+        SlackHTTPSHandler(context=_SSL_CONTEXT),
     )
-    if cookie:
-        opener.addheaders = [("Cookie", f"d={cookie}")]
     return opener
 
 

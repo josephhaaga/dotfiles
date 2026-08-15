@@ -17,6 +17,7 @@
 .config/yabai
 .config/brew
 Library
+Documents/obsidian-vault
 {{- end }}
 
 {{- if ne .profile "desktop" }}

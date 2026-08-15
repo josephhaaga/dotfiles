@@ -94,5 +94,6 @@ packages:
     - tar
     - tree
     - unzip
+    - util-linux-user
     - wget
     - zsh

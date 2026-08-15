@@ -15,6 +15,14 @@ if [ -z "$profile" ]; then
   fi
 fi
 
+case "$profile" in
+  desktop|server|container) ;;
+  *)
+    printf 'Invalid DOTFILES_PROFILE: %s\n' "$profile" >&2
+    exit 2
+    ;;
+esac
+
 required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship gh opencode2 kubectl neofetch tree-sitter)
 status=0
 

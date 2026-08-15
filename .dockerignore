@@ -1,0 +1,12 @@
+.git
+.opencode
+.playwright-mcp
+.omo
+.aider*
+.DS_Store
+*.swp
+
+# Legacy and local-only trees are not needed by the v2 container test.
+Casks
+configs
+home

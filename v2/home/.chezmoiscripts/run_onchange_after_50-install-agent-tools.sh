@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
 plannotator_version="0.27.3"
 curl -fsSL https://plannotator.ai/install.sh |
   bash -s -- --version "$plannotator_version" --non-interactive

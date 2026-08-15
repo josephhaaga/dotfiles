@@ -22,7 +22,7 @@ if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
 
-if command -v fzf >/dev/null 2>&1; then
+if [[ -o interactive ]] && command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh)
 fi
 
@@ -37,7 +37,7 @@ if command -v opencode2 >/dev/null 2>&1; then
   alias opencode=opencode2
 fi
 
-if command -v kubectl >/dev/null 2>&1; then
+if [[ -o interactive ]] && command -v kubectl >/dev/null 2>&1; then
   source <(kubectl completion zsh)
   alias k=kubectl
 fi

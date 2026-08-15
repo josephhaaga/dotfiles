@@ -20,3 +20,6 @@ auto_switch = false
 
 [keys]
 prefix = "ctrl+alt+g"
+
+[experimental]
+kitty_graphics = true

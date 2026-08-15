@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# package inventory: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
+
+{{ if eq .profile "desktop" -}}
+if command -v brew >/dev/null 2>&1; then
+  brew_bin="$(command -v brew)"
+else
+  brew_bin="/opt/homebrew/bin/brew"
+fi
+eval "$("$brew_bin" shellenv)"
+brew bundle --file="{{ .chezmoi.homeDir }}/.config/brew/Brewfile"
+{{ else if eq .profile "server" -}}
+packages=(
+{{- range .packages.amazon_linux }}
+  {{ . | quote }}
+{{- end }}
+)
+sudo dnf install -y "${packages[@]}"
+{{ else -}}
+printf '%s\n' 'Container profile: native packages are owned by the image.'
+{{ end -}}

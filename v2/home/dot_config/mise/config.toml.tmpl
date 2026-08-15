@@ -1,0 +1,12 @@
+min_version = "2026.8.0"
+
+[tools]
+{{- range $tool, $version := .packages.mise }}
+{{ $tool | quote }} = {{ $version | quote }}
+{{- end }}
+
+[settings]
+experimental = true
+lockfile = true
+pin = true
+minimum_release_age = "7d"

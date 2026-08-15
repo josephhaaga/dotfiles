@@ -1,0 +1,38 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "shell": "/bin/zsh",
+  "share": "manual",
+  "plugins": [
+    "@plannotator/opencode@0.27.3"
+  ],
+  "mcp": {
+    "servers": {
+      "agent-mcp": {
+        "type": "remote",
+        "url": "https://agent-mcp-production-db5b.up.railway.app/mcp",
+        "disabled": false
+      }{{ if eq .profile "desktop" }},
+      "obsidian": {
+        "type": "local",
+        "command": ["npx", "-y", "seekstone@0.13.0"],
+        "environment": {
+          "SEEKSTONE_VAULT": "{{ .chezmoi.homeDir }}/Documents/obsidian-vault"
+        },
+        "disabled": false
+      }
+      {{- end }}
+    }
+  },
+  "permissions": [
+    {
+      "action": "subagent",
+      "resource": "build",
+      "effect": "deny"
+    },
+    {
+      "action": "subagent",
+      "resource": "plan",
+      "effect": "deny"
+    }
+  ]
+}

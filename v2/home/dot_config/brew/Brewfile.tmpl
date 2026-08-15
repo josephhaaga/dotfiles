@@ -1,0 +1,16 @@
+# Generated from .chezmoidata/packages.yaml. Edit the inventory, not this file.
+{{- range .packages.macos.taps }}
+{{- if has . $.packages.macos.trusted_taps }}
+tap {{ . | quote }}, trusted: true
+{{- else }}
+tap {{ . | quote }}
+{{- end }}
+{{- end }}
+
+{{ range .packages.macos.brews }}
+brew {{ . | quote }}
+{{- end }}
+
+{{ range .packages.macos.casks }}
+cask {{ . | quote }}
+{{- end }}

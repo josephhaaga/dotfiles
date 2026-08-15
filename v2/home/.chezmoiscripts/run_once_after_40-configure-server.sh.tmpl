@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+{{ if eq .profile "server" -}}
+sudo systemctl enable --now docker.service
+sudo systemctl enable --now crond.service
+
+if ! id -nG "$USER" | tr ' ' '\n' | grep -qx docker; then
+  sudo usermod -aG docker "$USER"
+  printf '%s\n' 'Docker group added. Reconnect before running Docker without sudo.'
+fi
+{{ else -}}
+printf '%s\n' 'No server services for this profile.'
+{{ end -}}

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
+npm_packages=(
+{{- range $package, $version := .packages.npm }}
+  {{ printf "%s@%s" $package $version | quote }}
+{{- end }}
+)
+npm install --global --prefix "$HOME/.local" --ignore-scripts=false "${npm_packages[@]}"
+
+plannotator_version="0.27.3"
+installer="$(mktemp)"
+trap 'rm -f "$installer"' EXIT
+
+verify_installer() {
+  local expected="$1"
+  local actual
+  if command -v sha256sum >/dev/null 2>&1; then
+    actual="$(sha256sum "$installer" | awk '{print $1}')"
+  else
+    actual="$(shasum -a 256 "$installer" | awk '{print $1}')"
+  fi
+  [ "$actual" = "$expected" ]
+}
+
+curl -fsSL https://plannotator.ai/install.sh -o "$installer"
+verify_installer "b644951c8d556414dacc4a7d70e1b6fd7e5674111ed3f533575aadb1b33424e5" || {
+  printf '%s\n' 'Plannotator installer checksum mismatch' >&2
+  exit 1
+}
+bash "$installer" --version "$plannotator_version" --non-interactive \
+  --skip-skills --skip-codex --skip-gemini --skip-kiro --skip-opencode
+
+curl -fsSL https://terminal-browser.sh/install -o "$installer"
+verify_installer "fb1d1b77f38b02772a4b62bf30a73a989a1f4edd7fa5b2a53161676989a453d4" || {
+  printf '%s\n' 'terminal-browser installer checksum mismatch' >&2
+  exit 1
+}
+bash "$installer"

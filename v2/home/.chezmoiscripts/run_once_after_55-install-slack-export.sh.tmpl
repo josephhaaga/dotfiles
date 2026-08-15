@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+{{ if eq .profile "desktop" -}}
+if ! gh extension list | awk '{print $1}' | grep -qx 'wham/gh-slackdump'; then
+  gh extension install wham/gh-slackdump
+fi
+{{ else -}}
+printf '%s\n' 'Slack export is only installed on macOS.'
+{{ end -}}

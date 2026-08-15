@@ -1,0 +1,29 @@
+{{- $profile := "" -}}
+{{- $unsupported := "" -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{-   $profile = "desktop" -}}
+{{- else if or (env "CODESPACES") (env "REMOTE_CONTAINERS") (env "container") (stat "/.dockerenv") -}}
+{{-   $profile = "container" -}}
+{{- else if eq .chezmoi.os "linux" -}}
+{{-   $release := output "sh" "-c" ". /etc/os-release 2>/dev/null && printf %s \"$ID:$VERSION_ID\"" -}}
+{{-   if eq $release "amzn:2023" -}}
+{{-     $profile = "server" -}}
+{{-   else -}}
+{{-     $unsupported = printf "unsupported Linux release %q; set DOTFILES_PROFILE=container only inside a dev container" $release -}}
+{{-   end -}}
+{{- else -}}
+{{-   $unsupported = printf "unsupported operating system %q" .chezmoi.os -}}
+{{- end -}}
+{{- if env "DOTFILES_PROFILE" -}}
+{{-   $profile = env "DOTFILES_PROFILE" -}}
+{{- end -}}
+{{- if not $profile -}}
+{{-   fail $unsupported -}}
+{{- end -}}
+{{- if not (has $profile (list "desktop" "server" "container")) -}}
+{{-   fail (printf "invalid DOTFILES_PROFILE %q; expected desktop, server, or container" $profile) -}}
+{{- end -}}
+
+[data]
+    profile = {{ $profile | quote }}
+    managedSecrets = false

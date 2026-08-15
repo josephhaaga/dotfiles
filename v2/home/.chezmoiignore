@@ -1,0 +1,27 @@
+# Source-only files.
+.chezmoidata
+
+# Authentication and mutable runtime state are never managed.
+.config/gh
+.config/gcloud
+.config/opencode/auth.json
+.docker/config.json
+.local/share/opencode/auth.json
+.zsh_history
+
+{{- if ne .profile "desktop" }}
+# macOS-only configuration and applications.
+.config/ghostty
+.skhdrc
+.config/skhd
+.config/yabai
+.config/brew
+Library
+Documents/obsidian-vault
+{{- end }}
+
+{{- if ne .profile "desktop" }}
+# Headless profiles do not carry the macOS-only Slack export workflow.
+.local/bin/slackmd
+.local/lib/dotfiles/format_slackdump_as_md.py
+{{- end }}

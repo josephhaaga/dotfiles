@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Keep $HOME literal so zsh evaluates it when loading ~/.zshenv.
+# shellcheck disable=SC2016
+line='export ZDOTDIR="$HOME/.config/zsh"'
+touch "$HOME/.zshenv"
+grep -qxF "$line" "$HOME/.zshenv" || printf '%s\n' "$line" >> "$HOME/.zshenv"
+
+{{ if ne .profile "container" -}}
+zsh_path="$(command -v zsh || true)"
+if [ -n "$zsh_path" ] && [ "${SHELL:-}" != "$zsh_path" ]; then
+  {{ if eq .profile "desktop" -}}
+    grep -qxF "$zsh_path" /etc/shells || printf '%s\n' "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+    chsh -s "$zsh_path"
+  {{ else -}}
+    sudo usermod -s "$zsh_path" "$USER"
+  {{ end -}}
+fi
+{{ end -}}

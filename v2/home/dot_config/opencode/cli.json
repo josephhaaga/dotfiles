@@ -1,0 +1,28 @@
+{
+  "diffs": {
+    "wrap": "word",
+    "view": "auto",
+    "single": false
+  },
+  "session": {
+    "sidebar": "auto",
+    "scrollbar": true,
+    "thinking": "hide",
+    "markdown": "rendered",
+    "image_preview": false,
+    "grouping": "auto"
+  },
+  "animations": true,
+  "theme": {
+    "name": "cobalt2",
+    "mode": "dark"
+  },
+  "tabs": {
+    "layout": "vertical",
+    "scope": "global",
+    "enabled": true
+  },
+  "prompt": {
+    "image_preview": true
+  }
+}

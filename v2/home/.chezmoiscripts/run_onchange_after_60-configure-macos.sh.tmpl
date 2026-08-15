@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# yabai: {{ include "dot_config/yabai/executable_yabairc" | sha256sum }}
+# skhd: {{ include "executable_dot_skhdrc" | sha256sum }}
+
+{{ if eq .profile "desktop" -}}
+defaults write com.apple.dock autohide -bool true
+killall Dock >/dev/null 2>&1 || true
+"$HOME/.local/bin/window-manager" restart
+{{ else -}}
+printf '%s\n' 'No macOS services for this profile.'
+{{ end -}}

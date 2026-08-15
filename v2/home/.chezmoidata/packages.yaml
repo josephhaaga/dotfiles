@@ -73,6 +73,7 @@ packages:
     - at-spi2-atk
     - atk
     - bash
+    - clang-libs
     - cmake
     - cronie
     - cups-libs

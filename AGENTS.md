@@ -14,7 +14,6 @@
 
 - Never manage OAuth tokens, provider credentials, Docker credentials, Slack cookies, shell history, application databases, caches, or agent sessions. See `docs/secrets-v2.md`.
 - `~/.config/gh`, `~/.config/gcloud`, and OpenCode authentication remain local runtime state.
-- The legacy encrypted files under `home/` must remain encrypted while the old source exists. Do not decrypt them into the repository.
 - After changing OpenCode config, commands, or skills, restart OpenCode because it loads configuration at startup.
 - Do not reintroduce tmux, a work/personal profile split, removed agent clients, or unpinned runtime downloads without an explicit requirement.
 

@@ -75,7 +75,7 @@ This needs three markdown files in `~/.config/opencode/commands/`, not a framewo
 
 ## Changes applied to this repo
 
-Source of truth is `home/dot_config/opencode/opencode.json` (chezmoi renders it to `~/.config/opencode/opencode.json`).
+At the time of this research, the source of truth was the former v1 path `home/dot_config/opencode/opencode.json`. That source has since been retired.
 
 1. **Removed the `chrome-devtools` MCP server.** Highest-value single change at ~17.9k tokens per session. Browser debugging is occasional; re-add it project-locally in `.opencode/opencode.json` where needed.
 2. **Disabled the `playwright` MCP** (`enabled: false` rather than deletion, so it is a one-word revert). Same token class as chrome-devtools.
@@ -116,7 +116,7 @@ That makes them valid for **additive** tests only, which is what the table above
 
 Follow-up changes made from the same research:
 
-5. **Disabled OMO's anonymous PostHog telemetry.** Reading `shouldDisablePostHog` in the installed bundle shows three independent switches: config `telemetry: false`, `OMO_DISABLE_POSTHOG=1`, or `OMO_SEND_ANONYMOUS_TELEMETRY` set to `0`/`false`/`no`. Both a config file (`home/dot_config/opencode/oh-my-openagent.json`) and the env var are set — the config file covers every launch path, and the env var covers launches that bypass it. The redundancy is deliberate: the config file was observed disappearing once after being written, so relying on it alone is not safe. The canonical filename is used rather than the legacy `oh-my-opencode.json` to avoid triggering the plugin's config-migration copy, which would create untracked chezmoi drift.
+5. **Disabled OMO's anonymous PostHog telemetry.** Reading `shouldDisablePostHog` in the installed bundle showed three independent switches: config `telemetry: false`, `OMO_DISABLE_POSTHOG=1`, or `OMO_SEND_ANONYMOUS_TELEMETRY` set to `0`/`false`/`no`. The retired v1 source used both a config file and the environment variable so launches that bypassed either path remained covered.
 6. **Moved the browser MCP servers into an opt-in profile.** The `opencode()` shell wrapper already selected between `work` and `personal` profiles via `OPENCODE_CONFIG`, but both were empty scaffolds. Since that variable is a *merge* layer, it is exactly the right mechanism for optional extras: the base config stays lean, and `OPENCODE_PROFILE=browser opencode` adds Playwright and Chrome DevTools when UI work needs them. This replaces the dead `"enabled": false` stub, which cost nothing but also provided nothing.
 
    Measured, confirming the design: `work` (default) 52,476 tokens; `browser` 66,564. The browser profile costs **+14,088 tokens**, matching the original saving to within one token — the cost is now paid only when browser tooling is actually wanted.

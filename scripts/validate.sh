@@ -14,9 +14,7 @@ elif [ -n "${1:-}" ]; then
   exit 2
 fi
 
-bash -n "$DOTFILES"/scripts/*.sh "$DOTFILES"/scripts/lib/*.sh \
-  "$DOTFILES"/home/dot_local/bin/executable_herdr-pr \
-  "$DOTFILES"/home/dot_local/bin/executable_rotate-logs
+bash -n "$DOTFILES"/scripts/*.sh "$DOTFILES"/scripts/lib/*.sh
 
 while IFS= read -r -d '' file; do
   jq empty "$file"
@@ -32,38 +30,15 @@ if [ -f "$HOME/.config/brew/Brewfile" ]; then
   fi
 fi
 
-if command -v chezmoi >/dev/null 2>&1; then
-  chezmoi execute-template --source "$DOTFILES/home" --override-data "{\"dotfilesRepo\":\"$DOTFILES\",\"work\":false}" < "$DOTFILES/home/dot_config/brew/Brewfile.tmpl" >/dev/null
-
-  personal_config="$(chezmoi execute-template --init < "$DOTFILES/home/.chezmoi.toml.tmpl")"
-  case "$personal_config" in
-    *"[age]"*)
-      echo "personal chezmoi configuration must not require an age identity" >&2
-      exit 1
-      ;;
-  esac
-
-  personal_ignore="$(chezmoi execute-template --source "$DOTFILES/home" --override-data '{"work":false}' < "$DOTFILES/home/.chezmoiignore")"
-  case "$personal_ignore" in
-    *".config/opencode/opencode.personal.json.age"*".config/zsh/.secrets.age"*) ;;
-    *)
-      echo "personal chezmoi configuration must ignore encrypted files" >&2
-      exit 1
-      ;;
-  esac
-fi
-
 if command -v shellcheck >/dev/null 2>&1; then
-  shellcheck "$DOTFILES"/scripts/*.sh "$DOTFILES"/scripts/lib/*.sh \
-    "$DOTFILES"/home/dot_local/bin/executable_herdr-pr \
-    "$DOTFILES"/home/dot_local/bin/executable_rotate-logs
+  shellcheck "$DOTFILES"/scripts/*.sh "$DOTFILES"/scripts/lib/*.sh
 fi
 
 if command -v gitleaks >/dev/null 2>&1; then
   gitleaks detect --source "$DOTFILES" --no-git
 fi
 
-# Validate the staged cross-platform v2 source without applying it to $HOME.
+# Validate the active cross-platform source without applying it to $HOME.
 V2_SOURCE="$DOTFILES/v2/home"
 if [ -d "$V2_SOURCE" ]; then
   bash -n "$DOTFILES/setup"

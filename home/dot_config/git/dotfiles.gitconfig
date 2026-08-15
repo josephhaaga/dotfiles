@@ -1,2 +1,0 @@
-[alias]
-    glo = log --pretty=format:'%Cred%h%Creset%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -n 2

@@ -13,7 +13,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/lib/status-checks.sh"
 
 # Renderer callback for status_emit_all. See status-checks.sh for the arg contract.
-# shellcheck disable=SC2329
+# shellcheck disable=SC2317,SC2329
 render() {
   local kind="$1" section="$2" label="$3" result="$4" value="$5"
   case "$kind" in

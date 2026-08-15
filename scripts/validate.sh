@@ -81,7 +81,8 @@ if [ -d "$V2_SOURCE" ]; then
     "$V2_SOURCE/dot_config/nvim/lazyvim.json" \
     "$V2_SOURCE/dot_config/opencode/cli.json"
 
-  python3 -m py_compile "$V2_SOURCE/dot_local/lib/dotfiles/format_slackdump_as_md.py"
+  python3 -c 'import pathlib, sys; compile(pathlib.Path(sys.argv[1]).read_bytes(), sys.argv[1], "exec")' \
+    "$V2_SOURCE/dot_local/lib/dotfiles/format_slackdump_as_md.py"
 
   if DOTFILES_PROFILE=invalid chezmoi execute-template --source "$V2_SOURCE" \
     < "$V2_SOURCE/.chezmoi.toml.tmpl" >/dev/null 2>&1; then

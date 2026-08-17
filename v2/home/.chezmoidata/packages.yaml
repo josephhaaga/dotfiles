@@ -20,6 +20,7 @@ packages:
 
   mise_server:
     "cargo:tree-sitter-cli": "0.26.12"
+    caddy: "2.11.4"
     rust: "1.97.1"
 
   npm:

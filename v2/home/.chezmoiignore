@@ -25,3 +25,8 @@ Documents/obsidian-vault
 .local/bin/slackmd
 .local/lib/dotfiles/format_slackdump_as_md.py
 {{- end }}
+
+{{- if ne .profile "server" }}
+# The public HTTPS endpoint exists only on the VM.
+.config/caddy
+{{- end }}

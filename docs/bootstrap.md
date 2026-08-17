@@ -27,6 +27,13 @@ bash scripts/smoke-test.sh
 herdr
 ```
 
+The server profile installs Caddy and publishes the loopback-only OpenCode web
+service at `https://josephhaaga.sh.tribe.ai`. Caddy requires a client
+certificate signed by the public CA in `~/.config/caddy/client-ca.pem`; client
+private keys and the CA private key remain local runtime state outside this
+repository. OpenCode's generated Basic authentication remains enabled behind
+Caddy.
+
 From another machine, attach with:
 
 ```bash

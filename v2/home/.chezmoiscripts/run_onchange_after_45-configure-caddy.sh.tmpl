@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Caddyfile: {{ include "dot_config/caddy/Caddyfile.tmpl" | sha256sum }}
+# systemd unit: {{ include "dot_config/caddy/caddy.service.tmpl" | sha256sum }}
+
+{{ if eq .profile "server" -}}
+caddy_bin="{{ .chezmoi.homeDir }}/.local/share/mise/shims/caddy"
+caddyfile="{{ .chezmoi.homeDir }}/.config/caddy/Caddyfile"
+unit="{{ .chezmoi.homeDir }}/.config/caddy/caddy.service"
+
+"$caddy_bin" validate --config "$caddyfile" --adapter caddyfile
+sudo install -m 0644 "$unit" /etc/systemd/system/caddy.service
+sudo systemctl daemon-reload
+sudo systemctl enable caddy.service
+
+if systemctl is-active --quiet caddy.service; then
+  sudo systemctl reload caddy.service
+else
+  sudo systemctl start caddy.service
+fi
+{{ else -}}
+printf '%s\n' 'Caddy is only configured on the server profile.'
+{{ end -}}

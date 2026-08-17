@@ -6,6 +6,7 @@ Excluded runtime state includes:
 
 - GitHub and cloud CLI OAuth configuration.
 - OpenCode provider and MCP authentication.
+- Caddy client-certificate and client-CA private keys.
 - Docker registry credentials.
 - Slack cookies and keychain material.
 - Obsidian vault content beyond the selected app setting.

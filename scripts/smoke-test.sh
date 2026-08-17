@@ -24,6 +24,10 @@ case "$profile" in
 esac
 
 required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode2 kubectl neofetch tree-sitter)
+
+if [ "$profile" = server ]; then
+  required+=(caddy)
+fi
 status=0
 
 for command_name in "${required[@]}"; do
@@ -50,6 +54,7 @@ if [ "$profile" != container ]; then
 fi
 
 if [ "$profile" = server ]; then
+  systemctl is-active --quiet caddy.service || status=1
   systemctl is-active --quiet docker.service || status=1
   systemctl is-active --quiet crond.service || status=1
 fi

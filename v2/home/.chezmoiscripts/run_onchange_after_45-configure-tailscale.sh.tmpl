@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+{{ if eq .profile "server" -}}
+sudo systemctl enable --now tailscaled.service
+{{ else -}}
+printf '%s\n' 'Tailscale service is only configured on the server profile.'
+{{ end -}}

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+{{ if eq .profile "server" -}}
+repo="$(mktemp)"
+trap 'rm -f "$repo"' EXIT
+
+cat >"$repo" <<'EOF'
+[tailscale-stable]
+name=Tailscale stable
+baseurl=https://pkgs.tailscale.com/stable/amazon-linux/2023/$basearch
+enabled=1
+type=rpm
+repo_gpgcheck=1
+gpgcheck=1
+gpgkey=https://pkgs.tailscale.com/stable/amazon-linux/2023/repo.gpg
+EOF
+
+sudo install -m 0644 "$repo" /etc/yum.repos.d/tailscale.repo
+{{ else -}}
+printf '%s\n' 'Tailscale RPM repository is only configured on the server profile.'
+{{ end -}}

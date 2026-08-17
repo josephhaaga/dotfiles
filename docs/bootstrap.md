@@ -32,7 +32,9 @@ service at `https://josephhaaga.sh.tribe.ai`. Caddy requires a client
 certificate signed by the public CA in `~/.config/caddy/client-ca.pem`; client
 private keys and the CA private key remain local runtime state outside this
 repository. OpenCode's generated Basic authentication remains enabled behind
-Caddy.
+Caddy. Back up the client CA runtime directory at
+`~/.local/share/dotfiles/caddy-ca`; losing its private key requires issuing a
+new CA and replacing every device certificate.
 
 From another machine, attach with:
 

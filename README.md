@@ -10,7 +10,7 @@ The v2 source supports:
 
 ## Safe Preview
 
-The active chezmoi source is `v2/home/`. The legacy `home/` source remains in the repository for rollback but is no longer applied.
+The active chezmoi source is `v2/home/`. Previous configurations remain available through Git history.
 
 Preview the desktop profile without applying it:
 

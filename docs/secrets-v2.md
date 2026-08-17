@@ -1,6 +1,6 @@
-# v2 Secrets Policy
+# Secrets Policy
 
-v2 does not manage secret values by default.
+The managed source does not include secret values by default.
 
 Excluded runtime state includes:
 

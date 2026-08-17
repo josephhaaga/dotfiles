@@ -3,6 +3,7 @@
 set -euo pipefail
 
 # tool versions: {{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}
+# package inventory: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
 
 if command -v mise >/dev/null 2>&1; then
   mise_bin="$(command -v mise)"

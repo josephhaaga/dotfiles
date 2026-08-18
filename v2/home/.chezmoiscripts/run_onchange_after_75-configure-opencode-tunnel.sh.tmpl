@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# LaunchAgent: {{ include "private_Library/private_LaunchAgents/com.josephhaaga.opencode-tunnel.plist.tmpl" | sha256sum }}
+
+{{ if eq .profile "desktop" -}}
+label="com.josephhaaga.opencode-tunnel"
+domain="gui/$(id -u)"
+unit="{{ .chezmoi.homeDir }}/Library/LaunchAgents/$label.plist"
+
+launchctl bootout "$domain/$label" 2>/dev/null || true
+launchctl enable "$domain/$label"
+launchctl bootstrap "$domain" "$unit"
+{{ else -}}
+printf '%s\n' 'OpenCode SSH tunnel is only configured on the desktop profile.'
+{{ end -}}

@@ -1,0 +1,12 @@
+josephhaaga.sh.tribe.ai {
+	tls {
+		client_auth {
+			mode require_and_verify
+			trust_pool file {{ .chezmoi.homeDir }}/.config/caddy/client-ca.pem
+		}
+	}
+
+	reverse_proxy 127.0.0.1:49374 {
+		header_up Authorization "Basic {$OPENCODE_BASIC_AUTH}"
+	}
+}

@@ -1,0 +1,25 @@
+[Unit]
+Description=Caddy web server
+Documentation=https://caddyserver.com/docs/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+User={{ .chezmoi.username }}
+Group={{ .chezmoi.group }}
+Environment=HOME={{ .chezmoi.homeDir }}
+EnvironmentFile=/etc/caddy/opencode.env
+ExecStart={{ .chezmoi.homeDir }}/.local/share/mise/shims/caddy run --config {{ .chezmoi.homeDir }}/.config/caddy/Caddyfile --adapter caddyfile
+ExecReload={{ .chezmoi.homeDir }}/.local/share/mise/shims/caddy reload --config {{ .chezmoi.homeDir }}/.config/caddy/Caddyfile --adapter caddyfile --force
+TimeoutStopSec=5s
+LimitNOFILE=1048576
+PrivateTmp=true
+ProtectSystem=full
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target

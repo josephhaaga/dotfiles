@@ -11,8 +11,16 @@ HISTSIZE=60000
 SAVEHIST=50000
 setopt HIST_IGNORE_DUPS HIST_IGNORE_SPACE SHARE_HISTORY
 
-autoload -Uz compinit
-compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+export ZSH="$HOME/.oh-my-zsh"
+export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
+export ZSH_COMPDUMP="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+mkdir -p "$ZSH_CACHE_DIR" "${ZSH_COMPDUMP:h}"
+
+ZSH_THEME=""
+ZSH_DISABLE_COMPFIX=true
+plugins=(git httpie jira shrink-path uv)
+
+source "$ZSH/oh-my-zsh.sh"
 
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"

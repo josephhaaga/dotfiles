@@ -8,7 +8,7 @@ Every retained item has one installation owner. Anything not listed here is inte
 |---|---|---|---|
 | chezmoi | bootstrap/native | all | Orchestrate files, templates, packages, and services |
 | mise | native/bootstrap | all | Install pinned portable CLIs and runtimes |
-| zsh, Starship | native + mise | all | Interactive shell and prompt |
+| zsh, Oh My Zsh, Starship | native + pinned Git checkout + mise | all | Interactive shell, plugins, and prompt |
 | Herdr | mise | all | Persistent local and remote terminal sessions |
 | Neovim/LazyVim | mise | all | Editor with Go, Python, TypeScript, Docker, JSON, Markdown, and TOML support |
 | OpenCode V2 | pinned npm install | all | Primary coding agent |

@@ -43,7 +43,7 @@ herdr --version >/dev/null
 opencode2 --version >/dev/null
 kubectl version --client >/dev/null
 
-zsh -lic true
+zsh -lic 'alias gst >/dev/null'
 if command -v nvim >/dev/null 2>&1; then
   nvim --headless '+Lazy! restore' '+lua vim.wait(30000)' \
     '+lua print("Neovim configuration loaded")' +qa

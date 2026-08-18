@@ -9,8 +9,22 @@ set -euo pipefail
 caddy_bin="{{ .chezmoi.homeDir }}/.local/share/mise/shims/caddy"
 caddyfile="{{ .chezmoi.homeDir }}/.config/caddy/Caddyfile"
 unit="{{ .chezmoi.homeDir }}/.config/caddy/caddy.service"
+service_state="{{ .chezmoi.homeDir }}/.local/state/opencode/service.json"
 
-"$caddy_bin" validate --config "$caddyfile" --adapter caddyfile
+if [ ! -s "$service_state" ]; then
+  printf '%s\n' 'OpenCode service credentials are missing; start the managed service first.' >&2
+  exit 1
+fi
+
+password="$(jq -er .password "$service_state")"
+basic_auth="$(printf 'opencode:%s' "$password" | base64 | tr -d '\n')"
+environment="$(mktemp)"
+trap 'rm -f "$environment"' EXIT
+printf 'OPENCODE_BASIC_AUTH=%s\n' "$basic_auth" >"$environment"
+
+OPENCODE_BASIC_AUTH="$basic_auth" "$caddy_bin" validate --config "$caddyfile" --adapter caddyfile
+sudo install -d -m 0755 /etc/caddy
+sudo install -o root -g root -m 0600 "$environment" /etc/caddy/opencode.env
 sudo install -m 0644 "$unit" /etc/systemd/system/caddy.service
 sudo systemctl daemon-reload
 sudo systemctl enable caddy.service

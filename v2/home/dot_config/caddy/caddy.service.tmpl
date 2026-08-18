@@ -9,6 +9,7 @@ Type=notify
 User={{ .chezmoi.username }}
 Group={{ .chezmoi.group }}
 Environment=HOME={{ .chezmoi.homeDir }}
+EnvironmentFile=/etc/caddy/opencode.env
 ExecStart={{ .chezmoi.homeDir }}/.local/share/mise/shims/caddy run --config {{ .chezmoi.homeDir }}/.config/caddy/Caddyfile --adapter caddyfile
 ExecReload={{ .chezmoi.homeDir }}/.local/share/mise/shims/caddy reload --config {{ .chezmoi.homeDir }}/.config/caddy/Caddyfile --adapter caddyfile --force
 TimeoutStopSec=5s

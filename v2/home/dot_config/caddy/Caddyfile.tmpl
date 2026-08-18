@@ -6,5 +6,7 @@ josephhaaga.sh.tribe.ai {
 		}
 	}
 
-	reverse_proxy 127.0.0.1:49374
+	reverse_proxy 127.0.0.1:49374 {
+		header_up Authorization "Basic {$OPENCODE_BASIC_AUTH}"
+	}
 }

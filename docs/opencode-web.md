@@ -89,6 +89,19 @@ The effective boundaries are:
 - Caddy to OpenCode: VM-local loopback HTTP, authenticated with OpenCode Basic auth.
 - Direct internet to OpenCode: impossible because OpenCode is not bound to a public interface.
 
+## Desktop TUI access
+
+The macOS desktop profile maintains an SSH local forward from
+`127.0.0.1:14096` to the VM's `127.0.0.1:49374`. A LaunchAgent starts the tunnel
+at login and restarts it after network interruptions. The `opencode-vm` alias
+connects a local TUI to the forwarded endpoint.
+
+OpenCode still authenticates this direct connection. The alias runs the client
+through 1Password CLI using the secret reference in
+`~/.config/opencode/opencode-vm.env`; the password is resolved only for the
+child process and is never rendered by chezmoi. Use `/pair` in the VM TUI to
+obtain the password when initially creating or updating the 1Password item.
+
 ## Secret handling
 
 Only non-secret configuration and the public client CA certificate belong in

@@ -13,7 +13,7 @@ else
   installer="$(mktemp)"
   trap 'rm -f "$installer"' EXIT
   curl -fsSL https://mise.run -o "$installer"
-  expected="18ec854e24388880277a84e73434114eb80cdf2066afcf3671fed2682cb1ea4a"
+  expected="26adf4d21ca8eeecbf1035357eb1a9262a93484747e690458833b05c3b61b905"
   if command -v sha256sum >/dev/null 2>&1; then
     actual="$(sha256sum "$installer" | awk '{print $1}')"
   else

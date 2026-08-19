@@ -12,7 +12,6 @@
 {{- if ne .profile "desktop" }}
 # macOS-only configuration and applications.
 .config/ghostty
-.config/opencode/opencode-vm.env
 .skhdrc
 .config/skhd
 .config/yabai

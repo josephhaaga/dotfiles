@@ -37,20 +37,20 @@ their client certificate instead of repeatedly prompting for the generated
 password. See [OpenCode web access](opencode-web.md) for the architecture,
 certificate roles, request flow, and secret-handling requirements.
 
-To connect the desktop TUI to the VM, create an `OpenCode VM` item in the
-1Password `Employee` vault and set its `password` field to the password shown
-by `/pair` in the VM TUI. The desktop profile keeps an SSH tunnel from local
-port `14096` to the VM's loopback-only OpenCode service and resolves that
-password only when launching:
+The desktop profile keeps an SSH tunnel from local port `1455` to the same port
+on the VM for OpenAI's browser OAuth callback. To authenticate the VM, start
+OpenCode there, use `/connect`, choose OpenAI's browser flow, and open the
+authorization URL in the desktop browser. The redirect to
+`http://localhost:1455/auth/callback` reaches the listener on the VM through
+the tunnel.
 
 ```bash
-opencode-vm
-opencode-vm --continue
+ssh ec2-user@josephhaaga.sh.tribe.ai
+opencode2
 ```
 
-The SSH private key and 1Password value remain local runtime state. The
-LaunchAgent uses `~/.ssh/id_ed25519` and requires the VM host key to already be
-present in `~/.ssh/known_hosts`.
+The LaunchAgent uses `~/.ssh/id_ed25519` and requires the VM host key to already
+be present in `~/.ssh/known_hosts`.
 
 From another machine, attach with:
 

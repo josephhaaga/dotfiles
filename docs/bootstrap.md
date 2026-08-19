@@ -34,23 +34,23 @@ private keys and the CA private key remain local runtime state outside this
 repository. Caddy reads OpenCode's generated Basic credential from runtime
 state and adds it only on the loopback proxy hop, so browsers authenticate with
 their client certificate instead of repeatedly prompting for the generated
-password. See [OpenCode web access](opencode-web.md) for the architecture,
-certificate roles, request flow, and secret-handling requirements.
+password. See [OpenCode web access](opencode-web.md) for the web architecture
+and [OpenCode VM connections](opencode-vm-connections.md) for all browser, TUI,
+and OAuth connection paths.
 
-The desktop profile keeps an SSH tunnel from local port `1455` to the same port
-on the VM for OpenAI's browser OAuth callback. To authenticate the VM, start
-OpenCode there, use `/connect`, choose OpenAI's browser flow, and open the
-authorization URL in the desktop browser. The redirect to
-`http://localhost:1455/auth/callback` reaches the listener on the VM through
-the tunnel.
+To connect the desktop TUI to the VM, create an `OpenCode VM` item in the
+1Password `Employee` vault and set its `password` field to the password shown
+by `/pair` in the VM TUI. The desktop profile keeps the required SSH tunnel
+running in the background. Launch the client with:
 
 ```bash
-ssh ec2-user@josephhaaga.sh.tribe.ai
-opencode2
+opencode-vm
+opencode-vm --continue
 ```
 
-The LaunchAgent uses `~/.ssh/id_ed25519` and requires the VM host key to already
-be present in `~/.ssh/known_hosts`.
+The SSH private key and 1Password value remain local runtime state. The
+LaunchAgent uses `~/.ssh/id_ed25519` and requires the VM host key to already be
+present in `~/.ssh/known_hosts`.
 
 From another machine, attach with:
 

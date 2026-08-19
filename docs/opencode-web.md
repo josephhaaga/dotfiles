@@ -89,14 +89,11 @@ The effective boundaries are:
 - Caddy to OpenCode: VM-local loopback HTTP, authenticated with OpenCode Basic auth.
 - Direct internet to OpenCode: impossible because OpenCode is not bound to a public interface.
 
-## OpenAI OAuth callback
+## Other client connections
 
-The macOS desktop profile maintains an SSH local forward from
-`127.0.0.1:1455` to the VM's `127.0.0.1:1455`. A LaunchAgent starts the tunnel
-at login and restarts it after network interruptions. When OpenAI redirects the
-desktop browser to `http://localhost:1455/auth/callback`, the tunnel delivers
-the authorization response to OpenCode's temporary callback listener on the
-VM.
+Local TUI attachment and OpenAI browser OAuth use separate SSH tunnels with
+different lifetimes. See [OpenCode VM connections](opencode-vm-connections.md)
+for all three connection paths and their commands.
 
 ## Secret handling
 

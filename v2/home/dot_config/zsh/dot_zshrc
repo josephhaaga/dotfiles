@@ -45,6 +45,10 @@ if command -v opencode2 >/dev/null 2>&1; then
   alias opencode=opencode2
 fi
 
+if command -v op >/dev/null 2>&1 && command -v opencode2 >/dev/null 2>&1 && [[ -f "$HOME/.config/opencode/opencode-vm.env" ]]; then
+  alias opencode-vm='op run --env-file="$HOME/.config/opencode/opencode-vm.env" -- opencode2 --server http://127.0.0.1:14096'
+fi
+
 if [[ -o interactive ]] && command -v kubectl >/dev/null 2>&1; then
   source <(kubectl completion zsh)
   alias k=kubectl

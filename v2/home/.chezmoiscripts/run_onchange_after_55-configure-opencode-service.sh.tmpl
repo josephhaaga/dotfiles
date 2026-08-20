@@ -6,10 +6,15 @@ set -euo pipefail
 
 {{ if eq .profile "server" -}}
 opencode="{{ .chezmoi.homeDir }}/.local/bin/opencode2"
+service_state="{{ .chezmoi.homeDir }}/.local/state/opencode/service.json"
 
-"$opencode" service set hostname 127.0.0.1
-"$opencode" service set port 49374
-"$opencode" service start
+if [ -s "$service_state" ]; then
+  printf '%s\n' 'OpenCode service restart deferred until the current agent session is idle.'
+else
+  "$opencode" service set hostname 127.0.0.1
+  "$opencode" service set port 49374
+  "$opencode" service start
+fi
 {{ else -}}
 printf '%s\n' 'OpenCode background service is only configured on the server profile.'
 {{ end -}}

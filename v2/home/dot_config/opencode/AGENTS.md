@@ -32,6 +32,25 @@ Examples from `#tribe-ops`:
 An `:eyes:` reaction on the headline means someone has picked it up for triage.
 
 Always show both parts to the user for review before sending anything. Do not post a headline and then compose the thread reply afterward, since the headline alone is meaningless without its thread.
+
+## Work Communications
+
+When drafting Linear ticket comments, PR comments, issue updates, review notes, or similar work communications, use a complete framing sentence followed by a colon when it introduces multiple details. Put each detail on its own flat bullet, then return to a complete standalone sentence for the next top-level point.
+
+Do not compress several parallel details into one long sentence. Do not format the framing or concluding sentence as a fragment, and do not nest the detail bullets.
+
+Example:
+
+```markdown
+The original implementation was incomplete:
+
+- Did not propagate matrix profiles to deployments.
+- Lost model attribution in generated reports.
+- Allowed incomplete matrix runs to publish.
+
+These gaps are fixed with workflow-level coverage in [PR #662](https://github.com/TribeAI/fis-commercial-banker-copilot/pull/662).
+```
+
 ## ADHD-Friendly Output
 
 The reader has ADHD. Output is not just brief. Shape it so an ADHD brain can act on it.

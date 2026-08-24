@@ -13,7 +13,7 @@ npm_packages=(
 )
 npm install --global --prefix "$HOME/.local" --ignore-scripts=false "${npm_packages[@]}"
 
-plannotator_version="0.27.3"
+plannotator_version="0.27.7"
 installer="$(mktemp)"
 trap 'rm -f "$installer"' EXIT
 
@@ -29,7 +29,7 @@ verify_installer() {
 }
 
 curl -fsSL https://plannotator.ai/install.sh -o "$installer"
-verify_installer "b644951c8d556414dacc4a7d70e1b6fd7e5674111ed3f533575aadb1b33424e5" || {
+verify_installer "df4170473178791deed11849f01c84d9e791263d9064de812e1dfc880aee5e96" || {
   printf '%s\n' 'Plannotator installer checksum mismatch' >&2
   exit 1
 }

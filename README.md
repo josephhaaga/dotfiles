@@ -58,6 +58,29 @@ bash scripts/smoke-test.sh
 chezmoi apply --source "$PWD"
 ```
 
+## Update Dashboard
+
+The private dashboard compares pinned tool and Neovim plugin versions with their
+upstream releases each morning. The server profile publishes it at
+`https://josephhaaga.sh.tribe.ai/private/updates/` behind the same client-certificate
+authentication as OpenCode.
+
+Build and preview it locally:
+
+```bash
+update-dashboard
+```
+
+Publish generated HTML privately by default, or explicitly make it public:
+
+```bash
+publish-html ./report.html weekly-report
+publish-html --public ./report.html shared-report
+```
+
+Published directories must contain `index.html`. Public artifacts are available
+without a client certificate, so inspect them for secrets before publishing.
+
 ## Documentation
 
 - [`docs/inventory.md`](docs/inventory.md): retained and removed applications.

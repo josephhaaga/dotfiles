@@ -56,6 +56,16 @@ if [ -d "$V2_SOURCE" ]; then
     "$V2_SOURCE/dot_config/nvim/lazyvim.json" \
     "$V2_SOURCE/dot_config/opencode/cli.json"
 
+  jq empty "$V2_SOURCE/dot_local/share/dotfiles/update-dashboard/sources.json"
+  ruby -c "$V2_SOURCE/dot_local/lib/dotfiles/executable_build_update_dashboard.rb" >/dev/null
+  node --check "$V2_SOURCE/dot_local/share/dotfiles/html/private/updates/app.js"
+
+  if grep -RqE 'https?://' "$V2_SOURCE/dot_local/share/dotfiles/html/private/updates" \
+    --include='*.html' --include='*.css' --include='*.js'; then
+    echo "managed HTML artifacts must not load external resources" >&2
+    exit 1
+  fi
+
   python3 -c 'import pathlib, sys; compile(pathlib.Path(sys.argv[1]).read_bytes(), sys.argv[1], "exec")' \
     "$V2_SOURCE/dot_local/lib/dotfiles/format_slackdump_as_md.py"
 

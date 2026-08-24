@@ -3,7 +3,18 @@
 The server profile publishes OpenCode at
 `https://josephhaaga.sh.tribe.ai` without exposing the OpenCode process itself.
 An approved device must authenticate to Caddy with a client certificate before
-Caddy will proxy any HTTP request.
+Caddy will proxy a request to OpenCode.
+
+The same hostname publishes sandboxed HTML artifacts under two explicit path
+prefixes:
+
+| Path | Access | Source directory |
+| --- | --- | --- |
+| `/private/<slug>/` | Valid client certificate required | `~/.local/share/dotfiles/html/private/<slug>/` |
+| `/public/<slug>/` | Public internet | `~/.local/share/dotfiles/html/public/<slug>/` |
+
+OpenCode remains at `/` because it does not currently support a URL base path.
+The update dashboard is the managed private artifact at `/private/updates/`.
 
 ## Request flow
 
@@ -43,13 +54,13 @@ There are two separate certificate directions during the TLS handshake:
    that a public CA signed it and that it is valid for
    `josephhaaga.sh.tribe.ai`. This proves the device reached the intended
    server.
-2. Safari presents its **client certificate**. Caddy verifies that the private
-   client CA signed it and that it is valid for client authentication. This
-   proves the request came from an approved device.
+2. Safari can present its **client certificate**. Caddy verifies that the
+   private client CA signed it and that it is valid for client authentication.
+   This proves the request came from an approved device.
 
-Requiring both checks is mutual TLS, or mTLS. A connection without an approved
-client certificate is rejected during TLS negotiation, before OpenCode sees an
-HTTP request.
+Caddy uses `verify_if_given`: an invalid certificate is rejected, while a
+connection without a certificate can reach only `/public/*`. OpenCode and
+`/private/*` return 404 unless the request has a verified certificate.
 
 ## Certificates and keys
 
@@ -85,9 +96,28 @@ the proxied request. The browser never receives or stores this password.
 
 The effective boundaries are:
 
-- Internet to Caddy: encrypted HTTPS, authenticated with the device certificate.
+- Internet to Caddy: encrypted HTTPS; private routes additionally require a verified device certificate.
 - Caddy to OpenCode: VM-local loopback HTTP, authenticated with OpenCode Basic auth.
 - Direct internet to OpenCode: impossible because OpenCode is not bound to a public interface.
+- Artifact HTML: sandboxed by response headers with network requests, forms, framing, and same-origin access disabled.
+
+## Publishing HTML
+
+Publishing is private by default. The public flag is deliberately explicit:
+
+```bash
+publish-html ./report.html weekly-report
+publish-html --public ./report.html shared-report
+```
+
+A source may be one HTML file or a directory containing `index.html`. Slugs use
+only letters, numbers, dots, underscores, and hyphens. Symlinks are rejected,
+and the managed private slug `updates` is reserved.
+
+Artifacts should be self-contained and use relative asset paths. The CSP
+sandbox permits scripts and downloads but blocks network requests, forms,
+embedding, and access to OpenCode's same-origin API. Public publishing does not
+scan for secrets; inspect the output before using `--public`.
 
 ## Other client connections
 

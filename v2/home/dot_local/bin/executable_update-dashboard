@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+dashboard_root="$HOME/.local/share/dotfiles/update-dashboard"
+
+DASHBOARD_PACKAGES="$dashboard_root/packages.json" \
+DASHBOARD_LOCK="$HOME/.config/nvim/lazy-lock.json" \
+DASHBOARD_SOURCES="$dashboard_root/sources.json" \
+DASHBOARD_OUTPUT="$HOME/.local/share/dotfiles/html/private/updates/data.js" \
+  ruby "$HOME/.local/lib/dotfiles/build_update_dashboard.rb"

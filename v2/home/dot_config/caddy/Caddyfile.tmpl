@@ -1,12 +1,52 @@
 josephhaaga.sh.tribe.ai {
 	tls {
 		client_auth {
-			mode require_and_verify
+			mode verify_if_given
 			trust_pool file {{ .chezmoi.homeDir }}/.config/caddy/client-ca.pem
 		}
 	}
 
-	reverse_proxy 127.0.0.1:49374 {
-		header_up Authorization "Basic {$OPENCODE_BASIC_AUTH}"
+	@has_client_cert not vars {tls_client_fingerprint} e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+	redir /public /public/
+	redir /private /private/
+
+	handle_path /public/* {
+		root * {{ .chezmoi.homeDir }}/.local/share/dotfiles/html/public
+		header {
+			Content-Security-Policy "sandbox allow-downloads allow-popups allow-scripts; default-src 'self' data: blob:; base-uri 'none'; connect-src 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'"
+			Referrer-Policy "no-referrer"
+			X-Content-Type-Options "nosniff"
+		}
+		file_server
+	}
+
+	@private_artifact {
+		path /private/*
+		not vars {tls_client_fingerprint} e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+	}
+	handle @private_artifact {
+		uri strip_prefix /private
+		root * {{ .chezmoi.homeDir }}/.local/share/dotfiles/html/private
+		header {
+			Content-Security-Policy "sandbox allow-downloads allow-popups allow-scripts; default-src 'self' data: blob:; base-uri 'none'; connect-src 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'"
+			Referrer-Policy "no-referrer"
+			X-Content-Type-Options "nosniff"
+		}
+		file_server
+	}
+
+	handle /private/* {
+		respond 404
+	}
+
+	handle @has_client_cert {
+		reverse_proxy 127.0.0.1:49374 {
+			header_up Authorization "Basic {$OPENCODE_BASIC_AUTH}"
+		}
+	}
+
+	handle {
+		respond 404
 	}
 }

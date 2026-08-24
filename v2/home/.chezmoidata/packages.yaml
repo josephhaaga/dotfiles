@@ -97,6 +97,7 @@ packages:
     - mesa-libgbm
     - nss
     - pango
+    - ruby
     - tar
     - tree
     - unzip

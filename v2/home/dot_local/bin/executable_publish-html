@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+usage() {
+  printf '%s\n' 'Usage: publish-html [--public] SOURCE SLUG' >&2
+  exit 2
+}
+
+visibility=private
+if [ "${1:-}" = "--public" ]; then
+  visibility=public
+  shift
+fi
+
+[ "$#" -eq 2 ] || usage
+source_path="$1"
+slug="$2"
+
+if [[ ! "$slug" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
+  printf '%s\n' 'SLUG must contain only letters, numbers, dots, underscores, and hyphens.' >&2
+  exit 2
+fi
+
+if [ "$visibility" = private ] && [ "$slug" = updates ]; then
+  printf '%s\n' 'The private slug "updates" is reserved for the managed update dashboard.' >&2
+  exit 2
+fi
+
+if [ ! -e "$source_path" ]; then
+  printf 'Source does not exist: %s\n' "$source_path" >&2
+  exit 1
+fi
+
+if [ -L "$source_path" ] || { [ -d "$source_path" ] && find "$source_path" -type l -print -quit | grep -q .; }; then
+  printf '%s\n' 'Publishing symlinks is not allowed.' >&2
+  exit 1
+fi
+
+root="$HOME/.local/share/dotfiles/html/$visibility"
+target="$root/$slug"
+mkdir -p "$root"
+staging="$(mktemp -d "$root/.${slug}.XXXXXX")"
+trap 'rm -rf "$staging"' EXIT
+
+if [ -d "$source_path" ]; then
+  if [ ! -f "$source_path/index.html" ]; then
+    printf '%s\n' 'A published directory must contain index.html.' >&2
+    exit 1
+  fi
+  cp -R "$source_path"/. "$staging"/
+else
+  case "$source_path" in
+    *.html|*.htm) cp "$source_path" "$staging/index.html" ;;
+    *) printf '%s\n' 'A published file must be HTML.' >&2; exit 1 ;;
+  esac
+fi
+
+find "$staging" -type d -exec chmod 0755 {} +
+find "$staging" -type f -exec chmod 0644 {} +
+rm -rf "$target"
+mv "$staging" "$target"
+trap - EXIT
+
+printf 'Published %s artifact: https://josephhaaga.sh.tribe.ai/%s/%s/\n' "$visibility" "$visibility" "$slug"

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="Live update status for the tools managed by Joseph's dotfiles.">
+    <title>System Update Manifest</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="data.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="eyebrow">DOTFILES / UPDATE INTELLIGENCE</div>
+      <div class="title-row">
+        <h1>System<br>Manifest</h1>
+        <div class="signal" aria-hidden="true"><span></span><span></span><span></span></div>
+      </div>
+      <p class="lede">What is pinned. What moved. What changed.</p>
+    </header>
+
+    <main>
+      <section class="summary" aria-label="Update summary">
+        <div><strong id="update-count">--</strong><span>updates</span></div>
+        <div><strong id="current-count">--</strong><span>current</span></div>
+        <div><strong id="total-count">--</strong><span>tracked</span></div>
+        <p id="freshness">Loading manifest...</p>
+      </section>
+
+      <section class="controls" aria-label="Manifest controls">
+        <label>
+          <span>FILTER MANIFEST</span>
+          <input id="search" type="search" placeholder="OpenCode, Neovim, mise..." autocomplete="off">
+        </label>
+        <div id="filters" class="filters" role="group" aria-label="Status filter">
+          <button class="active" data-filter="all">All</button>
+          <button data-filter="update">Updates</button>
+          <button data-filter="current">Current</button>
+          <button data-filter="tracking">Rolling</button>
+        </div>
+      </section>
+
+      <div id="manifest" class="manifest" aria-live="polite"></div>
+      <p id="empty" class="empty" hidden>No entries match this filter.</p>
+    </main>
+
+    <footer>
+      <span>Generated daily as a private VM artifact</span>
+      <button id="refresh" type="button">Refresh data</button>
+    </footer>
+  </body>
+</html>

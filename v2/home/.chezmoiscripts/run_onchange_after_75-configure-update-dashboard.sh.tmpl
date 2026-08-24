@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# updater: {{ include "dot_local/bin/executable_update-dashboard" | sha256sum }}
+# manifest: {{ include "dot_local/share/dotfiles/update-dashboard/packages.json.tmpl" | sha256sum }}
+# sources: {{ include "dot_local/share/dotfiles/update-dashboard/sources.json" | sha256sum }}
+# lockfile: {{ include "dot_config/nvim/lazy-lock.json" | sha256sum }}
+# page: {{ include "dot_local/share/dotfiles/html/private/updates/index.html" | sha256sum }}
+
+{{ if eq .profile "server" -}}
+updater="{{ .chezmoi.homeDir }}/.local/bin/update-dashboard"
+state_dir="{{ .chezmoi.homeDir }}/.local/state/dotfiles"
+cron_marker="# dotfiles-update-dashboard"
+
+mkdir -p "$state_dir"
+"$updater"
+
+existing="$(crontab -l 2>/dev/null || true)"
+filtered="$(printf '%s\n' "$existing" | grep -vF "$cron_marker" || true)"
+{
+  printf '%s\n' "$filtered"
+  printf '17 11 * * * %q >> %q 2>&1 %s\n' "$updater" "$state_dir/update-dashboard.log" "$cron_marker"
+} | sed '/^[[:space:]]*$/d' | crontab -
+{{ else -}}
+printf '%s\n' 'The update dashboard schedule is only configured on the server profile.'
+{{ end -}}

@@ -1,5 +1,21 @@
 # Global Instructions
 
+## HTML Publishing
+
+When the user asks to publish an HTML report or document from the VM, use the
+managed publisher instead of starting an HTTP server or changing Caddy:
+
+```bash
+publish-html ./report.html report-slug
+publish-html --public ./report.html report-slug
+```
+
+Publishing is private by default. Use `--public` only when the user explicitly
+asks for a shareable public URL, and inspect the artifact for secrets first.
+Sources must be a single HTML file or a self-contained directory with
+`index.html`; use relative paths and do not rely on network requests. Return the
+URL printed by the command.
+
 ## Slack Messages
 
 Whenever drafting, proposing, or sending a Slack message, use Tribe's two-part structure:

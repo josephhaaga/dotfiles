@@ -17,7 +17,7 @@ Safari connects directly to the public Caddy endpoint. No SSH tunnel is used.
 ```text
 Safari
   -> HTTPS on josephhaaga.sh.tribe.ai:443
-  -> mTLS client-certificate verification at Caddy
+  -> verified client-certificate route at Caddy
   -> OpenCode Basic Authorization added by Caddy
   -> OpenCode on VM loopback port 49374
 ```

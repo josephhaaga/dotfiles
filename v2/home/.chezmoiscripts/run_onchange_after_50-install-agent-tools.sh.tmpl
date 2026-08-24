@@ -39,7 +39,7 @@ PATH="$HOME/.local/share/mise/shims:/usr/bin:/bin:/usr/sbin:/sbin" \
   --skip-skills --skip-codex --skip-gemini --skip-kiro --skip-opencode
 
 curl -fsSL https://terminal-browser.sh/install -o "$installer"
-verify_installer "f571b9381e18bdfbc970eb2c270206a6778d0aa435cd4ed1e8d6930a1a9e064d" || {
+verify_installer "9b00a732ba367d853de187a7772b7fcb4890c87adb131fdac1e147c08debbb4f" || {
   printf '%s\n' 'terminal-browser installer checksum mismatch' >&2
   exit 1
 }

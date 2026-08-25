@@ -81,6 +81,19 @@ publish-html --public ./report.html shared-report
 Published directories must contain `index.html`. Public artifacts are available
 without a client certificate, so inspect them for secrets before publishing.
 
+## Podcast Briefings
+
+The `/podcast` OpenCode skill turns a PDF into a two-host ElevenLabs briefing
+and publishes it to a tokenized RSS feed compatible with Apple Podcasts. The
+feed token is generated on the VM at runtime and remains outside this
+repository. Episodes expire after 30 days.
+
+Print the feed URL without publishing an episode:
+
+```bash
+publish-podcast --feed-url
+```
+
 ## Documentation
 
 - [`docs/inventory.md`](docs/inventory.md): retained and removed applications.

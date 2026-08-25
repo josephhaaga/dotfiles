@@ -16,6 +16,14 @@ Sources must be a single HTML file or a self-contained directory with
 `index.html`; use relative paths and do not rely on network requests. Return the
 URL printed by the command.
 
+## Podcast Publishing
+
+Use the `/podcast` skill when the user asks to turn a PDF, architecture plan,
+or other long document into audio. It publishes to a tokenized personal RSS
+feed for offline listening. Never reveal that feed URL outside the private
+OpenCode session and never use `publish-html --public` for source documents,
+transcripts, or evidence notes.
+
 ## Slack Messages
 
 Whenever drafting, proposing, or sending a Slack message, use Tribe's two-part structure:

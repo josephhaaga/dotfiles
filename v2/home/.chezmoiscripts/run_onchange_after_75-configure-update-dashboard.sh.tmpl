@@ -7,6 +7,7 @@ set -euo pipefail
 # sources: {{ include "dot_local/share/dotfiles/update-dashboard/sources.json" | sha256sum }}
 # lockfile: {{ include "dot_config/nvim/lazy-lock.json" | sha256sum }}
 # page: {{ include "dot_local/share/dotfiles/html/private/updates/index.html" | sha256sum }}
+# podcast publisher: {{ include "dot_local/bin/executable_publish-podcast" | sha256sum }}
 
 {{ if eq .profile "server" -}}
 updater="{{ .chezmoi.homeDir }}/.local/bin/update-dashboard"
@@ -21,6 +22,8 @@ filtered="$(printf '%s\n' "$existing" | grep -vF "$cron_marker" || true)"
 {
   printf '%s\n' "$filtered"
   printf '17 11 * * * %q >> %q 2>&1 %s\n' "$updater" "$state_dir/update-dashboard.log" "$cron_marker"
+  printf '37 11 * * * %q --prune >> %q 2>&1 %s\n' \
+    "{{ .chezmoi.homeDir }}/.local/bin/publish-podcast" "$state_dir/podcast.log" "$cron_marker"
 } | sed '/^[[:space:]]*$/d' | crontab -
 {{ else -}}
 printf '%s\n' 'The update dashboard schedule is only configured on the server profile.'

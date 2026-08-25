@@ -119,6 +119,19 @@ sandbox permits scripts and downloads but blocks network requests, forms,
 embedding, and access to OpenCode's same-origin API. Public publishing does not
 scan for secrets; inspect the output before using `--public`.
 
+## Podcast feed
+
+`/podcast` publishes generated MP3 briefings beneath
+`/public/podcasts/<runtime-token>/`. The random path token is the credential
+because Apple Podcasts cannot present the site's client certificate. The feed
+uses `itunes:block` to prevent Apple directory listing, Caddy disables search
+indexing, and no directory browsing is enabled.
+
+The URL remains accessible to anyone who obtains it. Do not paste it into work
+messages or public systems. Delete the runtime token and published podcast
+directory to revoke the feed; following clients must then use a new URL. Source
+PDFs, transcripts, and evidence notes are never published.
+
 ## Other client connections
 
 Local TUI attachment and OpenAI browser OAuth use separate SSH tunnels with

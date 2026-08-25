@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+
+import argparse
+import binascii
+import json
+import re
+import secrets
+import shutil
+import struct
+import sys
+import uuid
+import zlib
+from datetime import datetime, timedelta, timezone
+from email.utils import format_datetime
+from pathlib import Path
+from xml.etree import ElementTree as ET
+
+HOST = "https://josephhaaga.sh.tribe.ai"
+MAX_AGE = timedelta(days=30)
+MAX_EPISODES = 30
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Publish audio to the private-token podcast feed.")
+    parser.add_argument("audio", type=Path, nargs="?")
+    parser.add_argument("title", nargs="?")
+    parser.add_argument("--description", default="")
+    parser.add_argument("--feed-url", action="store_true")
+    parser.add_argument("--prune", action="store_true")
+    args = parser.parse_args()
+    if not (args.feed_url or args.prune) and (args.audio is None or args.title is None):
+        parser.error("audio and title are required unless --feed-url or --prune is used")
+    return args
+
+
+def state_paths():
+    state = Path.home() / ".local/state/dotfiles/podcast"
+    state.mkdir(parents=True, exist_ok=True)
+    token_path = state / "feed-token"
+    if not token_path.exists():
+        token_path.write_text(secrets.token_urlsafe(32) + "\n")
+        token_path.chmod(0o600)
+    token = token_path.read_text().strip()
+    if not re.fullmatch(r"[A-Za-z0-9_-]{32,}", token):
+        raise SystemExit(f"Invalid podcast feed token in {token_path}")
+    return state, token
+
+
+def feed_url(token):
+    return f"{HOST}/public/podcasts/{token}/feed.xml"
+
+
+def write_cover(path):
+    if path.exists():
+        return
+    width = height = 1400
+    row = b"\x00" + b"\x17\x17\x14" * width
+    raw = row * height
+
+    def chunk(kind, data):
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", binascii.crc32(kind + data) & 0xFFFFFFFF)
+
+    png = b"\x89PNG\r\n\x1a\n"
+    png += chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+    png += chunk(b"IDAT", zlib.compress(raw, 9))
+    png += chunk(b"IEND", b"")
+    path.write_bytes(png)
+    path.chmod(0o644)
+
+
+def write_feed(feed_root, token, episodes):
+    itunes = "http://www.itunes.com/dtds/podcast-1.0.dtd"
+    atom = "http://www.w3.org/2005/Atom"
+    ET.register_namespace("itunes", itunes)
+    ET.register_namespace("atom", atom)
+    rss = ET.Element("rss", {"version": "2.0"})
+    channel = ET.SubElement(rss, "channel")
+    ET.SubElement(channel, "title").text = "Architecture Review Briefings"
+    ET.SubElement(channel, "link").text = feed_url(token)
+    ET.SubElement(channel, "description").text = "Private, AI-generated briefings for document review."
+    ET.SubElement(channel, "language").text = "en-us"
+    ET.SubElement(channel, f"{{{itunes}}}author").text = "Joseph Haaga"
+    ET.SubElement(channel, f"{{{itunes}}}block").text = "Yes"
+    ET.SubElement(channel, f"{{{itunes}}}category", {"text": "Technology"})
+    ET.SubElement(channel, f"{{{itunes}}}explicit").text = "false"
+    ET.SubElement(channel, f"{{{itunes}}}image", {"href": f"{HOST}/public/podcasts/{token}/cover.png"})
+    ET.SubElement(channel, f"{{{itunes}}}type").text = "episodic"
+    ET.SubElement(channel, f"{{{atom}}}link", {"href": feed_url(token), "rel": "self", "type": "application/rss+xml"})
+    image = ET.SubElement(channel, "image")
+    ET.SubElement(image, "url").text = f"{HOST}/public/podcasts/{token}/cover.png"
+    ET.SubElement(image, "title").text = "Architecture Review Briefings"
+    ET.SubElement(image, "link").text = feed_url(token)
+
+    for episode in episodes:
+        item = ET.SubElement(channel, "item")
+        ET.SubElement(item, "title").text = episode["title"]
+        ET.SubElement(item, "description").text = episode["description"]
+        ET.SubElement(item, "guid", {"isPermaLink": "false"}).text = episode["id"]
+        ET.SubElement(item, "pubDate").text = format_datetime(datetime.fromisoformat(episode["published_at"]))
+        url = f"{HOST}/public/podcasts/{token}/{episode['filename']}"
+        ET.SubElement(item, "enclosure", {"url": url, "length": str(episode["bytes"]), "type": episode["mime_type"]})
+
+    tree = ET.ElementTree(rss)
+    ET.indent(tree, space="  ")
+    temporary = feed_root / ".feed.xml.tmp"
+    tree.write(temporary, encoding="utf-8", xml_declaration=True)
+    temporary.replace(feed_root / "feed.xml")
+
+
+def main():
+    args = parse_args()
+    state, token = state_paths()
+    if args.feed_url:
+        print(feed_url(token))
+        return
+
+    feed_root = Path.home() / ".local/share/dotfiles/html/public/podcasts" / token
+    feed_root.mkdir(parents=True, exist_ok=True)
+    write_cover(feed_root / "cover.png")
+    metadata_path = state / "episodes.json"
+    episodes = json.loads(metadata_path.read_text()) if metadata_path.exists() else []
+    now = datetime.now(timezone.utc)
+    cutoff = now - MAX_AGE
+    retained_limit = MAX_EPISODES if args.prune else MAX_EPISODES - 1
+    retained = []
+    for episode in episodes:
+        if datetime.fromisoformat(episode["published_at"]) >= cutoff and len(retained) < retained_limit:
+            retained.append(episode)
+        else:
+            (feed_root / episode["filename"]).unlink(missing_ok=True)
+
+    if args.prune:
+        metadata_path.write_text(json.dumps(retained, indent=2) + "\n")
+        write_feed(feed_root, token, retained)
+        return
+
+    audio = args.audio.expanduser().resolve()
+    mime_type = {".mp3": "audio/mpeg", ".m4a": "audio/mp4"}.get(audio.suffix.lower())
+    if not audio.is_file() or mime_type is None:
+        raise SystemExit("Audio must be an existing .mp3 or .m4a file.")
+
+    episode_id = str(uuid.uuid4())
+    filename = f"{now:%Y%m%d-%H%M%S}-{episode_id[:8]}{audio.suffix.lower()}"
+    destination = feed_root / filename
+    shutil.copyfile(audio, destination)
+    destination.chmod(0o644)
+    retained.insert(0, {
+        "id": episode_id,
+        "title": args.title,
+        "description": args.description,
+        "published_at": now.isoformat(),
+        "filename": filename,
+        "bytes": destination.stat().st_size,
+        "mime_type": mime_type,
+    })
+
+    temporary = metadata_path.with_suffix(".json.tmp")
+    temporary.write_text(json.dumps(retained, indent=2) + "\n")
+    temporary.replace(metadata_path)
+    write_feed(feed_root, token, retained)
+    print(f"Feed: {feed_url(token)}")
+    print(f"Episode: {HOST}/public/podcasts/{token}/{filename}")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        print(f"publish-podcast: {error}", file=sys.stderr)
+        raise SystemExit(1)

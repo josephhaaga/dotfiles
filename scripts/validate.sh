@@ -59,6 +59,8 @@ if [ -d "$V2_SOURCE" ]; then
   jq empty "$V2_SOURCE/dot_local/share/dotfiles/update-dashboard/sources.json"
   ruby -c "$V2_SOURCE/dot_local/lib/dotfiles/executable_build_update_dashboard.rb" >/dev/null
   node --check "$V2_SOURCE/dot_local/share/dotfiles/html/private/updates/app.js"
+  python3 -c 'import pathlib, sys; compile(pathlib.Path(sys.argv[1]).read_bytes(), sys.argv[1], "exec")' \
+    "$V2_SOURCE/dot_local/bin/executable_publish-podcast"
 
   if grep -RqE 'https?://' "$V2_SOURCE/dot_local/share/dotfiles/html/private/updates" \
     --include='*.html' --include='*.css' --include='*.js'; then

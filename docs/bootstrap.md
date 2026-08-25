@@ -10,6 +10,17 @@ cd ~/Documents/dotfiles
 
 The detected profile is `desktop`.
 
+### MDM-controlled macOS
+
+Do not use the automatically detected `desktop` profile. Preview and apply the restricted profile explicitly:
+
+```bash
+chezmoi apply --dry-run --source "$PWD/v2/home" --override-data '{"profile":"enterprise"}'
+DOTFILES_PROFILE=enterprise ./setup
+```
+
+The enterprise profile leaves native software and macOS services under MDM control. See [Enterprise profile audit](enterprise-profile.md) for the exact install boundary.
+
 ## Amazon Linux 2023
 
 ```bash

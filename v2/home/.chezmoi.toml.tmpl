@@ -20,8 +20,8 @@
 {{- if not $profile -}}
 {{-   fail $unsupported -}}
 {{- end -}}
-{{- if not (has $profile (list "desktop" "server" "container")) -}}
-{{-   fail (printf "invalid DOTFILES_PROFILE %q; expected desktop, server, or container" $profile) -}}
+{{- if not (has $profile (list "desktop" "enterprise" "server" "container")) -}}
+{{-   fail (printf "invalid DOTFILES_PROFILE %q; expected desktop, enterprise, server, or container" $profile) -}}
 {{- end -}}
 
 [data]

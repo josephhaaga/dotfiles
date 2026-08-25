@@ -2,7 +2,7 @@
 
 ## Workflow
 
-- The active cross-platform chezmoi source is `v2/home/`. It supports the `desktop`, `server`, and `container` profiles described in `docs/profiles.md`.
+- The active cross-platform chezmoi source is `v2/home/`. It supports the `desktop`, `enterprise`, `server`, and `container` profiles described in `docs/profiles.md`.
 - `.chezmoiroot` points to `v2/home`; `setup` remains the explicit bootstrap path.
 - Preview v2 with `chezmoi apply --dry-run --source "$PWD" --override-data '{"profile":"desktop"}'`.
 - chezmoi copies and renders files; it does not symlink them. Do not edit deployed files while developing v2.
@@ -22,5 +22,5 @@
 - Edit only `v2/home/.chezmoidata/packages.yaml`; `v2/home/dot_config/brew/Brewfile.tmpl` and the mise config are generated from it.
 - Third-party Homebrew taps execute formula code. Add one only when the retained application requires it and keep the trust decision visible in review.
 - Amazon Linux uses Docker Engine and `crond` under systemd. Docker group membership grants root-equivalent access.
-- macOS uses Docker Desktop and the managed Yabai/skhd restart hook.
+- The desktop profile uses Docker Desktop; desktop and enterprise use the managed Yabai/skhd restart hook.
 - Container images own native packages and services; chezmoi must remain usable without `sudo` or systemd in the container profile.

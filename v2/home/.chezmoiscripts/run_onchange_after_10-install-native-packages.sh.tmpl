@@ -4,7 +4,7 @@ set -euo pipefail
 
 # package inventory: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
 
-{{ if eq .profile "desktop" -}}
+{{ if or (eq .profile "desktop") (eq .profile "enterprise") -}}
 if command -v brew >/dev/null 2>&1; then
   brew_bin="$(command -v brew)"
 else

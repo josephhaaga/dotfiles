@@ -8,6 +8,18 @@ Apple Silicon macOS. Installs the complete Brewfile, GUI applications, Ghostty, 
 
 There is no work/personal split. Collaboration tools are part of the normal desktop workflow.
 
+## enterprise
+
+MDM-controlled macOS. Uses an existing, MDM-approved Homebrew installation for the shared CLI formulae, Yabai/skhd, Ghostty, and fonts. It also installs the pinned user-space and agent toolchains. It does not install personal or collaboration applications, Docker Desktop, Slack export, Obsidian integration, LaunchAgents, or macOS preferences.
+
+Select it explicitly during bootstrap because MDM enrollment cannot be detected reliably:
+
+```bash
+DOTFILES_PROFILE=enterprise ./setup
+```
+
+See [Enterprise profile audit](enterprise-profile.md) for the complete install and managed-file boundary.
+
 ## server
 
 Amazon Linux 2023 x86_64. DNF installs build prerequisites, Docker Engine, zsh, and cronie. mise installs the shared user-space toolchain. No GUI applications or managed secrets are deployed.

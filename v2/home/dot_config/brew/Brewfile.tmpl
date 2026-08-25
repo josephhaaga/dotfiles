@@ -11,6 +11,12 @@ tap {{ . | quote }}
 brew {{ . | quote }}
 {{- end }}
 
+{{ if eq .profile "enterprise" -}}
+{{ range .packages.macos.enterprise_casks }}
+cask {{ . | quote }}
+{{- end }}
+{{ else -}}
 {{ range .packages.macos.casks }}
 cask {{ . | quote }}
+{{- end }}
 {{- end }}

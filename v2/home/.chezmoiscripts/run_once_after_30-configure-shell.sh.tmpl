@@ -14,6 +14,12 @@ if [ -n "$zsh_path" ] && [ "${SHELL:-}" != "$zsh_path" ]; then
   {{ if eq .profile "desktop" -}}
     grep -qxF "$zsh_path" /etc/shells || printf '%s\n' "$zsh_path" | sudo tee -a /etc/shells >/dev/null
     chsh -s "$zsh_path"
+  {{ else if eq .profile "enterprise" -}}
+    if grep -qxF "$zsh_path" /etc/shells; then
+      chsh -s "$zsh_path"
+    else
+      printf 'Not changing the login shell: %s is not listed in /etc/shells.\n' "$zsh_path" >&2
+    fi
   {{ else -}}
     sudo usermod -s "$zsh_path" "$USER"
   {{ end -}}

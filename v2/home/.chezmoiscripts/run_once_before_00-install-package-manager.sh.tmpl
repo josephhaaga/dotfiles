@@ -12,6 +12,11 @@ if ! command -v brew >/dev/null 2>&1; then
     -o "$installer"
   /bin/bash "$installer"
 fi
+{{ else if eq .profile "enterprise" -}}
+command -v brew >/dev/null 2>&1 || {
+  printf '%s\n' 'Enterprise profile requires an MDM-approved Homebrew installation.' >&2
+  exit 1
+}
 {{ else -}}
 mkdir -p "$HOME/.local/bin"
 {{ end -}}

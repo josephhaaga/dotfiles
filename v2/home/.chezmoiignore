@@ -9,14 +9,19 @@
 .local/share/opencode/auth.json
 .zsh_history
 
-{{- if ne .profile "desktop" }}
+{{- if not (has .profile (list "desktop" "enterprise")) }}
 # macOS-only configuration and applications.
 .config/ghostty
-.config/opencode/opencode-vm.env
 .skhdrc
 .config/skhd
 .config/yabai
 .config/brew
+.local/bin/window-manager
+{{- end }}
+
+{{- if ne .profile "desktop" }}
+# Personal desktop integrations are not deployed to restricted macOS.
+.config/opencode/opencode-vm.env
 Library
 Documents/obsidian-vault
 {{- end }}

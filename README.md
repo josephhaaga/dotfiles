@@ -5,6 +5,7 @@ Cross-platform development environment managed by [chezmoi](https://www.chezmoi.
 The v2 source supports:
 
 - Apple Silicon macOS desktops.
+- MDM-controlled macOS development laptops.
 - Amazon Linux 2023 development servers.
 - Non-root Linux development containers.
 
@@ -35,10 +36,11 @@ The profile is detected automatically:
 | Profile | Target | Native packages |
 |---|---|---|
 | `desktop` | macOS Apple Silicon | Homebrew and casks |
+| `enterprise` | MDM-controlled macOS | Approved Homebrew CLI/window tools |
 | `server` | Amazon Linux 2023 | DNF and systemd services |
 | `container` | Dev containers | Owned by the container image |
 
-Set `DOTFILES_PROFILE=container` to override detection.
+Set `DOTFILES_PROFILE=enterprise` or `DOTFILES_PROFILE=container` to override detection.
 
 ## Remote Development
 

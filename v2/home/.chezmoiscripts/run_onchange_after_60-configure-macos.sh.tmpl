@@ -9,6 +9,8 @@ set -euo pipefail
 defaults write com.apple.dock autohide -bool true
 killall Dock >/dev/null 2>&1 || true
 "$HOME/.local/bin/window-manager" restart
+{{ else if eq .profile "enterprise" -}}
+"$HOME/.local/bin/window-manager" restart
 {{ else -}}
 printf '%s\n' 'No macOS services for this profile.'
 {{ end -}}

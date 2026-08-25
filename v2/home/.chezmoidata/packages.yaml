@@ -68,6 +68,10 @@ packages:
       - tailscale-app
       - wispr-flow
       - zoom
+    enterprise_casks:
+      - font-hack-nerd-font
+      - font-jetbrains-mono
+      - ghostty
 
   amazon_linux:
     - alsa-lib

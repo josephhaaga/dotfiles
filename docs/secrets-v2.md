@@ -2,6 +2,8 @@
 
 The managed source does not include secret values by default.
 
+The enterprise profile also excludes the desktop's 1Password VM reference, personal SSH tunnel LaunchAgent, Slack cookie tooling, and local Obsidian integration.
+
 Excluded runtime state includes:
 
 - GitHub and cloud CLI OAuth configuration.

@@ -16,7 +16,7 @@ if [ -z "$profile" ]; then
 fi
 
 case "$profile" in
-  desktop|server|container) ;;
+  desktop|enterprise|server|container) ;;
   *)
     printf 'Invalid DOTFILES_PROFILE: %s\n' "$profile" >&2
     exit 2
@@ -49,7 +49,7 @@ if command -v nvim >/dev/null 2>&1; then
     '+lua print("Neovim configuration loaded")' +qa
 fi
 
-if [ "$profile" != container ]; then
+if [ "$profile" = desktop ] || [ "$profile" = server ]; then
   command -v docker >/dev/null 2>&1 || status=1
 fi
 

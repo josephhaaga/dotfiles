@@ -7,7 +7,7 @@ Every retained item has one installation owner. Anything not listed here is inte
 | Tool | Owner | Profiles | Purpose |
 |---|---|---|---|
 | chezmoi | bootstrap/native | all | Orchestrate files, templates, packages, and services |
-| mise | native/bootstrap | all | Install pinned portable CLIs and runtimes |
+| mise | native/bootstrap | all | Install pinned portable CLIs and runtimes; enterprise installs it under the user's home directory |
 | zsh, Oh My Zsh, Starship | native + pinned Git checkout + mise | all | Interactive shell, plugins, and prompt |
 | Herdr | mise | all | Persistent local and remote terminal sessions |
 | Neovim/LazyVim | mise | all | Editor with Go, Python, TypeScript, Docker, JSON, Markdown, and TOML support |
@@ -18,6 +18,8 @@ Every retained item has one installation owner. Anything not listed here is inte
 | gh, Git LFS, git-filter-repo, GnuPG | mise/native | desktop, server | Git and GitHub workflows |
 | shellcheck, gitleaks | mise | all | Static and secret checks |
 | Docker, Compose, kubectl | native + mise | all | Containers and Kubernetes client tooling |
+
+The enterprise profile uses an existing, MDM-approved Homebrew installation for CLI formulae, Yabai/skhd, Ghostty, and fonts. It excludes the rest of the desktop casks.
 
 ## macOS applications
 

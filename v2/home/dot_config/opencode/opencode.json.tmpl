@@ -9,6 +9,15 @@
   "enabled_providers": [
     "github-copilot"
   ],
+  "mcp": {
+    "servers": {
+      "playwright": {
+        "type": "local",
+        "command": ["npx", "-y", "@playwright/mcp@0.0.79", "--browser", "chrome"],
+        "disabled": false
+      }
+    }
+  },
 {{- else }}
   "mcp": {
     "servers": {

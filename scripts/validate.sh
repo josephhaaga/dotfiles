@@ -122,13 +122,21 @@ if [ -d "$V2_SOURCE" ]; then
   fi
 
   # The enterprise network blocks unreviewed outbound endpoints and only
-  # GitHub Copilot is an approved model provider, so opencode must ship with no
-  # MCP servers and an explicit provider allowlist.
+  # GitHub Copilot is an approved model provider, so opencode ships an explicit
+  # provider allowlist and only individually reviewed MCP servers. Servers are
+  # opt-in per name rather than inherited from the other profiles; adding one
+  # here is the record that its outbound behaviour was reviewed.
+  enterprise_mcp_allowlist='["playwright"]'
   enterprise_opencode="$(chezmoi execute-template --source "$V2_SOURCE" \
     --override-data '{"profile":"enterprise"}' \
     < "$V2_SOURCE/dot_config/opencode/opencode.json.tmpl")"
-  if ! printf '%s' "$enterprise_opencode" | jq -e '.mcp == null' >/dev/null; then
-    echo "enterprise opencode config declares MCP servers" >&2
+  if ! printf '%s' "$enterprise_opencode" |
+    jq -e --argjson allowed "$enterprise_mcp_allowlist" \
+      '((.mcp.servers // {}) | keys) - $allowed | length == 0' >/dev/null; then
+    echo "enterprise opencode config declares unreviewed MCP servers" >&2
+    printf '%s' "$enterprise_opencode" |
+      jq -r --argjson allowed "$enterprise_mcp_allowlist" \
+        '((.mcp.servers // {}) | keys) - $allowed | .[]' >&2
     exit 1
   fi
   if ! printf '%s' "$enterprise_opencode" |

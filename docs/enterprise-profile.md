@@ -38,7 +38,7 @@ The enterprise profile excludes all desktop-only paths through `.chezmoiignore` 
 - Homebrew bootstrap and all casks except Ghostty and the two fonts.
 - Docker Desktop, macOS defaults, and repository-managed LaunchAgents.
 - The local Obsidian vault integration and OpenCode VM environment file.
-- All OpenCode MCP servers and every model provider other than GitHub Copilot.
+- Every OpenCode MCP server not individually reviewed for this profile, and every model provider other than GitHub Copilot.
 - Slack export binaries, the Slack cookie reader, and the `gh-slackdump` extension.
 - Server-only Caddy configuration, Docker service setup, DNF packages, and systemd services.
 
@@ -48,7 +48,8 @@ chezmoi deploys the portable configuration plus Ghostty, Yabai/skhd, and the win
 
 OpenCode is configured differently on this profile than on the others:
 
-- No MCP servers are declared. The Agent MCP endpoint and the Obsidian server are both omitted, because the enterprise network blocks unreviewed outbound endpoints.
+- MCP servers are opt-in per name rather than inherited from the other profiles. Only `playwright` is declared. The Agent MCP endpoint and the Obsidian server are omitted, because neither is reviewed for the enterprise network. `scripts/validate.sh` enforces the allowlist, so adding a server means adding its name there and recording that its outbound behaviour was reviewed.
+- The Playwright server runs with `--browser chrome` so it drives the installed Google Chrome. Playwright's own browser builds come from `cdn.playwright.dev` rather than the private npm mirror, and selecting the system browser avoids that download entirely. The npm package itself resolves through Artifactory normally.
 - `enabled_providers` is set to `["github-copilot"]`, so every other model provider is ignored regardless of what credentials are present. GitHub Copilot is the only approved provider; authenticate through the device flow at `https://github.com/login/device`.
 
 Authentication remains local runtime state and is never managed.

@@ -65,6 +65,30 @@ if [ -d "$V2_SOURCE" ]; then
     exit 1
   fi
 
+  # Without an explicit sourceDir chezmoi defaults to ~/.local/share/chezmoi,
+  # which this repository never creates, so bare chezmoi commands fail.
+  if ! DOTFILES_PROFILE=desktop chezmoi execute-template --source "$V2_SOURCE" \
+    < "$V2_SOURCE/.chezmoi.toml.tmpl" | grep -q '^sourceDir = '; then
+    echo "generated chezmoi.toml does not pin sourceDir" >&2
+    exit 1
+  fi
+
+  # macOS always detects as "desktop", so a re-run of `chezmoi init` on an
+  # enterprise machine must not silently revert the profile and install the full
+  # desktop cask list. The recorded profile has to outrank OS detection.
+  profile_home="$(mktemp -d)"
+  mkdir -p "$profile_home/.config/chezmoi"
+  printf 'sourceDir = %s\n\n[data]\n    profile = "enterprise"\n    managedSecrets = false\n' \
+    "\"$V2_SOURCE\"" > "$profile_home/.config/chezmoi/chezmoi.toml"
+  recorded_profile="$(HOME="$profile_home" chezmoi execute-template \
+    --source "$V2_SOURCE" < "$V2_SOURCE/.chezmoi.toml.tmpl" |
+    sed -n 's/^ *profile = "\(.*\)"$/\1/p')"
+  rm -rf "$profile_home"
+  if [ "$recorded_profile" != "enterprise" ]; then
+    echo "re-init does not preserve the recorded profile (got ${recorded_profile:-empty})" >&2
+    exit 1
+  fi
+
   for profile in desktop enterprise server container; do
     data="{\"profile\":\"$profile\"}"
 
@@ -96,6 +120,37 @@ if [ -d "$V2_SOURCE" ]; then
     printf '%s\n' "$enterprise_managed" | grep -E "$enterprise_excluded" >&2
     exit 1
   fi
+
+  # The enterprise network blocks unreviewed outbound endpoints and only
+  # GitHub Copilot is an approved model provider, so opencode must ship with no
+  # MCP servers and an explicit provider allowlist.
+  enterprise_opencode="$(chezmoi execute-template --source "$V2_SOURCE" \
+    --override-data '{"profile":"enterprise"}' \
+    < "$V2_SOURCE/dot_config/opencode/opencode.json.tmpl")"
+  if ! printf '%s' "$enterprise_opencode" | jq -e '.mcp == null' >/dev/null; then
+    echo "enterprise opencode config declares MCP servers" >&2
+    exit 1
+  fi
+  if ! printf '%s' "$enterprise_opencode" |
+    jq -e '.enabled_providers == ["github-copilot"]' >/dev/null; then
+    echo "enterprise opencode config must allow only the github-copilot provider" >&2
+    exit 1
+  fi
+
+  # npm --prefix relocates the global npmrc, dropping a private registry and
+  # falling back to registry.npmjs.org, which fails behind a TLS-inspecting
+  # proxy. Every profile must pass the resolved registry explicitly.
+  # shellcheck disable=SC2016 # matching the literal shell source, not expanding it
+  registry_flag='--registry "$npm_registry"'
+  for profile in desktop enterprise server container; do
+    if ! chezmoi execute-template --source "$V2_SOURCE" \
+      --override-data "{\"profile\":\"$profile\"}" \
+      < "$V2_SOURCE/.chezmoiscripts/run_onchange_after_50-install-agent-tools.sh.tmpl" |
+      grep -qF -- "$registry_flag"; then
+      echo "agent tool install for $profile does not pin the npm registry" >&2
+      exit 1
+    fi
+  done
 
   for profile in desktop enterprise; do
     chezmoi execute-template --source "$V2_SOURCE" \

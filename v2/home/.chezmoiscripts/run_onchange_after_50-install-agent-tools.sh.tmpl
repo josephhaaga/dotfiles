@@ -11,7 +11,18 @@ npm_packages=(
 {{- end }}
 {{- end }}
 )
-npm install --global --prefix "$HOME/.local" --ignore-scripts=false "${npm_packages[@]}"
+
+# --prefix relocates the global npmrc npm reads to "$HOME/.local/etc/npmrc",
+# which does not exist, so a registry set in the Node install's global npmrc is
+# silently dropped and npm falls back to registry.npmjs.org. On networks with a
+# private mirror and a TLS-inspecting proxy that fallback fails with
+# SELF_SIGNED_CERT_IN_CHAIN. Resolve the registry before --prefix takes effect
+# and pass it explicitly.
+npm_registry="$(npm config get registry)"
+
+npm install --global --prefix "$HOME/.local" \
+  --registry "$npm_registry" \
+  --ignore-scripts=false "${npm_packages[@]}"
 
 plannotator_version="0.27.7"
 installer="$(mktemp)"

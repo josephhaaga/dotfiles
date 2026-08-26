@@ -1,3 +1,12 @@
+{{- /*
+Profile precedence, highest first:
+  1. DOTFILES_PROFILE, for the initial opt-in and for deliberate changes.
+  2. The profile already recorded in ~/.config/chezmoi/chezmoi.toml.
+  3. Operating system detection.
+Step 2 matters because macOS always detects as "desktop". Without it any later
+`chezmoi init` silently reverts an enterprise machine to the desktop profile and
+the next apply installs the full desktop cask list.
+*/ -}}
 {{- $profile := "" -}}
 {{- $unsupported := "" -}}
 {{- if eq .chezmoi.os "darwin" -}}
@@ -14,8 +23,16 @@
 {{- else -}}
 {{-   $unsupported = printf "unsupported operating system %q" .chezmoi.os -}}
 {{- end -}}
+{{- if and (hasKey . "chezmoi") (hasKey .chezmoi "config") -}}
+{{-   $recorded := dig "data" "profile" "" .chezmoi.config -}}
+{{-   if $recorded -}}
+{{-     $profile = $recorded -}}
+{{-     $unsupported = "" -}}
+{{-   end -}}
+{{- end -}}
 {{- if env "DOTFILES_PROFILE" -}}
 {{-   $profile = env "DOTFILES_PROFILE" -}}
+{{-   $unsupported = "" -}}
 {{- end -}}
 {{- if not $profile -}}
 {{-   fail $unsupported -}}
@@ -23,6 +40,12 @@
 {{- if not (has $profile (list "desktop" "enterprise" "server" "container")) -}}
 {{-   fail (printf "invalid DOTFILES_PROFILE %q; expected desktop, enterprise, server, or container" $profile) -}}
 {{- end -}}
+
+# Pin the source directory chezmoi was initialised from. Without it chezmoi
+# falls back to ~/.local/share/chezmoi, which this repository never creates, so
+# every command outside the working tree fails with a missing directory. The
+# value is derived at init time and is already resolved through .chezmoiroot.
+sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [data]
     profile = {{ $profile | quote }}

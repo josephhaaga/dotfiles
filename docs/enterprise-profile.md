@@ -38,12 +38,28 @@ The enterprise profile excludes all desktop-only paths through `.chezmoiignore` 
 - Homebrew bootstrap and all casks except Ghostty and the two fonts.
 - Docker Desktop, macOS defaults, and repository-managed LaunchAgents.
 - The local Obsidian vault integration and OpenCode VM environment file.
+- All OpenCode MCP servers and every model provider other than GitHub Copilot.
 - Slack export binaries, the Slack cookie reader, and the `gh-slackdump` extension.
 - Server-only Caddy configuration, Docker service setup, DNF packages, and systemd services.
 
 ## Managed Configuration
 
-chezmoi deploys the portable configuration plus Ghostty, Yabai/skhd, and the window-manager helper. This includes zsh, Git aliases, mise, Neovim, Starship, tealdeer, neofetch, herdr, and OpenCode configuration, commands, and skills. The OpenCode configuration includes the public Agent MCP endpoint but no authentication value; authentication remains local runtime state.
+chezmoi deploys the portable configuration plus Ghostty, Yabai/skhd, and the window-manager helper. This includes zsh, Git aliases, mise, Neovim, Starship, tealdeer, neofetch, herdr, and OpenCode configuration, commands, and skills.
+
+OpenCode is configured differently on this profile than on the others:
+
+- No MCP servers are declared. The Agent MCP endpoint and the Obsidian server are both omitted, because the enterprise network blocks unreviewed outbound endpoints.
+- `enabled_providers` is set to `["github-copilot"]`, so every other model provider is ignored regardless of what credentials are present. GitHub Copilot is the only approved provider; authenticate through the device flow at `https://github.com/login/device`.
+
+Authentication remains local runtime state and is never managed.
+
+## Private npm Registry
+
+The enterprise network serves npm through a private mirror and terminates TLS with an inspecting proxy, so any fallback to `registry.npmjs.org` fails with `SELF_SIGNED_CERT_IN_CHAIN`.
+
+The registry itself is configured outside this repository, in the Node installation's global npmrc. That file is not read when `npm install --global` is given a `--prefix`, because `--prefix` also relocates where npm looks for the global npmrc. `run_onchange_after_50-install-agent-tools.sh.tmpl` therefore resolves the registry with `npm config get registry` before `--prefix` takes effect and passes it explicitly with `--registry`.
+
+Do not manage npm credentials here. The auth token lives in `~/.npmrc` and stays local runtime state.
 
 The setup also writes `ZDOTDIR` to `~/.zshenv`. Because `chezmoi init` uses `--force`, preview the apply first if the account already has files at managed paths.
 

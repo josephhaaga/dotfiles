@@ -5,6 +5,11 @@
   "plugins": [
     "@plannotator/opencode@0.27.3"
   ],
+{{- if eq .profile "enterprise" }}
+  "enabled_providers": [
+    "github-copilot"
+  ],
+{{- else }}
   "mcp": {
     "servers": {
       "agent-mcp": {
@@ -23,6 +28,7 @@
       {{- end }}
     }
   },
+{{- end }}
   "permissions": [
     {
       "action": "subagent",

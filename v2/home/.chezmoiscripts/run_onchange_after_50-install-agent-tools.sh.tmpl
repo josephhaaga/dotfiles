@@ -17,7 +17,7 @@ fi
 
 npm_packages=(
 {{- range $package, $version := .packages.npm }}
-{{- if or (ne $.profile "server") (ne $package "tree-sitter-cli") }}
+{{- if and (or (ne $.profile "server") (ne $package "tree-sitter-cli")) (or (eq $.profile "enterprise") (ne $package "@plannotator/opencode")) }}
   {{ printf "%s@%s" $package $version | quote }}
 {{- end }}
 {{- end }}

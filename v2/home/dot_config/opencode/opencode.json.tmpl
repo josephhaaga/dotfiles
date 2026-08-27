@@ -17,7 +17,11 @@
   "shell": "/bin/zsh",
   "share": "manual",
   "plugin": [
+    {{- if eq .profile "enterprise" }}
+    "{{ .chezmoi.homeDir }}/.local/lib/node_modules/@plannotator/opencode/dist/server.js"
+    {{- else }}
     "@plannotator/opencode@0.27.3"
+    {{- end }}
   ],
 {{- if eq .profile "enterprise" }}
   "enabled_providers": [

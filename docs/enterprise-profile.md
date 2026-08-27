@@ -24,7 +24,7 @@ It also installs the following software under the user's home directory:
 
 - mise `v2026.8.6`, using a checksum-verified installer.
 - The versions in `v2/home/.chezmoidata/packages.yaml` under `packages.mise`: bat, bun, fd, fzf, GitHub CLI, gitleaks, Go, herdr, kubectl, Neovim, Node.js, ripgrep, ShellCheck, Starship, StyLua, tealdeer, and uv.
-- The npm packages under `packages.npm`: the OpenCode V2 CLI and tree-sitter CLI.
+- The npm packages under `packages.npm`: the OpenCode V2 CLI, tree-sitter CLI, and the enterprise-only Plannotator OpenCode plugin. npm uses the machine's existing private-registry and custom-CA configuration.
 - Oh My Zsh at pinned Git revision `97e11051e2f8053b1d694788d1cb4b0dbb1e2365`.
 - Neofetch `7.1.0`, using a checksum-verified download.
 - Plannotator `0.27.7` through a checksum-verified vendor installer.
@@ -52,7 +52,7 @@ OpenCode is configured differently on this profile than on the others:
 - MCP servers are opt-in per name rather than inherited from the other profiles. Only `playwright` is declared. The Agent MCP endpoint and the Obsidian server are omitted, because neither is reviewed for the enterprise network. `scripts/validate.sh` enforces the allowlist, so adding a server means adding its name there and recording that its outbound behaviour was reviewed.
 - The Playwright server runs with `--browser chrome` so it drives the installed Google Chrome. Playwright's own browser builds come from `cdn.playwright.dev` rather than the private npm mirror, and selecting the system browser avoids that download entirely. The npm package itself resolves through Artifactory normally.
 - `enabled_providers` is set to `["github-copilot"]`, so every other model provider is ignored regardless of what credentials are present. GitHub Copilot is the only approved provider; authenticate through the device flow at `https://github.com/login/device`.
-- The Plannotator plugin is declared like everywhere else. OpenCode installs plugins with bun, which does not read `~/.npmrc`, so it reached for `registry.npmjs.org` and hung OpenCode at startup until `~/.bunfig.toml` was generated to point it at Artifactory. See "Private npm Registry" below.
+- The Plannotator plugin is installed by npm through Artifactory and loaded from its local `dist/server.js`. This avoids OpenCode's bundled bun installer, which does not read npm's registry or custom-CA configuration.
 
 Authentication remains local runtime state and is never managed.
 
@@ -72,7 +72,7 @@ The registry itself is configured outside this repository, in the Node installat
 
 Do not manage npm credentials here. The auth token lives in `~/.npmrc` and stays local runtime state.
 
-bun does not read `~/.npmrc` at all, so it ignored the mirror and reached for `registry.npmjs.org`, which the proxy answers with 503. This mattered because OpenCode installs its configured plugins with bun, and the failure hung OpenCode at startup rather than erroring. `run_onchange_after_06-configure-bun-registry.sh.tmpl` generates `~/.bunfig.toml` from the existing npmrc at apply time, writing it `0600`. The token is matched against the configured registry host rather than the first line of the file, so an npmrc holding several hosts cannot pair a token with the wrong registry. Like `~/.npmrc`, the generated file is local credential state and is never committed.
+bun does not read `~/.npmrc` at all, so it otherwise ignores the mirror and reaches for `registry.npmjs.org`, which the proxy answers with 503. Plannotator bypasses this path by loading its npm-installed local file. `run_onchange_after_06-configure-bun-registry.sh.tmpl` still generates `~/.bunfig.toml` from the existing npmrc for any future package-form plugins, writing it `0600`. The token is matched against the configured registry host rather than the first line of the file, so an npmrc holding several hosts cannot pair a token with the wrong registry. Like `~/.npmrc`, the generated file is local credential state and is never committed.
 
 ## Certificate Trust
 
@@ -87,7 +87,7 @@ Getting that backwards fails in a confusing direction. Pointing `SSL_CERT_FILE` 
 
 Note that npm's registry setting does not help here. It covers npm's own traffic only, so package postinstall scripts that download their own binaries still need the CA: tree-sitter-cli fetches a release asset from github.com over plain Node https.
 
-The setup also writes `ZDOTDIR` to `~/.zshenv`. Because `chezmoi init` uses `--force`, preview the apply first if the account already has files at managed paths.
+The enterprise OpenCode configuration loads Plannotator from npm's local installation instead of asking OpenCode's bundled Bun runtime to download it. The setup also writes `ZDOTDIR` to `~/.zshenv`. Because `chezmoi init` uses `--force`, preview the apply first if the account already has files at managed paths.
 
 ## Secret Boundary
 

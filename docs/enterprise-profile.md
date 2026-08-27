@@ -27,7 +27,7 @@ It also installs the following software under the user's home directory:
 - The npm packages under `packages.npm`: the OpenCode V2 CLI and tree-sitter CLI.
 - Oh My Zsh at pinned Git revision `97e11051e2f8053b1d694788d1cb4b0dbb1e2365`.
 - Neofetch `7.1.0`, using a checksum-verified download.
-- Plannotator `0.27.7` and terminal-browser through checksum-verified vendor installers.
+- Plannotator `0.27.7` through a checksum-verified vendor installer.
 
 The profile may run `chsh` to select an already approved shell from `/etc/shells`. Starting Yabai runs its existing `sudo -n yabai --load-sa` hook; it cannot prompt for or create privileged access.
 
@@ -40,8 +40,8 @@ The enterprise profile excludes all desktop-only paths through `.chezmoiignore` 
 - The local Obsidian vault integration and OpenCode VM environment file.
 - Every OpenCode MCP server not individually reviewed for this profile, and every model provider other than GitHub Copilot.
 - Slack export binaries, the Slack cookie reader, and the `gh-slackdump` extension.
-- The Plannotator OpenCode plugin, which bun cannot fetch from Artifactory.
 - Server-only Caddy configuration, Docker service setup, DNF packages, and systemd services.
+- terminal-browser, whose installer host the proxy answers with 503.
 
 ## Managed Configuration
 
@@ -52,7 +52,7 @@ OpenCode is configured differently on this profile than on the others:
 - MCP servers are opt-in per name rather than inherited from the other profiles. Only `playwright` is declared. The Agent MCP endpoint and the Obsidian server are omitted, because neither is reviewed for the enterprise network. `scripts/validate.sh` enforces the allowlist, so adding a server means adding its name there and recording that its outbound behaviour was reviewed.
 - The Playwright server runs with `--browser chrome` so it drives the installed Google Chrome. Playwright's own browser builds come from `cdn.playwright.dev` rather than the private npm mirror, and selecting the system browser avoids that download entirely. The npm package itself resolves through Artifactory normally.
 - `enabled_providers` is set to `["github-copilot"]`, so every other model provider is ignored regardless of what credentials are present. GitHub Copilot is the only approved provider; authenticate through the device flow at `https://github.com/login/device`.
-- The Plannotator plugin is excluded. OpenCode installs plugins with bun, which does not read the npm registry settings and cannot authenticate to Artifactory, so loading the plugin hangs OpenCode at startup on this network. See "OpenCode Configuration Syntax" below.
+- The Plannotator plugin is declared like everywhere else. OpenCode installs plugins with bun, which does not read `~/.npmrc`, so it reached for `registry.npmjs.org` and hung OpenCode at startup until `~/.bunfig.toml` was generated to point it at Artifactory. See "Private npm Registry" below.
 
 Authentication remains local runtime state and is never managed.
 
@@ -71,6 +71,21 @@ The enterprise network serves npm through a private mirror and terminates TLS wi
 The registry itself is configured outside this repository, in the Node installation's global npmrc. That file is not read when `npm install --global` is given a `--prefix`, because `--prefix` also relocates where npm looks for the global npmrc. `run_onchange_after_50-install-agent-tools.sh.tmpl` therefore resolves the registry with `npm config get registry` before `--prefix` takes effect and passes it explicitly with `--registry`.
 
 Do not manage npm credentials here. The auth token lives in `~/.npmrc` and stays local runtime state.
+
+bun does not read `~/.npmrc` at all, so it ignored the mirror and reached for `registry.npmjs.org`, which the proxy answers with 503. This mattered because OpenCode installs its configured plugins with bun, and the failure hung OpenCode at startup rather than erroring. `run_onchange_after_06-configure-bun-registry.sh.tmpl` generates `~/.bunfig.toml` from the existing npmrc at apply time, writing it `0600`. The token is matched against the configured registry host rather than the first line of the file, so an npmrc holding several hosts cannot pair a token with the wrong registry. Like `~/.npmrc`, the generated file is local credential state and is never committed.
+
+## Certificate Trust
+
+The proxy re-signs outbound HTTPS with an internal root CA. macOS tools trust it from the System keychain, but language runtimes ship their own bundles and ignore the keychain, so `run_onchange_after_05-export-corporate-ca.sh.tmpl` exports the root at apply time. The certificate is not secret, but it is machine-local trust state, so it is exported rather than committed, and the export is best-effort so a machine off this network still applies cleanly.
+
+Two files are written, because the consuming variables have opposite semantics:
+
+- `~/.config/ssl/corporate-ca.pem` holds the corporate root alone, for `NODE_EXTRA_CA_CERTS`, which *appends* to Node's built-in bundle.
+- `~/.config/ssl/ca-bundle.pem` holds the system roots plus the corporate root, for `SSL_CERT_FILE` and `REQUESTS_CA_BUNDLE`, which *replace* the trust store outright.
+
+Getting that backwards fails in a confusing direction. Pointing `SSL_CERT_FILE` at the corporate root alone makes uv distrust everything else, so installs fail against PyPI, which is not intercepted and serves an ordinary public chain.
+
+Note that npm's registry setting does not help here. It covers npm's own traffic only, so package postinstall scripts that download their own binaries still need the CA: tree-sitter-cli fetches a release asset from github.com over plain Node https.
 
 The setup also writes `ZDOTDIR` to `~/.zshenv`. Because `chezmoi init` uses `--force`, preview the apply first if the account already has files at managed paths.
 

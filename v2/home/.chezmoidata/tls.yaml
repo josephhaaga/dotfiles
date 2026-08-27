@@ -1,0 +1,8 @@
+# Trust settings for the TLS-inspecting proxy on the enterprise network.
+#
+# This is the common name of the internal root CA, not key material. The
+# certificate itself is exported from the macOS System keychain at apply time
+# by .chezmoiscripts/run_onchange_after_05-export-corporate-ca.sh.tmpl and is
+# deliberately not committed.
+tls:
+  corporateRootCaCommonName: "FISGLOBAL ROOT CA"

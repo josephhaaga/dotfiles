@@ -4,6 +4,17 @@ set -euo pipefail
 
 export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
 
+# Node ignores the macOS keychain and uses its own CA bundle, so behind a
+# TLS-inspecting proxy every Node HTTPS request fails with
+# SELF_SIGNED_CERT_IN_CHAIN. Setting the registry below is not enough: it only
+# covers npm's own traffic, while package postinstall scripts fetch their own
+# binaries directly (tree-sitter-cli pulls a release asset from github.com).
+# The 05 script exports this bundle when the machine has the CA installed.
+corporate_ca="$HOME/.config/ssl/corporate-ca.pem"
+if [ -f "$corporate_ca" ]; then
+  export NODE_EXTRA_CA_CERTS="$corporate_ca"
+fi
+
 npm_packages=(
 {{- range $package, $version := .packages.npm }}
 {{- if or (ne $.profile "server") (ne $package "tree-sitter-cli") }}

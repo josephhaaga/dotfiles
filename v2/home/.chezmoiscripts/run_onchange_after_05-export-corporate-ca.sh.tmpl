@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# On the enterprise network a TLS-inspecting proxy re-signs outbound HTTPS with
+# an internal root CA. macOS tools trust it because it is in the System
+# keychain, but Node ships its own CA bundle and ignores the keychain entirely,
+# so any Node process fetching over HTTPS fails with SELF_SIGNED_CERT_IN_CHAIN.
+#
+# This is separate from the npm registry setting: npm config only covers npm's
+# own requests. Package postinstall scripts that download their own binaries
+# (tree-sitter-cli fetches a release asset from github.com) use plain Node
+# https and need NODE_EXTRA_CA_CERTS instead.
+#
+# Export the root from the System keychain rather than committing it. The cert
+# is not secret, but it is machine-local trust state and the repository stays
+# usable on machines that have never seen this CA.
+
+{{- if and (eq .profile "enterprise") (eq .chezmoi.os "darwin") }}
+
+ca_name={{ .tls.corporateRootCaCommonName | quote }}
+ca_dir="$HOME/.config/ssl"
+ca_file="$ca_dir/corporate-ca.pem"
+
+exported="$(security find-certificate -a -c "$ca_name" -p \
+  /Library/Keychains/System.keychain 2>/dev/null || true)"
+
+if [ -z "$exported" ]; then
+  # Not fatal: a machine off the corporate network has nothing to trust, and
+  # failing here would block the whole apply over an optional convenience.
+  printf '%s\n' "corporate root CA '$ca_name' not found in the System keychain; skipping" >&2
+  exit 0
+fi
+
+mkdir -p "$ca_dir"
+printf '%s\n' "$exported" > "$ca_file"
+chmod 644 "$ca_file"
+{{- else }}
+
+exit 0
+{{- end }}

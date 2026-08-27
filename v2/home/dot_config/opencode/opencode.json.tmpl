@@ -16,11 +16,9 @@
   "$schema": "https://opencode.ai/config.json",
   "shell": "/bin/zsh",
   "share": "manual",
-{{- if ne .profile "enterprise" }}
   "plugin": [
     "@plannotator/opencode@0.27.3"
   ],
-{{- end }}
 {{- if eq .profile "enterprise" }}
   "enabled_providers": [
     "github-copilot"

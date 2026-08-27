@@ -21,6 +21,8 @@ set -euo pipefail
 ca_name={{ .tls.corporateRootCaCommonName | quote }}
 ca_dir="$HOME/.config/ssl"
 ca_file="$ca_dir/corporate-ca.pem"
+bundle_file="$ca_dir/ca-bundle.pem"
+system_roots="/System/Library/Keychains/SystemRootCertificates.keychain"
 
 exported="$(security find-certificate -a -c "$ca_name" -p \
   /Library/Keychains/System.keychain 2>/dev/null || true)"
@@ -33,8 +35,24 @@ if [ -z "$exported" ]; then
 fi
 
 mkdir -p "$ca_dir"
+
+# Two files because the consuming variables have opposite semantics.
+#
+# NODE_EXTRA_CA_CERTS *appends* to Node's built-in bundle, so it wants the
+# corporate root on its own.
 printf '%s\n' "$exported" > "$ca_file"
 chmod 644 "$ca_file"
+
+# SSL_CERT_FILE *replaces* the trust store outright. uv honours it, and pointing
+# it at the corporate root alone makes uv distrust everything else: PyPI is not
+# intercepted and serves a real GlobalSign chain, so installs fail with
+# UnknownIssuer. Emit a complete bundle of the system roots plus the corporate
+# root for anything that replaces rather than appends.
+{
+  security find-certificate -a -p "$system_roots" 2>/dev/null
+  printf '%s\n' "$exported"
+} > "$bundle_file"
+chmod 644 "$bundle_file"
 {{- else }}
 
 exit 0

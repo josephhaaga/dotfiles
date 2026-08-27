@@ -5,6 +5,17 @@ set -euo pipefail
 # tool versions: {{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}
 # package inventory: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
 
+# azure-cli installs through the pipx backend, which runs uv. uv honours
+# SSL_CERT_FILE and treats it as a replacement for the trust store, not an
+# addition, so it needs the full bundle written by the 05 script. Without it
+# uv rejects PyPI, which is not intercepted and serves a real public chain.
+if [ -f "$HOME/.config/ssl/ca-bundle.pem" ]; then
+  export SSL_CERT_FILE="$HOME/.config/ssl/ca-bundle.pem"
+fi
+if [ -f "$HOME/.config/ssl/corporate-ca.pem" ]; then
+  export NODE_EXTRA_CA_CERTS="$HOME/.config/ssl/corporate-ca.pem"
+fi
+
 if command -v mise >/dev/null 2>&1; then
   mise_bin="$(command -v mise)"
 elif [ -x "$HOME/.local/bin/mise" ]; then

@@ -6,11 +6,15 @@ export VISUAL=nvim
 export PYTHONDONTWRITEBYTECODE=1
 export TEALDEER_CONFIG_DIR="$HOME/.config/tealdeer"
 
-# Node uses its own CA bundle and ignores the macOS keychain, so it needs the
-# TLS-inspecting proxy's root CA pointed at explicitly. Absent on machines that
-# are not behind the proxy, hence the guard.
+# TLS trust for the enterprise proxy. The two variables have opposite
+# semantics: NODE_EXTRA_CA_CERTS appends the corporate root to Node's built-in
+# bundle, while SSL_CERT_FILE replaces the store entirely and so needs the full
+# system-roots bundle. Both are absent off the corporate network.
 [[ -f "$HOME/.config/ssl/corporate-ca.pem" ]] && \
   export NODE_EXTRA_CA_CERTS="$HOME/.config/ssl/corporate-ca.pem"
+[[ -f "$HOME/.config/ssl/ca-bundle.pem" ]] && \
+  export SSL_CERT_FILE="$HOME/.config/ssl/ca-bundle.pem" && \
+  export REQUESTS_CA_BUNDLE="$SSL_CERT_FILE"
 
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=60000

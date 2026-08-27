@@ -1,8 +1,19 @@
 min_version = "2026.8.0"
 
+{{- /*
+  A tool is either a bare version string, or a map carrying a version plus
+  backend options. mise rewrites this file in place when a backend needs an
+  option that is missing, which then shows up as a modified target on every
+  apply, so any option a tool needs belongs here rather than being left for
+  mise to discover.
+*/}}
+
 [tools]
-{{- range $tool, $version := .packages.mise }}
-{{ $tool | quote }} = {{ $version | quote }}
+{{- range $tool, $spec := .packages.mise }}
+{{- if kindIs "map" $spec }}
+{{ $tool | quote }} = { version = {{ $spec.version | quote }}{{ range $key, $value := omit $spec "version" }}, {{ $key }} = {{ $value | quote }}{{ end }} }{{- else }}
+{{ $tool | quote }} = {{ $spec | quote }}
+{{- end }}
 {{- end }}
 {{- if eq .profile "server" }}
 {{- range $tool, $version := .packages.mise_server }}

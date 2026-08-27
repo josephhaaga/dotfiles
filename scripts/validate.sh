@@ -52,7 +52,6 @@ if [ -d "$V2_SOURCE" ]; then
   zsh -n "$V2_SOURCE/dot_config/zsh/dot_zshrc"
 
   jq empty \
-    "$V2_SOURCE/dot_config/nvim/lazy-lock.json" \
     "$V2_SOURCE/dot_config/nvim/lazyvim.json" \
     "$V2_SOURCE/dot_config/opencode/cli.json"
 

@@ -9,6 +9,12 @@
 .local/share/opencode/auth.json
 .zsh_history
 
+# lazy.nvim rewrites this on every startup that resolves a plugin update, so
+# managing it produces a conflict prompt on almost every apply. The pin is not
+# worth keeping: plugins are allowed to float, so the lockfile records whatever
+# the last nvim launch happened to see rather than an intended set of versions.
+.config/nvim/lazy-lock.json
+
 {{- if not (has .profile (list "desktop" "enterprise")) }}
 # macOS-only configuration and applications.
 .config/ghostty

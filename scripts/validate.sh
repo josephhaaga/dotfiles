@@ -132,11 +132,11 @@ if [ -d "$V2_SOURCE" ]; then
     < "$V2_SOURCE/dot_config/opencode/opencode.json.tmpl")"
   if ! printf '%s' "$enterprise_opencode" |
     jq -e --argjson allowed "$enterprise_mcp_allowlist" \
-      '((.mcp.servers // {}) | keys) - $allowed | length == 0' >/dev/null; then
+      '((.mcp // {}) | keys) - $allowed | length == 0' >/dev/null; then
     echo "enterprise opencode config declares unreviewed MCP servers" >&2
     printf '%s' "$enterprise_opencode" |
       jq -r --argjson allowed "$enterprise_mcp_allowlist" \
-        '((.mcp.servers // {}) | keys) - $allowed | .[]' >&2
+        '((.mcp // {}) | keys) - $allowed | .[]' >&2
     exit 1
   fi
   if ! printf '%s' "$enterprise_opencode" |
@@ -144,6 +144,40 @@ if [ -d "$V2_SOURCE" ]; then
     echo "enterprise opencode config must allow only the github-copilot provider" >&2
     exit 1
   fi
+
+  # "mcp" is keyed directly by server name. Nesting the servers under an extra
+  # "mcp.servers" object parses as a server literally named "servers" and opencode
+  # refuses to start. Unknown keys are accepted silently, so nothing surfaces the
+  # mistake until startup: assert every entry is a real local or remote server.
+  #
+  # The same silent-acceptance trap applies to the v2 key spellings. opencode 1.x
+  # rejects v2 syntax, while the opencode2 preview migrates v1 on read, so v1 is
+  # the only form that runs on both and machines with both binaries share one
+  # file. Writing the v2 plurals does not error on 1.x, it just stops taking
+  # effect, so reject them here rather than letting the config quietly go inert.
+  for profile in desktop enterprise server container; do
+    rendered="$(chezmoi execute-template --source "$V2_SOURCE" \
+      --override-data "{\"profile\":\"$profile\"}" \
+      < "$V2_SOURCE/dot_config/opencode/opencode.json.tmpl")"
+
+    if ! printf '%s' "$rendered" |
+      jq -e '(.mcp // {}) as $m
+        | ([$m[] | select((.type == "local" and (.command | type) == "array")
+            or (.type == "remote" and (.url | type) == "string"))] | length)
+          == ($m | length)' >/dev/null; then
+      echo "$profile opencode config has a malformed MCP server entry" >&2
+      echo "each key under \"mcp\" must be a server with type local (+command array) or remote (+url)" >&2
+      exit 1
+    fi
+
+    if ! printf '%s' "$rendered" |
+      jq -e 'has("plugins") == false and has("permissions") == false
+        and ((.mcp // {}) | has("servers") | not)' >/dev/null; then
+      echo "$profile opencode config uses v2 key spellings" >&2
+      echo "use \"plugin\", \"permission\", and \"mcp\" keyed by server name; opencode 1.x ignores the v2 plurals silently" >&2
+      exit 1
+    fi
+  done
 
   # npm --prefix relocates the global npmrc, dropping a private registry and
   # falling back to registry.npmjs.org, which fails behind a TLS-inspecting

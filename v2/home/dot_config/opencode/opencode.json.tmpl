@@ -1,53 +1,59 @@
+{{/*
+  Authored in legacy (v1) config syntax on purpose: "plugin", "permission" as a
+  keyed object, and "mcp" keyed directly by server name.
+
+  opencode 1.x rejects v2 syntax outright, while the opencode2 preview migrates
+  v1 on read ("plugin" to "plugins", the "permission" map to a "permissions"
+  rule array, "mcp" to "mcp.servers", "enabled_providers" to
+  experimental.policies). v1 is therefore the only form that runs on both, and
+  machines with both binaries share this single file.
+
+  Do not "modernise" these keys to the v2 plurals. opencode 1.x accepts unknown
+  top-level keys silently, so the plural spellings do not error, they just stop
+  taking effect. scripts/validate.sh enforces this.
+*/ -}}
 {
   "$schema": "https://opencode.ai/config.json",
   "shell": "/bin/zsh",
   "share": "manual",
-  "plugins": [
+{{- if ne .profile "enterprise" }}
+  "plugin": [
     "@plannotator/opencode@0.27.3"
   ],
+{{- end }}
 {{- if eq .profile "enterprise" }}
   "enabled_providers": [
     "github-copilot"
   ],
   "mcp": {
-    "servers": {
-      "playwright": {
-        "type": "local",
-        "command": ["npx", "-y", "@playwright/mcp@0.0.79", "--browser", "chrome"],
-        "disabled": false
-      }
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp@0.0.79", "--browser", "chrome"],
+      "enabled": true
     }
   },
 {{- else }}
   "mcp": {
-    "servers": {
-      "agent-mcp": {
-        "type": "remote",
-        "url": "https://agent-mcp-production-db5b.up.railway.app/mcp",
-        "disabled": false
-      }{{ if eq .profile "desktop" }},
-      "obsidian": {
-        "type": "local",
-        "command": ["npx", "-y", "seekstone@0.13.0"],
-        "environment": {
-          "SEEKSTONE_VAULT": "{{ .chezmoi.homeDir }}/Documents/obsidian-vault"
-        },
-        "disabled": false
-      }
-      {{- end }}
+    "agent-mcp": {
+      "type": "remote",
+      "url": "https://agent-mcp-production-db5b.up.railway.app/mcp",
+      "enabled": true
+    }{{ if eq .profile "desktop" }},
+    "obsidian": {
+      "type": "local",
+      "command": ["npx", "-y", "seekstone@0.13.0"],
+      "environment": {
+        "SEEKSTONE_VAULT": "{{ .chezmoi.homeDir }}/Documents/obsidian-vault"
+      },
+      "enabled": true
     }
+    {{- end }}
   },
 {{- end }}
-  "permissions": [
-    {
-      "action": "subagent",
-      "resource": "build",
-      "effect": "deny"
-    },
-    {
-      "action": "subagent",
-      "resource": "plan",
-      "effect": "deny"
+  "permission": {
+    "task": {
+      "build": "deny",
+      "plan": "deny"
     }
-  ]
+  }
 }

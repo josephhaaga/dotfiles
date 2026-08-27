@@ -40,6 +40,7 @@ The enterprise profile excludes all desktop-only paths through `.chezmoiignore` 
 - The local Obsidian vault integration and OpenCode VM environment file.
 - Every OpenCode MCP server not individually reviewed for this profile, and every model provider other than GitHub Copilot.
 - Slack export binaries, the Slack cookie reader, and the `gh-slackdump` extension.
+- The Plannotator OpenCode plugin, which bun cannot fetch from Artifactory.
 - Server-only Caddy configuration, Docker service setup, DNF packages, and systemd services.
 
 ## Managed Configuration
@@ -51,8 +52,17 @@ OpenCode is configured differently on this profile than on the others:
 - MCP servers are opt-in per name rather than inherited from the other profiles. Only `playwright` is declared. The Agent MCP endpoint and the Obsidian server are omitted, because neither is reviewed for the enterprise network. `scripts/validate.sh` enforces the allowlist, so adding a server means adding its name there and recording that its outbound behaviour was reviewed.
 - The Playwright server runs with `--browser chrome` so it drives the installed Google Chrome. Playwright's own browser builds come from `cdn.playwright.dev` rather than the private npm mirror, and selecting the system browser avoids that download entirely. The npm package itself resolves through Artifactory normally.
 - `enabled_providers` is set to `["github-copilot"]`, so every other model provider is ignored regardless of what credentials are present. GitHub Copilot is the only approved provider; authenticate through the device flow at `https://github.com/login/device`.
+- The Plannotator plugin is excluded. OpenCode installs plugins with bun, which does not read the npm registry settings and cannot authenticate to Artifactory, so loading the plugin hangs OpenCode at startup on this network. See "OpenCode Configuration Syntax" below.
 
 Authentication remains local runtime state and is never managed.
+
+## OpenCode Configuration Syntax
+
+`opencode.json.tmpl` is written in legacy (v1) syntax: `plugin`, `permission` as a keyed object, and `mcp` keyed directly by server name. This is deliberate and applies to every profile, not just this one.
+
+OpenCode 1.x rejects the v2 syntax outright and refuses to start. The opencode2 preview migrates v1 on read, rewriting `plugin` to `plugins`, the `permission` map to a `permissions` rule array, `mcp` to `mcp.servers`, and `enabled_providers` to `experimental.policies`. Compatibility therefore runs one way only, and v1 is the single form both channels accept. Machines with both binaries installed share one `~/.config/opencode/opencode.json`, so a per-channel file is not an option.
+
+The trap is that OpenCode 1.x accepts unknown top-level keys silently. Writing the v2 plurals does not raise an error, it just stops taking effect: before this was corrected, `plugins` and `permissions` were being ignored entirely on 1.x, so the plugin never loaded and the subagent denials were never enforced. `scripts/validate.sh` rejects the v2 spellings for this reason.
 
 ## Private npm Registry
 

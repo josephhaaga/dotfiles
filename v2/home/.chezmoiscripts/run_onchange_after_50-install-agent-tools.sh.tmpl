@@ -67,7 +67,7 @@ PATH="$HOME/.local/share/mise/shims:/usr/bin:/bin:/usr/sbin:/sbin" \
 # the whole apply with it. The tool is a convenience, so skip it there rather
 # than making every apply on that profile exit non-zero.
 curl -fsSL https://terminal-browser.sh/install -o "$installer"
-verify_installer "9b00a732ba367d853de187a7772b7fcb4890c87adb131fdac1e147c08debbb4f" || {
+verify_installer "5f77483e11de1f671cf07c173d38fb5b51b35af9b7ec3f763fba5198ac610a2e" || {
   printf '%s\n' 'terminal-browser installer checksum mismatch' >&2
   exit 1
 }

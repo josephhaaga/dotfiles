@@ -28,6 +28,9 @@ packages:
     tealdeer: "1.8.1"
     uv: "0.12.4"
 
+  mise_desktop:
+    "pipx:mempalace": "3.9.0"
+
   mise_server:
     "cargo:tree-sitter-cli": "0.26.12"
     caddy: "2.11.4"

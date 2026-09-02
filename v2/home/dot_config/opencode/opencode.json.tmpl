@@ -36,6 +36,13 @@
   },
 {{- else }}
   "mcp": {
+    {{- if eq .profile "desktop" }}
+    "mempalace": {
+      "type": "local",
+      "command": ["mempalace-mcp"],
+      "enabled": true
+    },
+    {{- end }}
     "agent-mcp": {
       "type": "remote",
       "url": "https://agent-mcp-production-db5b.up.railway.app/mcp",

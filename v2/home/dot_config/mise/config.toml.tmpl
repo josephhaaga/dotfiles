@@ -15,6 +15,11 @@ min_version = "2026.8.0"
 {{ $tool | quote }} = {{ $spec | quote }}
 {{- end }}
 {{- end }}
+{{- if eq .profile "desktop" }}
+{{- range $tool, $version := .packages.mise_desktop }}
+{{ $tool | quote }} = {{ $version | quote }}
+{{- end }}
+{{- end }}
 {{- if eq .profile "server" }}
 {{- range $tool, $version := .packages.mise_server }}
 {{ $tool | quote }} = {{ $version | quote }}

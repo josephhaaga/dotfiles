@@ -79,7 +79,7 @@ if [ -d "$V2_SOURCE" ]; then
   mkdir -p "$profile_home/.config/chezmoi"
   printf 'sourceDir = %s\n\n[data]\n    profile = "enterprise"\n    managedSecrets = false\n' \
     "\"$V2_SOURCE\"" > "$profile_home/.config/chezmoi/chezmoi.toml"
-  recorded_profile="$(HOME="$profile_home" chezmoi execute-template \
+  recorded_profile="$(HOME="$profile_home" chezmoi --config "$profile_home/.config/chezmoi/chezmoi.toml" execute-template \
     --source "$V2_SOURCE" < "$V2_SOURCE/.chezmoi.toml.tmpl" |
     sed -n 's/^ *profile = "\(.*\)"$/\1/p')"
   rm -rf "$profile_home"

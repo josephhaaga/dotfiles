@@ -20,6 +20,9 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y jq shellcheck zsh
       - run: sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin"
       - run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - run: |
+          mkdir -p "$HOME/.config/chezmoi"
+          printf '[data]\n    profile = "container"\n' > "$HOME/.config/chezmoi/chezmoi.toml"
       - run: bash scripts/validate.sh
 
   container:

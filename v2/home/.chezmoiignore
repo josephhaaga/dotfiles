@@ -41,4 +41,5 @@ Documents/obsidian-vault
 {{- if ne .profile "server" }}
 # The public HTTPS endpoint exists only on the VM.
 .config/caddy
+.config/systemd/user/openchamber.service
 {{- end }}

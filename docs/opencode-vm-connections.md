@@ -6,7 +6,7 @@ combined into one tunnel.
 
 | Method | Local entry point | VM destination | Lifetime |
 | --- | --- | --- | --- |
-| Safari web | `https://josephhaaga.sh.tribe.ai` | Caddy to `127.0.0.1:49374` | Per browser request |
+| Safari web | `https://josephhaaga.sh.tribe.ai` | Caddy to OpenChamber on `127.0.0.1:3000` | Per browser request |
 | Local TUI | `http://127.0.0.1:14096` | `127.0.0.1:49374` | Persistent LaunchAgent |
 | OpenAI OAuth | `http://localhost:1455/auth/callback` | `127.0.0.1:1455` | Temporary manual tunnel |
 
@@ -18,14 +18,11 @@ Safari connects directly to the public Caddy endpoint. No SSH tunnel is used.
 Safari
   -> HTTPS on josephhaaga.sh.tribe.ai:443
   -> mTLS client-certificate verification at Caddy
-  -> OpenCode Basic Authorization added by Caddy
-  -> OpenCode on VM loopback port 49374
+  -> OpenChamber on VM loopback port 3000
 ```
 
-The device must have its client certificate and private key installed. Caddy
-reads the OpenCode password from the VM's root-owned runtime configuration;
-the browser never receives that password. See [OpenCode web access](opencode-web.md)
-for certificate and proxy details.
+The device must have its client certificate and private key installed. See
+[VM web access](vm-web-access.md) for certificate and proxy details.
 
 ## Local TUI attachment
 

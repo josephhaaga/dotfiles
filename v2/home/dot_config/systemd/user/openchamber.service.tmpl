@@ -1,0 +1,20 @@
+[Unit]
+Description=OpenChamber web server
+Documentation=https://docs.openchamber.dev/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ .chezmoi.username }}
+Group={{ .chezmoi.group }}
+Environment=HOME={{ .chezmoi.homeDir }}
+Environment=PATH={{ .chezmoi.homeDir }}/.local/bin:{{ .chezmoi.homeDir }}/.local/share/mise/shims:/usr/local/bin:/usr/bin:/bin
+Environment=OPENCODE_BINARY={{ .chezmoi.homeDir }}/.local/bin/opencode
+Environment=OPENCODE_DATA_DIR={{ .chezmoi.homeDir }}/.local/share/openchamber/opencode
+ExecStart={{ .chezmoi.homeDir }}/.local/bin/openchamber serve --foreground --port 3000
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

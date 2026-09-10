@@ -38,16 +38,13 @@ bash scripts/smoke-test.sh
 herdr
 ```
 
-The server profile installs Caddy and publishes the loopback-only OpenCode web
-service at `https://josephhaaga.sh.tribe.ai`. Caddy requires a client
-certificate signed by the public CA in `~/.config/caddy/client-ca.pem`; client
-private keys and the CA private key remain local runtime state outside this
-repository. Caddy reads OpenCode's generated Basic credential from runtime
-state and adds it only on the loopback proxy hop, so browsers authenticate with
-their client certificate instead of repeatedly prompting for the generated
-password. See [OpenCode web access](opencode-web.md) for the web architecture
-and [OpenCode VM connections](opencode-vm-connections.md) for all browser, TUI,
-and OAuth connection paths.
+The server profile installs Caddy and publishes loopback-only OpenChamber at
+`https://josephhaaga.sh.tribe.ai`. Caddy requires a client certificate signed
+by the public CA in `~/.config/caddy/client-ca.pem`; client private keys and the
+CA private key remain local runtime state outside this repository. See
+[VM web access](vm-web-access.md) for the web architecture and [OpenCode VM
+connections](opencode-vm-connections.md) for all browser, TUI, and OAuth
+connection paths.
 
 To connect the desktop TUI to the VM, create an `OpenCode VM` item in the
 1Password `Employee` vault and set its `password` field to the password shown

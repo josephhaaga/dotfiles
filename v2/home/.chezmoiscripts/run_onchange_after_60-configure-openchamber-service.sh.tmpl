@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# OpenChamber package: {{ index .packages.npm "@openchamber/web" }}
+# OpenCode package: {{ index .packages.npm "opencode-ai" }}
+# systemd unit: {{ include "dot_config/systemd/user/openchamber.service.tmpl" | sha256sum }}
+
+{{ if eq .profile "server" -}}
+unit="{{ .chezmoi.homeDir }}/.config/systemd/user/openchamber.service"
+
+sudo install -m 0644 "$unit" /etc/systemd/system/openchamber.service
+sudo systemctl daemon-reload
+sudo systemctl enable openchamber.service
+
+if systemctl is-active --quiet openchamber.service; then
+  sudo systemctl restart openchamber.service
+else
+  sudo systemctl start openchamber.service
+fi
+{{ else -}}
+printf '%s\n' 'OpenChamber service is only configured on the server profile.'
+{{ end -}}

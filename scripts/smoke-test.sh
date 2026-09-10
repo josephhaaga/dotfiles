@@ -57,8 +57,10 @@ fi
 
 if [ "$profile" = server ]; then
   systemctl is-active --quiet caddy.service || status=1
+  systemctl is-active --quiet openchamber.service || status=1
   systemctl is-active --quiet docker.service || status=1
   systemctl is-active --quiet crond.service || status=1
+  curl --fail --silent --output /dev/null http://127.0.0.1:3000/ || status=1
 fi
 
 exit "$status"

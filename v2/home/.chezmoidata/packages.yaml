@@ -37,8 +37,10 @@ packages:
     rust: "1.97.1"
 
   npm:
+    "@openchamber/web": "1.23.0"
     "@opencode-ai/cli": "0.0.0-beta-18050"
     "@plannotator/opencode": "0.27.3"
+    opencode-ai: "1.18.30"
     tree-sitter-cli: "0.26.12"
 
   macos:

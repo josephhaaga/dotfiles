@@ -33,6 +33,7 @@ npm_registry="$(npm config get registry)"
 
 npm install --global --prefix "$HOME/.local" \
   --registry "$npm_registry" \
+  --allow-scripts=opencode-ai,node-pty \
   --ignore-scripts=false "${npm_packages[@]}"
 
 plannotator_version="0.27.7"

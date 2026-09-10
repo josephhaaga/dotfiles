@@ -23,7 +23,7 @@ case "$profile" in
     ;;
 esac
 
-required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode2 kubectl neofetch tree-sitter)
+required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode opencode2 openchamber kubectl neofetch tree-sitter)
 
 if [ "$profile" = server ]; then
   required+=(caddy)
@@ -41,6 +41,8 @@ done
 
 herdr --version >/dev/null
 opencode2 --version >/dev/null
+opencode --version >/dev/null
+openchamber --version >/dev/null
 kubectl version --client >/dev/null
 
 zsh -lic 'alias gst >/dev/null'

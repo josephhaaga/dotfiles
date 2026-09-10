@@ -39,7 +39,8 @@ used for installation contains the private key and must remain secret.
   available through the SSH tunnel for `opencode-vm`.
 - OpenChamber uses the stable `~/.local/bin/opencode` binary because its SDK is
   not compatible with the beta service. Its runtime data is isolated under
-  `~/.local/share/openchamber/opencode` to protect the beta database.
+  `~/.local/share/openchamber/opencode` with `XDG_DATA_HOME` to protect the beta
+  database; stable OpenCode 1.18 does not honor `OPENCODE_DATA_DIR`.
 
 ## Secret handling
 

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+exec ssh -t \
+  -o ExitOnForwardFailure=yes \
+  -L 1455:127.0.0.1:1455 \
+  ec2-user@josephhaaga.sh.tribe.ai \
+  '$HOME/.local/bin/openchamber-opencode auth login --provider openai --method "ChatGPT Pro/Plus (browser)"'

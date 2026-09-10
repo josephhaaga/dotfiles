@@ -59,28 +59,26 @@ OpenAI redirects browser authentication to the fixed loopback URL
 `http://localhost:1455/auth/callback`. For authentication initiated by the
 VM-hosted OpenCode server, temporarily forward that local port to the VM.
 
-1. Start the tunnel in a local terminal:
+1. In a local terminal, initiate browser OAuth against OpenChamber's isolated
+   stable OpenCode instance:
 
    ```bash
-   ssh -NT \
+   ssh -t \
      -o ExitOnForwardFailure=yes \
      -L 1455:127.0.0.1:1455 \
-     ec2-user@josephhaaga.sh.tribe.ai
+     ec2-user@josephhaaga.sh.tribe.ai \
+     '$HOME/.local/bin/openchamber-opencode auth login \
+       --provider openai --method "ChatGPT Pro/Plus (browser)"'
    ```
 
-2. In another local terminal, attach to the VM server and initiate OAuth:
+   The desktop profile installs this as the shorter `openchamber-auth` command.
 
-   ```bash
-   opencode-vm
-   ```
+2. Open the displayed authorization URL in the local browser and approve it.
 
-   Run `/connect`, select OpenAI, then select `ChatGPT Pro/Plus (browser)`.
-
-3. Open the displayed authorization URL in the local browser and approve it.
-
-4. After OpenCode confirms the connection, stop the temporary SSH tunnel with
-   `Ctrl-C`.
+3. Wait for OpenCode to confirm the connection. The temporary SSH tunnel exits
+   with the authentication command.
 
 The browser callback travels through port `1455`, but the resulting OpenAI
-credential is stored by the OpenCode server on the VM. Do not commit or copy
-that runtime authentication state into this repository.
+credential is stored in OpenChamber's isolated OpenCode runtime on the VM. It
+does not authenticate the separate beta `opencode2` service. Do not commit or
+copy that runtime authentication state into this repository.

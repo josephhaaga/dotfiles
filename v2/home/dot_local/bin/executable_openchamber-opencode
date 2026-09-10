@@ -1,0 +1,4 @@
+#!/bin/sh
+
+export XDG_DATA_HOME="$HOME/.local/share/openchamber"
+exec "$HOME/.local/bin/opencode" "$@"

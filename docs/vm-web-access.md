@@ -37,10 +37,11 @@ used for installation contains the private key and must remain secret.
 - OpenChamber listens only on `127.0.0.1:3000`.
 - The beta OpenCode service listens only on `127.0.0.1:49374` and remains
   available through the SSH tunnel for `opencode-vm`.
-- OpenChamber uses the stable `~/.local/bin/opencode` binary because its SDK is
-  not compatible with the beta service. Its runtime data is isolated under
-  `~/.local/share/openchamber/opencode` with `XDG_DATA_HOME` to protect the beta
-  database; stable OpenCode 1.18 does not honor `OPENCODE_DATA_DIR`.
+- OpenChamber uses `~/.local/bin/openchamber-opencode` to launch the stable
+  `~/.local/bin/opencode` binary because its SDK is not compatible with the
+  beta service. The wrapper isolates stable runtime data under
+  `~/.local/share/openchamber/opencode` to protect the beta database; stable
+  OpenCode 1.18 does not honor `OPENCODE_DATA_DIR`.
 
 ## Secret handling
 

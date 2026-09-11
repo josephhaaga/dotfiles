@@ -6,7 +6,22 @@ josephhaaga.sh.tribe.ai {
 		}
 	}
 
-	reverse_proxy 127.0.0.1:3000 {
-		flush_interval -1
+	route {
+		@legacy_report path /dotfiles-report /dotfiles-report/
+		redir @legacy_report /reports/dotfiles-field-guide.html
+		redir /reports /reports/
+
+		handle_path /reports/* {
+			root * {{ joinPath .chezmoi.sourceDir ".." ".." "reports" | quote }}
+			header Cache-Control "private, no-store"
+			header X-Robots-Tag "noindex, nofollow"
+			file_server browse
+		}
+
+		handle {
+			reverse_proxy 127.0.0.1:3000 {
+				flush_interval -1
+			}
+		}
 	}
 }

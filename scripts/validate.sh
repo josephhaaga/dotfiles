@@ -193,11 +193,16 @@ if [ -d "$V2_SOURCE" ]; then
     fi
   done
 
-  for profile in desktop enterprise; do
-    chezmoi execute-template --source "$V2_SOURCE" \
-      --override-data "{\"profile\":\"$profile\"}" \
-      < "$V2_SOURCE/dot_config/brew/Brewfile.tmpl" | ruby -c >/dev/null
-  done
+  if ruby --version >/dev/null 2>&1; then
+    for profile in desktop enterprise; do
+      chezmoi execute-template --source "$V2_SOURCE" \
+        --override-data "{\"profile\":\"$profile\"}" \
+        < "$V2_SOURCE/dot_config/brew/Brewfile.tmpl" | ruby -c >/dev/null
+    done
+  elif [ "$(uname -s)" = Darwin ]; then
+    echo "ruby is required to validate generated Brewfiles on macOS" >&2
+    exit 1
+  fi
 
   enterprise_casks="$(chezmoi execute-template --source "$V2_SOURCE" \
     --override-data '{"profile":"enterprise"}' \

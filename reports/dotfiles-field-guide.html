@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071826">
+  <title>Dotfiles Field Guide</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #eef7f5;
+      --muted: #9bb5b4;
+      --faint: #88a5a4;
+      --night: #071826;
+      --deep: #0a2231;
+      --panel: #0d2b3a;
+      --panel-2: #123747;
+      --line: #285266;
+      --cyan: #5eead4;
+      --blue: #6db8ff;
+      --amber: #ffc857;
+      --coral: #ff7a6e;
+      --green: #8ce99a;
+      --radius: 18px;
+      --max: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--night);
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background: var(--night);
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.62;
+      text-rendering: optimizeLegibility;
+    }
+
+    ::selection { color: var(--night); background: var(--cyan); }
+
+    a {
+      color: var(--cyan);
+      text-decoration-color: rgba(94, 234, 212, .45);
+      text-underline-offset: .2em;
+    }
+
+    a:hover { text-decoration-color: currentColor; }
+
+    a:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid var(--amber);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+
+    code, pre, .tag, .step, .stat-label, .toc a {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    }
+
+    code {
+      color: #c8fff6;
+      font-size: .9em;
+    }
+
+    .shell {
+      width: min(100% - 32px, var(--max));
+      min-width: 0;
+      margin-inline: auto;
+    }
+
+    .masthead {
+      min-height: 92svh;
+      display: grid;
+      align-items: center;
+      padding: 72px 0 52px;
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .masthead::after {
+      content: "";
+      position: absolute;
+      width: 460px;
+      height: 460px;
+      right: -220px;
+      top: 7%;
+      border: 1px solid rgba(94, 234, 212, .25);
+      border-radius: 50%;
+      box-shadow: 0 0 0 40px rgba(94, 234, 212, .025), 0 0 0 95px rgba(94, 234, 212, .018);
+      pointer-events: none;
+    }
+
+    .mast-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(240px, .7fr);
+      gap: clamp(32px, 8vw, 100px);
+      align-items: end;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(3.35rem, 10vw, 7.6rem);
+      font-weight: 760;
+      letter-spacing: -.045em;
+      line-height: .88;
+      text-wrap: balance;
+    }
+
+    .dek {
+      max-width: 680px;
+      margin: 30px 0 0;
+      color: #c4d8d6;
+      font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+      line-height: 1.5;
+    }
+
+    .hero-note {
+      padding: 18px 0 18px 20px;
+      border-left: 1px solid var(--cyan);
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .hero-note strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1.1rem;
+    }
+
+    .toc-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--line);
+      background: rgba(7, 24, 38, .94);
+      backdrop-filter: blur(14px);
+    }
+
+    .toc {
+      display: flex;
+      gap: 4px;
+      padding: 9px 0;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line) transparent;
+    }
+
+    .toc a {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      color: var(--muted);
+      font-size: .75rem;
+      text-decoration: none;
+      border-radius: 999px;
+    }
+
+    .toc a:hover { color: var(--night); background: var(--cyan); }
+
+    main { padding-bottom: 120px; }
+
+    section {
+      scroll-margin-top: 76px;
+      padding: clamp(72px, 10vw, 124px) 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: minmax(180px, .55fr) minmax(0, 1.45fr);
+      gap: clamp(28px, 7vw, 92px);
+    }
+
+    .section-title,
+    .section-body {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.7rem);
+      line-height: 1;
+      letter-spacing: -.035em;
+      text-wrap: balance;
+    }
+
+    .section-title p {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .section-body > :first-child { margin-top: 0; }
+    .section-body > :last-child { margin-bottom: 0; }
+
+    h3 {
+      margin: 48px 0 12px;
+      font-size: clamp(1.25rem, 2.6vw, 1.7rem);
+      letter-spacing: -.02em;
+      line-height: 1.2;
+    }
+
+    p { max-width: 72ch; }
+
+    p, li, td, summary, .flow-copy span {
+      overflow-wrap: anywhere;
+    }
+
+    pre code { overflow-wrap: normal; }
+
+    .lead {
+      color: #d7e8e5;
+      font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+      line-height: 1.5;
+    }
+
+    .verdict {
+      margin: 32px 0;
+      padding: 26px clamp(22px, 4vw, 38px);
+      border: 1px solid var(--cyan);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(94, 234, 212, .1), rgba(109, 184, 255, .04));
+    }
+
+    .verdict strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--cyan);
+      font-size: .8rem;
+      letter-spacing: .04em;
+    }
+
+    .verdict p {
+      margin: 0;
+      color: var(--ink);
+      font-size: 1.15rem;
+    }
+
+    .flow {
+      display: grid;
+      gap: 2px;
+      margin: 34px 0;
+      counter-reset: flow;
+    }
+
+    .flow-row {
+      counter-increment: flow;
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      min-height: 82px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+
+    .flow-row:first-child { border-radius: var(--radius) var(--radius) 4px 4px; }
+    .flow-row:last-child { border-radius: 4px 4px var(--radius) var(--radius); }
+
+    .flow-row::before {
+      content: counter(flow, decimal-leading-zero);
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      border-right: 1px solid var(--line);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: .75rem;
+    }
+
+    .flow-copy { padding: 17px 20px; }
+    .flow-copy strong { display: block; }
+    .flow-copy span { display: block; color: var(--muted); font-size: .9rem; }
+
+    .profiles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      margin: 36px 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--line);
+    }
+
+    .profile {
+      min-height: 190px;
+      padding: 26px;
+      background: var(--panel);
+    }
+
+    .profile .tag { color: var(--cyan); font-size: .8rem; }
+    .profile h3 { margin: 12px 0 9px; }
+    .profile p { margin: 0; color: var(--muted); font-size: .93rem; }
+
+    .pipeline {
+      max-width: 100%;
+      margin: 34px 0;
+      padding: 28px;
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      overflow-x: auto;
+    }
+
+    .pipe-line {
+      display: flex;
+      align-items: stretch;
+      min-width: 690px;
+    }
+
+    .pipe-node {
+      flex: 1;
+      display: grid;
+      align-content: center;
+      min-height: 110px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: var(--deep);
+      text-align: center;
+    }
+
+    .pipe-node:first-child { border-radius: 12px 0 0 12px; }
+    .pipe-node:last-child { border-radius: 0 12px 12px 0; }
+    .pipe-node strong { color: var(--ink); font-size: .9rem; }
+    .pipe-node small { color: var(--muted); }
+
+    .pipe-arrow {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      color: var(--amber);
+      background: var(--panel);
+      font-size: 1.4rem;
+    }
+
+    .rule-table {
+      width: 100%;
+      max-width: 100%;
+      margin: 30px 0;
+      border-collapse: collapse;
+      font-size: .95rem;
+    }
+
+    .rule-table th,
+    .rule-table td {
+      padding: 17px 14px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .rule-table th {
+      color: var(--muted);
+      font-size: .74rem;
+      letter-spacing: .08em;
+    }
+
+    .yes { color: var(--green); font-weight: 700; }
+    .no { color: var(--coral); font-weight: 700; }
+
+    pre {
+      position: relative;
+      max-width: 100%;
+      margin: 24px 0;
+      padding: 22px;
+      overflow-x: auto;
+      color: #d9fff8;
+      background: #04121d;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      font-size: .82rem;
+      line-height: 1.7;
+      tab-size: 2;
+      white-space: pre;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+    }
+
+    .timeline {
+      position: relative;
+      margin: 40px 0;
+      padding-left: 30px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: var(--line);
+    }
+
+    .event {
+      position: relative;
+      padding: 0 0 30px;
+    }
+
+    .event:last-child { padding-bottom: 0; }
+
+    .event::before {
+      content: "";
+      position: absolute;
+      left: -30px;
+      top: 7px;
+      width: 11px;
+      height: 11px;
+      border: 2px solid var(--night);
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 0 1px var(--cyan);
+    }
+
+    .event time { color: var(--amber); font-family: ui-monospace, monospace; font-size: .8rem; }
+    .event strong { display: block; margin-top: 4px; }
+    .event p { margin: 5px 0 0; color: var(--muted); font-size: .92rem; }
+
+    .ci-score {
+      display: grid;
+      grid-template-columns: minmax(150px, .7fr) minmax(0, 1.3fr);
+      gap: 34px;
+      align-items: center;
+      margin: 36px 0;
+      padding-top: clamp(24px, 5vw, 46px);
+      padding-right: clamp(24px, 5vw, 46px);
+      padding-bottom: clamp(24px, 5vw, 46px);
+      padding-left: clamp(24px, 5vw, 46px);
+      background: var(--panel);
+      border: 1px solid var(--coral);
+      border-radius: var(--radius);
+    }
+
+    .big-stat {
+      font-size: clamp(4.2rem, 12vw, 8rem);
+      font-weight: 800;
+      line-height: .78;
+      letter-spacing: -.07em;
+      color: var(--coral);
+    }
+
+    .stat-label { margin-top: 18px; color: var(--muted); font-size: .72rem; }
+
+    .bar {
+      display: flex;
+      height: 18px;
+      margin: 20px 0 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--deep);
+    }
+
+    .bar-mise { width: 92.3%; background: var(--coral); }
+    .bar-browser { width: 7.7%; background: var(--amber); }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 22px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .key { display: inline-flex; align-items: center; gap: 8px; }
+    .swatch { width: 9px; height: 9px; border-radius: 50%; }
+
+    .ranked {
+      list-style: none;
+      margin: 32px 0;
+      padding: 0;
+      counter-reset: priorities;
+      border-top: 1px solid var(--line);
+    }
+
+    .ranked li {
+      counter-increment: priorities;
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      gap: 16px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .ranked li::before {
+      content: counter(priorities);
+      color: var(--night);
+      background: var(--cyan);
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      font-family: ui-monospace, monospace;
+      font-weight: 800;
+    }
+
+    .ranked strong { display: block; margin-bottom: 5px; font-size: 1.06rem; }
+    .ranked p { margin: 0; color: var(--muted); }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      margin: 34px 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--line);
+    }
+
+    .choice { padding: 26px; background: var(--panel); }
+    .choice.recommended { background: linear-gradient(160deg, rgba(94,234,212,.13), var(--panel) 60%); }
+    .choice h3 { margin: 8px 0 10px; }
+    .choice p { color: var(--muted); font-size: .9rem; }
+    .choice ul { padding-left: 19px; color: var(--muted); font-size: .9rem; }
+    .choice .tag { color: var(--amber); font-size: .72rem; }
+
+    details {
+      margin: 16px 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 17px 20px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    details p { padding: 0 20px 18px; margin: 0; color: var(--muted); }
+
+    .close {
+      padding-top: 96px;
+      text-align: center;
+    }
+
+    .close p { margin-inline: auto; color: var(--muted); }
+    .close .command { max-width: 820px; margin: 28px auto; text-align: left; }
+
+    footer {
+      padding: 26px 0 48px;
+      color: var(--faint);
+      font-size: .78rem;
+      text-align: center;
+    }
+
+    @media (max-width: 780px) {
+      .masthead { min-height: auto; padding-top: 74px; }
+      .mast-grid, .section-grid, .ci-score { grid-template-columns: minmax(0, 1fr); }
+      .mast-grid { gap: 46px; }
+      .section-title { max-width: min(560px, 100%); }
+      .profiles, .comparison { grid-template-columns: 1fr; }
+      .profile { min-height: auto; }
+      .ci-score { gap: 24px; }
+      .big-stat { font-size: 5.4rem; }
+      .hero-note { max-width: 440px; }
+      .pipe-line { min-width: 0; flex-direction: column; }
+      .pipe-node:first-child { border-radius: 12px 12px 0 0; }
+      .pipe-node:last-child { border-radius: 0 0 12px 12px; }
+      .pipe-arrow { width: auto; height: 34px; transform: rotate(90deg); }
+    }
+
+    @media (max-width: 600px) {
+      .rule-table,
+      .rule-table tbody,
+      .rule-table tr,
+      .rule-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .rule-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+      }
+
+      .rule-table tr {
+        padding: 15px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .rule-table td {
+        display: grid;
+        grid-template-columns: 76px minmax(0, 1fr);
+        gap: 10px;
+        padding: 5px 0;
+        border: 0;
+      }
+
+      .rule-table td::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: .7rem;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .shell { width: min(100% - 24px, var(--max)); }
+      .masthead { padding-bottom: 44px; }
+      h1 { font-size: clamp(3.15rem, 18vw, 4.8rem); }
+      section { padding: 68px 0; }
+      .section-grid { gap: 30px; }
+      .pipeline { margin-inline: -12px; border-radius: 0; border-inline: 0; }
+      pre { margin-inline: -12px; border-radius: 0; border-inline: 0; font-size: .76rem; }
+      .verdict { padding: 22px 19px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="shell mast-grid">
+      <div>
+        <h1>Dotfiles,<br>decoded.</h1>
+        <p class="dek">A field guide to the four-profile chezmoi system: what is source, what is generated, why <code>v2</code> still exists, why CI keeps breaking, and how to make the next bootstrap smaller.</p>
+      </div>
+      <aside class="hero-note">
+        <strong>The short diagnosis</strong>
+        The architecture is sound. Its reliability problem is mostly network bootstrap code using fixed checksums against mutable installer URLs.
+      </aside>
+    </div>
+  </header>
+
+  <nav class="toc-wrap" aria-label="Report sections">
+    <div class="shell toc">
+      <a href="#map">System map</a>
+      <a href="#v2">Why v2?</a>
+      <a href="#templates">Templates</a>
+      <a href="#ci">CI failures</a>
+      <a href="#bootstrap">Bootstrap</a>
+      <a href="#simplify">Simplify</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="map">
+      <div class="shell section-grid">
+        <header class="section-title">
+          <h2>The system map</h2>
+          <p>One repository, four capability profiles, three installation owners.</p>
+        </header>
+        <div class="section-body">
+          <p class="lead">Chezmoi is the orchestrator. It selects a profile, renders files into <code>$HOME</code>, then runs ordered hooks. Homebrew or DNF owns native packages; mise owns portable runtimes and tools.</p>
+
+          <div class="flow" aria-label="Bootstrap sequence">
+            <div class="flow-row"><div class="flow-copy"><strong><code>./setup</code></strong><span>Installs pinned chezmoi when absent, then initializes the source.</span></div></div>
+            <div class="flow-row"><div class="flow-copy"><strong><code>.chezmoi.toml.tmpl</code></strong><span>Selects desktop, enterprise, server, or container.</span></div></div>
+            <div class="flow-row"><div class="flow-copy"><strong><code>.chezmoiignore</code></strong><span>Removes paths that do not belong on the selected machine.</span></div></div>
+            <div class="flow-row"><div class="flow-copy"><strong>Source files and templates</strong><span>Render and copy into the user's home directory. They are not symlinked.</span></div></div>
+            <div class="flow-row"><div class="flow-copy"><strong><code>.chezmoiscripts/</code></strong><span>Installs native packages, mise tools, agent tools, and profile-specific services.</span></div></div>
+          </div>
+
+          <div class="profiles">
+            <article class="profile"><span class="tag">macOS · full</span><h3>desktop</h3><p>Homebrew, GUI apps, Ghostty, Yabai/skhd, Docker Desktop, Obsidian, Slack export, and the VM tunnel.</p></article>
+            <article class="profile"><span class="tag">macOS · restricted</span><h3>enterprise</h3><p>Existing MDM-approved Homebrew, a narrow cask set, corporate CA handling, and no personal integrations or LaunchAgents.</p></article>
+            <article class="profile"><span class="tag">Amazon Linux 2023</span><h3>server</h3><p>DNF, Docker Engine, crond, Caddy, OpenCode, OpenChamber, and systemd services.</p></article>
+            <article class="profile"><span class="tag">non-root Linux</span><h3>container</h3><p>User configuration and mise tools only. The image owns native packages, services, and the login shell.</p></article>
+          </div>
+
+          <h3>Where the truth lives</h3>
+          <p>The active chezmoi root is declared by <a href="https://github.com/josephhaaga/dotfiles/blob/master/.chezmoiroot"><code>.chezmoiroot</code></a> as <code>v2/home</code>. Package membership and versions live in <a href="https://github.com/josephhaaga/dotfiles/blob/master/v2/home/.chezmoidata/packages.yaml"><code>.chezmoidata/packages.yaml</code></a>. Authentication, tokens, databases, caches, and sessions remain local runtime state and are deliberately excluded.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="v2">
+      <div class="shell section-grid">
+        <header class="section-title">
+          <h2>Why the v2 prefix?</h2>
+          <p>Migration history that outlived the migration.</p>
+        </header>
+        <div class="section-body">
+          <p class="lead"><code>v2</code> was a safe staging area for replacing the old macOS-oriented setup with a cross-platform, profile-driven system. It is no longer technically necessary.</p>
+
+          <div class="timeline">
+            <div class="event"><time>90f14b38 · Aug 14</time><strong>Scaffold v2 beside the old source</strong><p>The new <code>v2/home</code> tree could be built without changing the active deployment.</p></div>
+            <div class="event"><time>5687d972</time><strong>Port retained configuration</strong><p>Selected shell, editor, package, and agent configuration moved into the four-profile architecture.</p></div>
+            <div class="event"><time>69c8de23 · Aug 15</time><strong>Activate v2</strong><p><code>.chezmoiroot</code> changed from <code>home</code> to <code>v2/home</code>.</p></div>
+            <div class="event"><time>ae41143f</time><strong>Remove the old source</strong><p>The original <code>home/</code> tree was deleted. Git history became the rollback path.</p></div>
+          </div>
+
+          <div class="verdict">
+            <strong>Verdict</strong>
+            <p>The prefix now communicates provenance, not architecture. Renaming <code>v2/home</code> to <code>home</code> would reduce nesting and eliminate a label that implies another live version exists.</p>
+          </div>
+
+          <p>The rename is worthwhile but not urgent. First fix scripts that hard-code <code>v2/home</code>; otherwise the cosmetic simplification can create bootstrap drift.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="templates">
+      <div class="shell section-grid">
+        <header class="section-title">
+          <h2>Yes, edit the templates</h2>
+          <p>The important distinction is source versus rendered output.</p>
+        </header>
+        <div class="section-body">
+          <p class="lead">Your understanding is correct: files ending in <code>.tmpl</code> under <code>v2/home</code> are source code. You edit them, and chezmoi renders them for the current profile.</p>
+
+          <div class="verdict">
+            <strong>Correction to the repository wording</strong>
+            <p><code>Brewfile.tmpl</code> and <code>config.toml.tmpl</code> are not generated files. They are hand-maintained renderers. Their outputs under <code>~/.config</code> are generated.</p>
+          </div>
+
+          <table class="rule-table">
+            <thead><tr><th>File</th><th>Edit?</th><th>When</th></tr></thead>
+            <tbody>
+              <tr><td data-label="File"><code>v2/home/.../*.tmpl</code></td><td data-label="Edit?" class="yes">Yes</td><td data-label="When">Change profile conditions, rendering behavior, or static configuration.</td></tr>
+              <tr><td data-label="File"><code>.chezmoidata/packages.yaml</code></td><td data-label="Edit?" class="yes">Yes</td><td data-label="When">Add, remove, or change package versions.</td></tr>
+              <tr><td data-label="File"><code>~/.config/brew/Brewfile</code></td><td data-label="Edit?" class="no">No</td><td data-label="When">It is rendered output and can be replaced by the next apply.</td></tr>
+              <tr><td data-label="File"><code>~/.config/mise/config.toml</code></td><td data-label="Edit?" class="no">No</td><td data-label="When">It is rendered output; direct edits create drift from the source.</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Why package edits go into YAML</h3>
+          <div class="pipeline" aria-label="Package data flow">
+            <div class="pipe-line">
+              <div class="pipe-node"><strong>packages.yaml</strong><small>package facts</small></div><div class="pipe-arrow" aria-hidden="true">›</div>
+              <div class="pipe-node"><strong>*.tmpl</strong><small>rendering rules</small></div><div class="pipe-arrow" aria-hidden="true">›</div>
+              <div class="pipe-node"><strong>~/.config/*</strong><small>rendered targets</small></div><div class="pipe-arrow" aria-hidden="true">›</div>
+              <div class="pipe-node"><strong>brew / mise</strong><small>installed tools</small></div>
+            </div>
+          </div>
+
+          <p>For example, adding a cask belongs in <code>packages.yaml</code>. Changing how enterprise and desktop casks are selected belongs in <a href="https://github.com/josephhaaga/dotfiles/blob/master/v2/home/dot_config/brew/Brewfile.tmpl"><code>Brewfile.tmpl</code></a>. The current comment saying “Edit the inventory, not this file” means “do not put package facts here”; it should not imply that rendering logic is untouchable.</p>
+
+          <h3>Three template behaviors</h3>
+          <details open><summary>Ordinary configuration templates</summary><p><code>dot_config/opencode/opencode.json.tmpl</code> renders to <code>~/.config/opencode/opencode.json</code>. Chezmoi strips <code>.tmpl</code> and decodes prefixes such as <code>dot_</code> and <code>private_</code>.</p></details>
+          <details><summary>Chezmoi's own configuration template</summary><p><code>.chezmoi.toml.tmpl</code> runs during initialization. It chooses and records the profile and pins the resolved source directory.</p></details>
+          <details><summary>Lifecycle script templates</summary><p><code>.chezmoiscripts/*.tmpl</code> render into temporary shell scripts that chezmoi executes. <code>run_once_</code> tracks first-time execution; <code>run_onchange_</code> reruns when rendered content changes.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section id="ci">
+      <div class="shell section-grid">
+        <header class="section-title">
+          <h2>Why container CI fails</h2>
+          <p>The latest 50 runs reviewed, through September 10.</p>
+        </header>
+        <div class="section-body">
+          <p class="lead">The container build is not usually exposing a Docker bug. It is repeatedly detecting that an upstream installer script changed while the repository's hard-coded checksum did not.</p>
+
+          <div class="ci-score">
+            <div><div class="big-stat">26</div><div class="stat-label">failed container runs</div></div>
+            <div>
+              <strong>Failure attribution</strong>
+              <div class="bar" aria-label="24 mise checksum failures and 2 terminal-browser checksum failures"><span class="bar-mise"></span><span class="bar-browser"></span></div>
+              <div class="legend"><span class="key"><span class="swatch" style="background:var(--coral)"></span>24 mise installer</span><span class="key"><span class="swatch" style="background:var(--amber)"></span>2 terminal-browser</span></div>
+            </div>
+          </div>
+
+          <h3>The recurring defect</h3>
+          <pre><code>curl -fsSL https://mise.run -o "$installer"
+expected="3731df..."
+[ "$actual" = "$expected" ] || exit 1
+MISE_VERSION=v2026.8.6 sh "$installer"</code></pre>
+          <p><code>MISE_VERSION</code> pins what the script installs. It does not make <code>https://mise.run</code> immutable. When the vendor updates that moving endpoint, the fixed checksum correctly rejects it. The same pattern exists for <code>https://terminal-browser.sh/install</code> and <code>https://plannotator.ai/install.sh</code>.</p>
+
+          <p>Representative evidence: <a href="https://github.com/josephhaaga/dotfiles/actions/runs/34525529820">run 34525529820</a>, <a href="https://github.com/josephhaaga/dotfiles/actions/runs/33642681603">the last successful window</a>, and terminal-browser failure <a href="https://github.com/josephhaaga/dotfiles/actions/runs/32290489873">run 32290489873</a>.</p>
+
+          <h3>Fix correctness first</h3>
+          <ol class="ranked">
+            <li><div><strong>Use immutable release URLs</strong><p>Download mise's versioned GitHub release installer, keep checksum verification, and tie URL, version, and digest together.</p></div></li>
+            <li><div><strong>Reject mutable URL plus fixed digest</strong><p>Add a validation rule so future vendor installers cannot quietly reintroduce this failure mode.</p></div></li>
+            <li><div><strong>Keep optional tools out of container bootstrap</strong><p>Terminal-browser is installed in containers but is not part of the smoke-test contract. Skip it unless the container explicitly tests it.</p></div></li>
+          </ol>
+
+          <h3>Then reduce exposure and runtime</h3>
+          <p>The Dockerfile copies the whole repository before <code>RUN ./setup</code>, so nearly every change invalidates the expensive network layer. A successful run took about 3 minutes 19 seconds and restored 35 tree-sitter languages. Use BuildKit's GitHub Actions cache, separate stable dependency inputs from frequently changed files, and split deterministic rendering tests from a scheduled network integration test.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="bootstrap">
+      <div class="shell section-grid">
+        <header class="section-title">
+          <h2>The mise-exec idea</h2>
+          <p>The command was almost certainly <code>mise exec</code>, whose short alias is <code>mise x</code>.</p>
+        </header>
+        <div class="section-body">
+          <p class="lead">Rio's pattern uses mise as a temporary tool launcher: install mise, ask it for a pinned chezmoi binary, then let chezmoi clone and initialize the public repository.</p>
+
+          <pre><code>mise x chezmoi@2.72.0 -- \
+  chezmoi init --apply --force \
+  https://github.com/josephhaaga/dotfiles.git</code></pre>
+
+          <p>The first <code>chezmoi@2.72.0</code> is mise's tool declaration. Everything after <code>--</code> is the command mise runs with that tool on <code>PATH</code>. Chezmoi accepts a full Git URL or GitHub shorthand and can use built-in Git when an external <code>git</code> executable is unavailable.</p>
+
+          <div class="comparison">
+            <article class="choice recommended"><span class="tag">Recommended here</span><h3>Direct chezmoi</h3><p>One bootstrap dependency, persistent binary, remote repository initialization.</p><ul><li>No pre-clone</li><li>No mise-before-mise loop</li><li>Works with <code>.chezmoiroot</code></li></ul></article>
+            <article class="choice"><span class="tag">Good if mise exists</span><h3><code>mise x</code></h3><p>Elegant temporary execution, but mise must already be installed and chezmoi is not selected permanently.</p><ul><li>Pinned tool release</li><li>Cached by mise</li><li>Extra bootstrap layer</li></ul></article>
+            <article class="choice"><span class="tag">Current path</span><h3>Clone + setup</h3><p>Strong installer-script verification and a predictable checkout, at the cost of requiring Git first.</p><ul><li>Auditable</li><li>More manual steps</li><li>Duplicates source knowledge</li></ul></article>
+          </div>
+
+          <h3>A simpler public bootstrap</h3>
+          <pre><code>sh -c "$(curl -fsLS https://get.chezmoi.io)" -- \
+  -b "$HOME/.local/bin" \
+  -t v2.72.0 \
+  init --apply --force \
+  https://github.com/josephhaaga/dotfiles.git</code></pre>
+
+          <p>This installs chezmoi and lets it clone the repository into its standard source directory. The root-level <code>.chezmoiroot</code> tells it that managed source begins at <code>v2/home</code>. The profile template then records that resolved location, so later bare <code>chezmoi</code> commands work.</p>
+
+          <div class="verdict">
+            <strong>Important tradeoff</strong>
+            <p>The shorter official command executes a remotely fetched installer script. The current <code>setup</code> verifies the installer script itself before running it. Simplification changes the trust sequence unless the one-liner uses an immutable, pre-verified installer.</p>
+          </div>
+
+          <p>References: <a href="https://mise.jdx.dev/cli/exec.html">mise exec</a>, <a href="https://www.chezmoi.io/reference/commands/init/">chezmoi init</a>, and <a href="https://www.chezmoi.io/reference/special-files/chezmoiroot/">.chezmoiroot</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="simplify">
+      <div class="shell section-grid">
+        <header class="section-title">
+          <h2>A smaller, steadier system</h2>
+          <p>Ordered by impact and risk, not by visual neatness.</p>
+        </header>
+        <div class="section-body">
+          <p class="lead">Keep the four profiles and the package inventory. They solve real cross-platform problems. Simplify the edges around them.</p>
+
+          <ol class="ranked">
+            <li><div><strong>Fix immutable downloads now</strong><p>Version installer URLs, retain checksums, and make validation reject moving endpoints paired with frozen hashes. This addresses almost every recent container failure.</p></div></li>
+            <li><div><strong>Split render validation from network installation</strong><p>Run profile rendering and syntax checks on every push. Run the full internet-dependent container bootstrap on changes to bootstrap inputs, on a schedule, or as a non-blocking canary.</p></div></li>
+            <li><div><strong>Choose one bootstrap owner</strong><p>Prefer direct remote chezmoi initialization. Let chezmoi acquire the repository and let the repository install mise, rather than installing mise solely to acquire chezmoi.</p></div></li>
+            <li><div><strong>Derive the source root once</strong><p><code>setup</code> and <code>validate.sh</code> both hard-code <code>v2/home</code>. Read <code>.chezmoiroot</code> instead so a future rename cannot break one path but not another.</p></div></li>
+            <li><div><strong>Retire the migration label</strong><p>After source derivation is centralized, rename <code>v2/home</code> to <code>home</code> and update the documentation. This is clarity work, not a reliability fix.</p></div></li>
+          </ol>
+
+          <h3>Documentation fix worth making</h3>
+          <p>Change the contributor rule from “do not edit the generated Brewfile and mise config” to:</p>
+          <div class="verdict">
+            <strong>Proposed wording</strong>
+            <p>Package names and versions belong in <code>.chezmoidata/packages.yaml</code>. Edit <code>Brewfile.tmpl</code> and <code>config.toml.tmpl</code> only to change rendering logic or static settings. Never edit their deployed outputs under <code>~/.config</code>.</p>
+          </div>
+
+          <h3>Target architecture</h3>
+          <pre><code>remote bootstrap
+  └─ pinned chezmoi
+      └─ public dotfiles repository
+          └─ home/                    # active source
+              ├─ .chezmoidata/        # package facts
+              ├─ *.tmpl               # rendering rules
+              ├─ ordinary files       # copied configuration
+              └─ .chezmoiscripts/     # apply lifecycle
+
+every push: render + syntax + policy checks
+bootstrap changes / schedule: full network container test</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="close">
+      <div class="shell">
+        <h2>Preview before applying.</h2>
+        <p>The architecture's best safety feature is that every profile can be rendered without touching the current home directory.</p>
+        <pre class="command"><code>chezmoi apply --dry-run \
+  --source "$PWD" \
+  --override-data '{"profile":"desktop"}'</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">Generated from repository state and GitHub Actions history on September 11, 2026.</footer>
+</body>
+</html>

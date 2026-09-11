@@ -66,5 +66,7 @@ chezmoi apply --source "$PWD"
 - [`docs/profiles.md`](docs/profiles.md): platform behavior and boundaries.
 - [`docs/bootstrap.md`](docs/bootstrap.md): setup and safe preview commands.
 - [`docs/secrets-v2.md`](docs/secrets-v2.md): unmanaged credentials and runtime state.
+- [`docs/vm-web-access.md`](docs/vm-web-access.md): mTLS-protected VM web access.
+- [`docs/vm-hosted-reports.md`](docs/vm-hosted-reports.md): publish responsive reports to approved devices.
 
 The inventory intentionally keeps Neofetch, asciiquarium, cowsay, lolcat, and ponysay. tmux is not part of v2.

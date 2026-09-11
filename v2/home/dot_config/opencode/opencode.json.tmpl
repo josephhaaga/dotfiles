@@ -52,7 +52,10 @@
     "agent-mcp": {
       "type": "remote",
       "url": "https://agent-mcp-production-db5b.up.railway.app/mcp",
-      "enabled": true
+      "enabled": true{{ if eq .profile "server" }},
+      "oauth": {
+        "redirectUri": "https://josephhaaga.sh.tribe.ai/mcp/oauth/callback?server=agent-mcp"
+      }{{ end }}
     }{{ if eq .profile "desktop" }},
     "obsidian": {
       "type": "local",

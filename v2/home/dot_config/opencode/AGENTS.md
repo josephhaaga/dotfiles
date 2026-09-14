@@ -4,29 +4,25 @@
 
 Whenever drafting, proposing, or sending a Slack message, use Tribe's two-part structure:
 
-1. The top-level channel message is a bolded headline and nothing else: a short noun phrase naming the ask or topic.
+1. The top-level channel message must be `:thread:` followed by a bolded headline and nothing else: a short noun phrase naming the ask or topic.
 2. All detail goes in a threaded reply to that message: what you're asking for, why, and any specifics such as names, URLs, usernames, IDs, or error text.
 
 This keeps channels scannable and keeps triage discussion in threads. Never put the explanation in the top-level message.
 
-Formatting: Slack uses `*single asterisks*` for bold, not Markdown's `**double**`. Headlines are typically 2-8 words, title case.
+Formatting through `slack-mcp-tools`: send `:thread: **Headline**`. The MCP tool accepts Markdown and converts `**double asterisks**` to Slack bold. Do not send `*single asterisks*` through this tool; its Markdown conversion renders them as italics. Headlines are typically 2-8 words and title case.
 
-Observed variations that are fine:
-
-- A trailing unbolded qualifier: `*Anthropic API key* when/if possible`
-- A `cc @person` after the headline
-- A leading `:thread:` emoji to signal detail is in the thread
+Pre-send invariant: do not call `slack_send_message` for a top-level channel post unless the exact payload has the form `:thread: **<headline>**`, with no other text. Show that exact payload, plus the complete thread reply, to the user before sending either part.
 
 Examples from `#tribe-ops`:
 
 ```
-*Miro Access*
-*Linear Access*
-*Tribe dev Azure account*
-*M365 Product Download*
-*Google Workspace Email Alias*
-*Create Microsoft account for `felix.lau@tribe.ai`*
-*Azure + AI Foundry access for FIS AgentEdge*
+:thread: **Miro Access**
+:thread: **Linear Access**
+:thread: **Tribe dev Azure account**
+:thread: **M365 Product Download**
+:thread: **Google Workspace Email Alias**
+:thread: **Create Microsoft account for `felix.lau@tribe.ai`**
+:thread: **Azure + AI Foundry access for FIS AgentEdge**
 ```
 
 An `:eyes:` reaction on the headline means someone has picked it up for triage.

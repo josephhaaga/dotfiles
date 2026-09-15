@@ -139,8 +139,8 @@ if [ -d "$V2_SOURCE" ]; then
     exit 1
   fi
   if ! printf '%s' "$enterprise_opencode" |
-    jq -e '.enabled_providers == ["github-copilot"]' >/dev/null; then
-    echo "enterprise opencode config must allow only the github-copilot provider" >&2
+    jq -e '.enabled_providers == ["openrouter"]' >/dev/null; then
+    echo "enterprise opencode config must allow only the openrouter provider" >&2
     exit 1
   fi
 

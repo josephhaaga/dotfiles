@@ -23,7 +23,7 @@ The enterprise profile requires Homebrew to be available already; it will not bo
 It also installs the following software under the user's home directory:
 
 - mise `v2026.8.6`, using a checksum-verified installer.
-- The versions in `v2/home/.chezmoidata/packages.yaml` under `packages.mise`: bat, bun, fd, fzf, GitHub CLI, gitleaks, Go, herdr, kubectl, Neovim, Node.js, ripgrep, ShellCheck, Starship, StyLua, tealdeer, and uv.
+- The versions in `v2/home/.chezmoidata/packages.yaml` under `packages.mise`: Azure CLI, Azure kubelogin, bat, bun, fd, fzf, GitHub CLI, gitleaks, Go, herdr, kubectl, Neovim, Node.js, Python, ripgrep, ShellCheck, Starship, StyLua, tealdeer, and uv.
 - The npm packages under `packages.npm`: the OpenCode V2 CLI, tree-sitter CLI, and the enterprise-only Plannotator OpenCode plugin. npm uses the machine's existing private-registry and custom-CA configuration.
 - Oh My Zsh at pinned Git revision `97e11051e2f8053b1d694788d1cb4b0dbb1e2365`.
 - Neofetch `7.1.0`, using a checksum-verified download.

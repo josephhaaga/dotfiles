@@ -17,7 +17,7 @@ Every retained item has one installation owner. Anything not listed here is inte
 | ripgrep, fd, bat, fzf, tree, jq | mise/native | all | Search and shell utilities |
 | gh, Git LFS, git-filter-repo, GnuPG | mise/native | desktop, server | Git and GitHub workflows |
 | shellcheck, gitleaks | mise | all | Static and secret checks |
-| Docker, Compose, kubectl | native + mise | all | Containers and Kubernetes client tooling |
+| Docker, Compose, kubectl, Azure kubelogin | native + mise | all | Containers and Kubernetes client tooling |
 
 The enterprise profile uses an existing, MDM-approved Homebrew installation for CLI formulae, Yabai/skhd, Ghostty, and fonts. It excludes the rest of the desktop casks.
 

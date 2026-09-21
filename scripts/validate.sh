@@ -51,9 +51,7 @@ if [ -d "$V2_SOURCE" ]; then
 
   zsh -n "$V2_SOURCE/dot_config/zsh/dot_zshrc"
 
-  jq empty \
-    "$V2_SOURCE/dot_config/nvim/lazyvim.json" \
-    "$V2_SOURCE/dot_config/opencode/cli.json"
+  jq empty "$V2_SOURCE/dot_config/nvim/lazyvim.json"
 
   python3 -c 'import pathlib, sys; compile(pathlib.Path(sys.argv[1]).read_bytes(), sys.argv[1], "exec")' \
     "$V2_SOURCE/dot_local/lib/dotfiles/format_slackdump_as_md.py"
@@ -131,36 +129,29 @@ if [ -d "$V2_SOURCE" ]; then
     < "$V2_SOURCE/dot_config/opencode/opencode.json.tmpl")"
   if ! printf '%s' "$enterprise_opencode" |
     jq -e --argjson allowed "$enterprise_mcp_allowlist" \
-      '((.mcp // {}) | keys) - $allowed | length == 0' >/dev/null; then
+      '((.mcp.servers // {}) | keys) - $allowed | length == 0' >/dev/null; then
     echo "enterprise opencode config declares unreviewed MCP servers" >&2
     printf '%s' "$enterprise_opencode" |
       jq -r --argjson allowed "$enterprise_mcp_allowlist" \
-        '((.mcp // {}) | keys) - $allowed | .[]' >&2
+        '((.mcp.servers // {}) | keys) - $allowed | .[]' >&2
     exit 1
   fi
   if ! printf '%s' "$enterprise_opencode" |
-    jq -e '.enabled_providers == ["openrouter"]' >/dev/null; then
-    echo "enterprise opencode config must allow only the openrouter provider" >&2
+      jq -e '[.experimental.policies[] | select(.action == "provider.use" and .effect == "allow") | .resource] == ["github-copilot"]' >/dev/null; then
+    echo "enterprise opencode config must allow only the github-copilot provider" >&2
     exit 1
   fi
 
-  # "mcp" is keyed directly by server name. Nesting the servers under an extra
-  # "mcp.servers" object parses as a server literally named "servers" and opencode
-  # refuses to start. Unknown keys are accepted silently, so nothing surfaces the
-  # mistake until startup: assert every entry is a real local or remote server.
-  #
-  # The same silent-acceptance trap applies to the v2 key spellings. opencode 1.x
-  # rejects v2 syntax, while the opencode2 preview migrates v1 on read, so v1 is
-  # the only form that runs on both and machines with both binaries share one
-  # file. Writing the v2 plurals does not error on 1.x, it just stops taking
-  # effect, so reject them here rather than letting the config quietly go inert.
+  # V2 MCP servers live under "mcp.servers". Assert every entry is a real local
+  # or remote server so an incorrectly nested or malformed server cannot reach
+  # the runtime.
   for profile in desktop enterprise server container; do
     rendered="$(chezmoi execute-template --source "$V2_SOURCE" \
       --override-data "{\"profile\":\"$profile\"}" \
       < "$V2_SOURCE/dot_config/opencode/opencode.json.tmpl")"
 
     if ! printf '%s' "$rendered" |
-      jq -e '(.mcp // {}) as $m
+      jq -e '(.mcp.servers // {}) as $m
         | ([$m[] | select((.type == "local" and (.command | type) == "array")
             or (.type == "remote" and (.url | type) == "string"))] | length)
           == ($m | length)' >/dev/null; then
@@ -170,10 +161,9 @@ if [ -d "$V2_SOURCE" ]; then
     fi
 
     if ! printf '%s' "$rendered" |
-      jq -e 'has("plugins") == false and has("permissions") == false
-        and ((.mcp // {}) | has("servers") | not)' >/dev/null; then
-      echo "$profile opencode config uses v2 key spellings" >&2
-      echo "use \"plugin\", \"permission\", and \"mcp\" keyed by server name; opencode 1.x ignores the v2 plurals silently" >&2
+      jq -e 'has("plugins") and has("permissions") and (.mcp | has("servers"))' >/dev/null; then
+      echo "$profile opencode config is missing required v2 keys" >&2
+      echo "use \"plugins\", \"permissions\", and \"mcp.servers\"" >&2
       exit 1
     fi
   done

@@ -45,12 +45,12 @@ The alias expands to:
 
 ```bash
 op run --env-file="$HOME/.config/opencode/opencode-vm.env" -- \
-  opencode2 --server http://127.0.0.1:14096
+   opencode --server http://127.0.0.1:14096
 ```
 
 The env file contains only a 1Password secret reference. Create an `OpenCode
 VM` item in the `Employee` vault and set its `password` field to the password
-shown by `opencode2 pair` on the VM. The resolved password exists only in the
+shown by `opencode pair` on the VM. The resolved password exists only in the
 client process environment.
 
 ## OpenAI browser OAuth
@@ -80,5 +80,5 @@ VM-hosted OpenCode server, temporarily forward that local port to the VM.
 
 The browser callback travels through port `1455`, but the resulting OpenAI
 credential is stored in OpenChamber's isolated OpenCode runtime on the VM. It
-does not authenticate the separate beta `opencode2` service. Do not commit or
+does not authenticate the separate local OpenCode service. Do not commit or
 copy that runtime authentication state into this repository.

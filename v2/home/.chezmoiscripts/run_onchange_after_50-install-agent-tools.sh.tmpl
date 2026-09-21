@@ -31,12 +31,18 @@ npm_packages=(
 # and pass it explicitly.
 npm_registry="$(npm config get registry)"
 
+# V2 replaces the legacy CLI and beta preview. npm does not remove packages
+# omitted from a later install, and both old packages own the `opencode2` bin.
+# Remove them before installing V2 so npm can install its compatibility shim.
+npm uninstall --global --prefix "$HOME/.local" \
+  @opencode-ai/cli opencode-ai
+
 npm install --global --prefix "$HOME/.local" \
   --registry "$npm_registry" \
-  --allow-scripts=@opencode-ai/cli,opencode-ai,node-pty \
+  --allow-scripts=@opencode/cli,node-pty \
   --ignore-scripts=false "${npm_packages[@]}"
 
-plannotator_version="0.27.7"
+plannotator_version="0.27.17"
 installer="$(mktemp)"
 trap 'rm -f "$installer"' EXIT
 

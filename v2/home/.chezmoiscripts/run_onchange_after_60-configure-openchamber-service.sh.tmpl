@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # OpenChamber package: {{ index .packages.npm "@openchamber/web" }}
-# OpenCode package: {{ index .packages.npm "opencode-ai" }}
+# OpenCode package: {{ index .packages.npm "@opencode/cli" }}
 # systemd unit: {{ include "dot_config/systemd/user/openchamber.service.tmpl" | sha256sum }}
 
 {{ if eq .profile "server" -}}

@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-# OpenCode package: {{ index .packages.npm "@opencode-ai/cli" }}
+# OpenCode package: {{ index .packages.npm "@opencode/cli" }}
 
 {{ if eq .profile "server" -}}
-opencode="{{ .chezmoi.homeDir }}/.local/bin/opencode2"
+opencode="{{ .chezmoi.homeDir }}/.local/bin/opencode"
 service_state="{{ .chezmoi.homeDir }}/.local/state/opencode/service.json"
 
 if [ -s "$service_state" ]; then

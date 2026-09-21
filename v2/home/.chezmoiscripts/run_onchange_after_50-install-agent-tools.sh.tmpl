@@ -60,17 +60,3 @@ verify_installer "df4170473178791deed11849f01c84d9e791263d9064de812e1dfc880aee5e
 PATH="$HOME/.local/share/mise/shims:/usr/bin:/bin:/usr/sbin:/sbin" \
   bash "$installer" --version "$plannotator_version" --non-interactive \
   --skip-skills --skip-codex --skip-gemini --skip-kiro --skip-opencode
-
-{{- if ne .profile "enterprise" }}
-
-# terminal-browser.sh is not reachable from the enterprise network: the proxy
-# answers blocked hosts with 503, which fails the checksum download and takes
-# the whole apply with it. The tool is a convenience, so skip it there rather
-# than making every apply on that profile exit non-zero.
-curl -fsSL https://terminal-browser.sh/install -o "$installer"
-verify_installer "cc3af0d5bb698af4708e814934acd7408ca51102e2159a2fb2e2d32758a743c0" || {
-  printf '%s\n' 'terminal-browser installer checksum mismatch' >&2
-  exit 1
-}
-bash "$installer"
-{{- end }}

@@ -93,20 +93,15 @@ if errorlevel 1 goto download_failed
 :verify
 call :check_download
 if errorlevel 1 exit /b 127
-rem Mirrors the sh launcher and fails closed: a freshly downloaded binary
-rem runs only after verifying against its .sha256 sidecar. A sidecar that
-rem cannot be fetched, or an empty certutil result, refuses the download
-rem instead of running an unverified binary.
-curl.exe -fsSL -o "%cached%.sha256" "%url%.sha256" >nul 2>nul
-if errorlevel 1 goto verify_refuse
+rem Mirrors the sh launcher: use a repository-held checksum instead of a
+rem sidecar from the same channel as the downloadable release asset.
 set "expected="
-set /p expected=<"%cached%.sha256"
-for /f "tokens=1" %%h in ("%expected%") do set "expected=%%h"
+if /I "%asset%"=="impeccable-windows-x64.exe" set "expected=477e544fc8880a5e82e427490cb9a5f5adab480c0e02966d33fd50772b531c71"
+if not defined expected goto verify_refuse
 call :check_download
 if errorlevel 1 exit /b 127
 set "actual="
-rem Reuse the sidecar staging file after reading expected. Check certutil's
-rem status before parsing: its error text on stdout is not a digest.
+rem Check certutil's status before parsing: its error text on stdout is not a digest.
 certutil -hashfile "%cached%.part" SHA256 >"%cached%.sha256" 2>nul
 if errorlevel 1 goto verify_refuse
 call :check_download
@@ -126,7 +121,7 @@ call :check_download
 if errorlevel 1 exit /b 127
 del "%cached%.part" >nul 2>nul
 del "%cached%.sha256" >nul 2>nul
-echo impeccable: cannot verify %url% against %url%.sha256; refusing the unverified download 1>&2
+echo impeccable: cannot verify %url% against its pinned checksum; refusing the unverified download 1>&2
 exit /b 127
 
 :check_download

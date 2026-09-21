@@ -2,9 +2,9 @@
 
 set -euo pipefail
 
-version="7.1.0"
+commit="60d07dee6b76769d8c487a40639fb7b5a1a7bc85" # neofetch 7.1.0
 expected="3dc33493e54029fb1528251552093a9f9a2894fcf94f9c3a6f809136a42348c7"
-url="https://raw.githubusercontent.com/dylanaraps/neofetch/$version/neofetch"
+url="https://raw.githubusercontent.com/dylanaraps/neofetch/$commit/neofetch"
 destination="$HOME/.local/bin/neofetch"
 tmp="$(mktemp)"
 trap 'rm -f "$tmp"' EXIT

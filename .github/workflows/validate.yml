@@ -18,8 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y jq shellcheck zsh
-      - run: sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin"
-      - run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Install pinned chezmoi
+        run: |
+          curl -fsSL https://github.com/twpayne/chezmoi/releases/download/v2.72.0/chezmoi-linux-amd64 -o chezmoi
+          echo 'ba563f716d5c00a2e91d4aeb199b417c6b219db2896f890fd422fc72610b2d90  chezmoi' | sha256sum -c -
+          install -m 0755 chezmoi "$HOME/.local/bin/chezmoi"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - run: |
           mkdir -p "$HOME/.config/chezmoi"
           printf '[data]\n    profile = "container"\n' > "$HOME/.config/chezmoi/chezmoi.toml"
@@ -29,4 +33,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install pinned chezmoi
+        run: |
+          curl -fsSL https://github.com/twpayne/chezmoi/releases/download/v2.72.0/chezmoi-linux-amd64 -o chezmoi
+          echo 'ba563f716d5c00a2e91d4aeb199b417c6b219db2896f890fd422fc72610b2d90  chezmoi' | sha256sum -c -
+          install -m 0755 chezmoi "$HOME/.local/bin/chezmoi"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - run: docker build -f tests/container/Dockerfile -t dotfiles-v2 .

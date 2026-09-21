@@ -43,6 +43,9 @@ npm install --global --prefix "$HOME/.local" \
   --ignore-scripts=false "${npm_packages[@]}"
 
 plannotator_version="0.27.17"
+# Commit behind the v0.27.17 installer. Pinning its object ID makes the script
+# URL immutable; the SHA-256 below verifies its bytes before execution.
+plannotator_installer_commit="8f2a8a81a384f1cd39c5f083d3c6fcd35a956422"
 installer="$(mktemp)"
 trap 'rm -f "$installer"' EXIT
 
@@ -57,7 +60,7 @@ verify_installer() {
   [ "$actual" = "$expected" ]
 }
 
-curl -fsSL https://plannotator.ai/install.sh -o "$installer"
+curl -fsSL "https://raw.githubusercontent.com/backnotprop/plannotator/${plannotator_installer_commit}/scripts/install.sh" -o "$installer"
 verify_installer "df4170473178791deed11849f01c84d9e791263d9064de812e1dfc880aee5e96" || {
   printf '%s\n' 'Plannotator installer checksum mismatch' >&2
   exit 1

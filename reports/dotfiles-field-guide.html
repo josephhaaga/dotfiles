@@ -758,10 +758,10 @@
       <div class="shell section-grid">
         <header class="section-title">
           <h2>Why container CI fails</h2>
-          <p>The latest 50 runs reviewed, through September 10.</p>
+          <p>Historical analysis through September 10; the installer paths below have since been remediated.</p>
         </header>
         <div class="section-body">
-          <p class="lead">The container build is not usually exposing a Docker bug. It is repeatedly detecting that an upstream installer script changed while the repository's hard-coded checksum did not.</p>
+          <p class="lead">The container build failures were not Docker bugs. They detected that an upstream installer script changed while the repository's hard-coded checksum did not.</p>
 
           <div class="ci-score">
             <div><div class="big-stat">26</div><div class="stat-label">failed container runs</div></div>
@@ -772,19 +772,19 @@
             </div>
           </div>
 
-          <h3>The recurring defect</h3>
+          <h3>The former defect</h3>
           <pre><code>curl -fsSL https://mise.run -o "$installer"
 expected="3731df..."
 [ "$actual" = "$expected" ] || exit 1
 MISE_VERSION=v2026.8.6 sh "$installer"</code></pre>
-          <p><code>MISE_VERSION</code> pins what the script installs. It does not make <code>https://mise.run</code> immutable. When the vendor updates that moving endpoint, the fixed checksum correctly rejects it. The same pattern exists for <code>https://terminal-browser.sh/install</code> and <code>https://plannotator.ai/install.sh</code>.</p>
+          <p><code>MISE_VERSION</code> pins what the script installs. It did not make <code>https://mise.run</code> immutable. The bootstrap now uses a versioned installer URL, and the other identified installers use release artifacts or immutable source commits with repository-held digests.</p>
 
           <p>Representative evidence: <a href="https://github.com/josephhaaga/dotfiles/actions/runs/34525529820">run 34525529820</a>, <a href="https://github.com/josephhaaga/dotfiles/actions/runs/33642681603">the last successful window</a>, and terminal-browser failure <a href="https://github.com/josephhaaga/dotfiles/actions/runs/32290489873">run 32290489873</a>.</p>
 
-          <h3>Fix correctness first</h3>
+          <h3>Remediation</h3>
           <ol class="ranked">
-            <li><div><strong>Use immutable release URLs</strong><p>Download mise's versioned GitHub release installer, keep checksum verification, and tie URL, version, and digest together.</p></div></li>
-            <li><div><strong>Reject mutable URL plus fixed digest</strong><p>Add a validation rule so future vendor installers cannot quietly reintroduce this failure mode.</p></div></li>
+            <li><div><strong>Use immutable release URLs</strong><p>Download versioned release artifacts, keep checksum verification, and tie URL, version, and digest together.</p></div></li>
+            <li><div><strong>Reject mutable URL plus fixed digest</strong><p>Prevent future vendor installers from quietly reintroducing this failure mode.</p></div></li>
             <li><div><strong>Keep optional tools out of container bootstrap</strong><p>Terminal-browser is installed in containers but is not part of the smoke-test contract. Skip it unless the container explicitly tests it.</p></div></li>
           </ol>
 
@@ -816,17 +816,15 @@ MISE_VERSION=v2026.8.6 sh "$installer"</code></pre>
           </div>
 
           <h3>A simpler public bootstrap</h3>
-          <pre><code>sh -c "$(curl -fsLS https://get.chezmoi.io)" -- \
-  -b "$HOME/.local/bin" \
-  -t v2.72.0 \
-  init --apply --force \
-  https://github.com/josephhaaga/dotfiles.git</code></pre>
+          <pre><code>git clone https://github.com/josephhaaga/dotfiles.git
+cd dotfiles
+./setup</code></pre>
 
-          <p>This installs chezmoi and lets it clone the repository into its standard source directory. The root-level <code>.chezmoiroot</code> tells it that managed source begins at <code>v2/home</code>. The profile template then records that resolved location, so later bare <code>chezmoi</code> commands work.</p>
+          <p>The setup script downloads a versioned chezmoi release binary, verifies its repository-held SHA-256 digest, then applies the source rooted at <code>v2/home</code>.</p>
 
           <div class="verdict">
             <strong>Important tradeoff</strong>
-            <p>The shorter official command executes a remotely fetched installer script. The current <code>setup</code> verifies the installer script itself before running it. Simplification changes the trust sequence unless the one-liner uses an immutable, pre-verified installer.</p>
+            <p>Do not use a generic installer URL with a fixed checksum: the upstream script can change. Keep the binary URL, version, and digest coupled in <code>setup</code>.</p>
           </div>
 
           <p>References: <a href="https://mise.jdx.dev/cli/exec.html">mise exec</a>, <a href="https://www.chezmoi.io/reference/commands/init/">chezmoi init</a>, and <a href="https://www.chezmoi.io/reference/special-files/chezmoiroot/">.chezmoiroot</a>.</p>

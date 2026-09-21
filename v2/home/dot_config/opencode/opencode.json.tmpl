@@ -19,7 +19,13 @@
   "model": "openrouter/deepseek/deepseek-v4.1-flash",
   "small_model": "openrouter/~deepseek/deepseek-flash-latest",
   "enabled_providers": [
-    "openrouter"
+    {{ if eq .profile "enterprise" }}
+    "github-copilot",
+    {{- else }}
+    "openrouter",
+    "openai",
+    "anthropic"
+    {{- end }}
   ],
   "plugin": [
     {{- if eq .profile "enterprise" }}

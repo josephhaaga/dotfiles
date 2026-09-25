@@ -2,9 +2,8 @@
 
 set -euo pipefail
 
-# OpenChamber V2 preview release 2.0.0-preview.8 was built from this immutable
-# commit, as recorded in its 2026-09-19 GitHub release notes.
-commit="9fba129ddf968df1e5fb6916b84d3ceb35493198"
+# OpenChamber V2 release 2.0.1 is pinned to its immutable release-tag commit.
+commit="63bd5070c8620432817e1e67de77791f801bcf3e"
 install_root="$HOME/.local/share/openchamber-v2-preview"
 source_dir="$install_root/source"
 staging_dir="$install_root/staging"
@@ -16,7 +15,7 @@ export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
 rm -rf "$opencode_prefix"
 npm install --global --prefix "$opencode_prefix" \
   --allow-scripts=@opencode/cli --ignore-scripts=false \
-  @opencode/cli@2.0.8
+  @opencode/cli@2.0.16
 
 rm -rf "$staging_dir"
 mkdir -p "$install_root"
@@ -40,5 +39,5 @@ actual_commit="$(git -C "$staging_dir" rev-parse HEAD)"
 rm -rf "$source_dir"
 mv "$staging_dir" "$source_dir"
 {{ else -}}
-printf '%s\n' 'OpenChamber V2 preview is only installed on the server profile.'
+printf '%s\n' 'OpenChamber V2 is only installed on the server profile.'
 {{ end -}}

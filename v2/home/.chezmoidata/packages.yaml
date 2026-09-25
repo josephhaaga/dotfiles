@@ -39,7 +39,7 @@ packages:
     rust: "1.97.1"
 
   npm:
-    "@opencode/cli": "2.0.12"
+    "@opencode/cli": "2.0.16"
     "@plannotator/opencode": "0.27.17"
     tree-sitter-cli: "0.26.12"
 

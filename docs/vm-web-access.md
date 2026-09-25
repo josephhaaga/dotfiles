@@ -38,12 +38,12 @@ used for installation contains the private key and must remain secret.
 - Caddy serves `/reports/*` from the repository's `reports/` directory. It
   provides a directory index and disables browser and intermediary caching.
 - OpenChamber listens only on `127.0.0.1:3000`.
-- The beta OpenCode service listens only on `127.0.0.1:49374` and remains
+- The OpenCode 2.0.16 service listens only on `127.0.0.1:49374` and remains
   available through the SSH tunnel for `opencode-vm`.
-- OpenChamber V2 preview uses its bundled-compatible OpenCode 2.0.8 through
+- OpenChamber V2.0.1 uses its bundled-compatible OpenCode 2.0.16 through
   `~/.local/bin/openchamber-opencode-v2-preview`. The wrapper isolates its
   runtime data under `~/.local/share/openchamber` so it cannot affect the
-  paired OpenCode 2.0.12 service.
+  paired OpenCode 2.0.16 service.
 
 See [VM-hosted reports](vm-hosted-reports.md) for the report publishing
 contract and workflow.

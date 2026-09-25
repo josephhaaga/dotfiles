@@ -44,6 +44,9 @@ packages:
     tokscale: "4.17.0"
     tree-sitter-cli: "0.26.12"
 
+  npm_server:
+    "@openchamber/web": "2.0.1"
+
   macos:
     taps:
       - asmvik/formulae

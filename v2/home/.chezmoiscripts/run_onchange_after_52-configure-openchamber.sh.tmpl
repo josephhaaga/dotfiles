@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# OpenChamber is installed from its official package and uses the OpenCode V2
+# CLI installed by the shared agent-tools script.
+# OpenChamber package: {{ index .packages.npm_server "@openchamber/web" }}
+
+{{ if eq .profile "server" -}}
+# Remove the retired system-wide preview service before enabling OpenChamber's
+# official per-user startup integration.
+legacy_unit="/etc/systemd/system/openchamber.service"
+if [ -f "$legacy_unit" ]; then
+  sudo systemctl disable --now openchamber.service || true
+  sudo rm -f "$legacy_unit"
+  sudo systemctl daemon-reload
+fi
+
+openchamber startup enable
+{{ else -}}
+printf '%s\n' 'OpenChamber is only configured on the server profile.'
+{{ end -}}

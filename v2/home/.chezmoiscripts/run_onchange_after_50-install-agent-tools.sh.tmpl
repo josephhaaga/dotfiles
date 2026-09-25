@@ -21,6 +21,11 @@ npm_packages=(
   {{ printf "%s@%s" $package $version | quote }}
 {{- end }}
 {{- end }}
+{{- if eq .profile "server" }}
+{{- range $package, $version := .packages.npm_server }}
+  {{ printf "%s@%s" $package $version | quote }}
+{{- end }}
+{{- end }}
 )
 
 # --prefix relocates the global npmrc npm reads to "$HOME/.local/etc/npmrc",

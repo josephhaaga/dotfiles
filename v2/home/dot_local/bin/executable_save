@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+source_dir="$(chezmoi source-path)"
+dotfiles_repo="$(cd "$source_dir/../.." && pwd)"
+repos=("$HOME/Documents/journal" "$dotfiles_repo")
+exit_code=0
+
+for repo in "${repos[@]}"; do
+  if ! git -C "$repo" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    printf 'Skipping %s: not a Git repository.\n' "$repo" >&2
+    exit_code=1
+    continue
+  fi
+
+  if [ -z "$(git -C "$repo" status --porcelain)" ]; then
+    printf '%s: no changes to save.\n' "$repo"
+    continue
+  fi
+
+  printf '%s:\n' "$repo"
+  git -C "$repo" diff --stat HEAD || true
+  git -C "$repo" add --all
+  git -C "$repo" commit -m "Autosave at $(date)"
+  git -C "$repo" push
+done
+
+exit "$exit_code"

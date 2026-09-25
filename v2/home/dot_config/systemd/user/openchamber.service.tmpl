@@ -10,8 +10,8 @@ User={{ .chezmoi.username }}
 Group={{ .chezmoi.group }}
 Environment=HOME={{ .chezmoi.homeDir }}
 Environment=PATH={{ .chezmoi.homeDir }}/.local/bin:{{ .chezmoi.homeDir }}/.local/share/mise/shims:/usr/local/bin:/usr/bin:/bin
-Environment=OPENCODE_BINARY={{ .chezmoi.homeDir }}/.local/bin/openchamber-opencode
-ExecStart={{ .chezmoi.homeDir }}/.local/bin/openchamber serve --foreground --port 3000
+Environment=OPENCODE_BINARY={{ .chezmoi.homeDir }}/.local/bin/openchamber-opencode-v2-preview
+ExecStart={{ .chezmoi.homeDir }}/.local/bin/openchamber-v2-preview serve --foreground --port 3000
 Restart=on-failure
 RestartSec=5s
 

@@ -17,6 +17,7 @@ packages:
     herdr: "0.8.0"
     kubectl: "1.36.3"
     neovim: "0.12.4"
+    "pipx:josephhaaga-clerk": "0.0.12"
     node: "26.7.0"
     # azure-cli resolves to the pipx backend, which needs Python 3.10 or newer.
     # The macOS system Python is 3.9, so pin an interpreter rather than
@@ -38,7 +39,6 @@ packages:
     rust: "1.97.1"
 
   npm:
-    "@openchamber/web": "1.24.2"
     "@opencode/cli": "2.0.12"
     "@plannotator/opencode": "0.27.17"
     tree-sitter-cli: "0.26.12"

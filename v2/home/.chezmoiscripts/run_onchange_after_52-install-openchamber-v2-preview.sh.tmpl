@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# OpenChamber V2 preview release 2.0.0-preview.8 was built from this immutable
+# commit, as recorded in its 2026-09-19 GitHub release notes.
+commit="9fba129ddf968df1e5fb6916b84d3ceb35493198"
+install_root="$HOME/.local/share/openchamber-v2-preview"
+source_dir="$install_root/source"
+staging_dir="$install_root/staging"
+opencode_prefix="$install_root/opencode"
+
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
+{{ if eq .profile "server" -}}
+rm -rf "$opencode_prefix"
+npm install --global --prefix "$opencode_prefix" \
+  --allow-scripts=@opencode/cli --ignore-scripts=false \
+  @opencode/cli@2.0.8
+
+rm -rf "$staging_dir"
+mkdir -p "$install_root"
+git clone --quiet --no-checkout https://github.com/openchamber/openchamber.git "$staging_dir"
+git -C "$staging_dir" checkout --quiet --detach "$commit"
+
+actual_commit="$(git -C "$staging_dir" rev-parse HEAD)"
+[ "$actual_commit" = "$commit" ] || {
+  printf 'OpenChamber preview commit verification failed\n' >&2
+  exit 1
+}
+
+(
+  cd "$staging_dir"
+  bun install --frozen-lockfile --ignore-scripts
+  bunx patch-package
+  bun run --cwd packages/sdk build
+  bun run build:web
+)
+
+rm -rf "$source_dir"
+mv "$staging_dir" "$source_dir"
+{{ else -}}
+printf '%s\n' 'OpenChamber V2 preview is only installed on the server profile.'
+{{ end -}}

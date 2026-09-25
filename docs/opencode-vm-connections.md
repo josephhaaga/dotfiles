@@ -60,14 +60,14 @@ OpenAI redirects browser authentication to the fixed loopback URL
 VM-hosted OpenCode server, temporarily forward that local port to the VM.
 
 1. In a local terminal, initiate browser OAuth against OpenChamber's isolated
-   stable OpenCode instance:
+   OpenCode V2 instance:
 
    ```bash
    ssh -t \
      -o ExitOnForwardFailure=yes \
      -L 1455:127.0.0.1:1455 \
      ec2-user@josephhaaga.sh.tribe.ai \
-     '$HOME/.local/bin/openchamber-opencode auth login \
+     '$HOME/.local/bin/openchamber-opencode-v2-preview auth login \
        --provider openai --method "ChatGPT Pro/Plus (browser)"'
    ```
 

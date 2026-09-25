@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec node "$HOME/.local/share/openchamber-v2-preview/source/packages/web/bin/cli.js" "$@"

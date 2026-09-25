@@ -54,16 +54,7 @@
         "oauth": {
           "redirect_uri": "https://josephhaaga.sh.tribe.ai/mcp/oauth/callback?server=agent-mcp"
         }{{ end }}
-      }{{ if eq .profile "desktop" }},
-      "obsidian": {
-        "type": "local",
-        "command": ["npx", "-y", "seekstone@0.13.0"],
-        "environment": {
-          "SEEKSTONE_VAULT": "{{ .chezmoi.homeDir }}/Documents/obsidian-vault"
-        },
-        "disabled": false
       }
-      {{- end }}
     }
   },
 {{- end }}

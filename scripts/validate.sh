@@ -111,7 +111,7 @@ if [ -d "$V2_SOURCE" ]; then
 
   enterprise_managed="$(chezmoi managed --source "$V2_SOURCE" \
     --override-data '{"profile":"enterprise"}')"
-  enterprise_excluded='^(\.config/caddy(/|$)|\.config/opencode/opencode-vm\.env$|\.local/bin/slackmd$|Documents/obsidian-vault(/|$)|Library(/|$))'
+  enterprise_excluded='^(\.config/caddy(/|$)|\.config/opencode/opencode-vm\.env$|\.local/bin/slackmd$|Library(/|$))'
   if printf '%s\n' "$enterprise_managed" | grep -Eq "$enterprise_excluded"; then
     echo "enterprise profile manages a desktop, server, or local-vault path" >&2
     printf '%s\n' "$enterprise_managed" | grep -E "$enterprise_excluded" >&2

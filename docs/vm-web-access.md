@@ -13,7 +13,7 @@ Safari with device certificate
   -> mTLS client-certificate verification at Caddy
   -> /reports/*: static files in the dotfiles checkout
   -> other paths: OpenChamber on VM loopback port 3000
-                  -> stable OpenCode managed by OpenChamber
+                  -> OpenCode V2 managed by OpenChamber
 ```
 
 Caddy handles WebSocket upgrades automatically. Its `flush_interval -1`
@@ -40,11 +40,10 @@ used for installation contains the private key and must remain secret.
 - OpenChamber listens only on `127.0.0.1:3000`.
 - The beta OpenCode service listens only on `127.0.0.1:49374` and remains
   available through the SSH tunnel for `opencode-vm`.
-- OpenChamber uses `~/.local/bin/openchamber-opencode` to launch the stable
-  `~/.local/bin/opencode` binary because its SDK is not compatible with the
-  beta service. The wrapper isolates stable runtime data under
-  `~/.local/share/openchamber/opencode` to protect the beta database; stable
-  OpenCode 1.18 does not honor `OPENCODE_DATA_DIR`.
+- OpenChamber V2 preview uses its bundled-compatible OpenCode 2.0.8 through
+  `~/.local/bin/openchamber-opencode-v2-preview`. The wrapper isolates its
+  runtime data under `~/.local/share/openchamber` so it cannot affect the
+  paired OpenCode 2.0.12 service.
 
 See [VM-hosted reports](vm-hosted-reports.md) for the report publishing
 contract and workflow.

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mkdir -p "$HOME/Documents/journal/journals"
+
+if [ "$(uname -s)" = Darwin ]; then
+  mkdir -p "$HOME/Library/Application Support/clerk"
+else
+  mkdir -p "${XDG_DATA_HOME:-$HOME/.local/share}/clerk"
+fi

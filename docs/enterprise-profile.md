@@ -37,7 +37,7 @@ The enterprise profile excludes all desktop-only paths through `.chezmoiignore` 
 
 - Homebrew bootstrap and all casks except Ghostty and the two fonts.
 - Docker Desktop, macOS defaults, and repository-managed LaunchAgents.
-- The local Obsidian vault integration and OpenCode VM environment file.
+- The OpenCode VM environment file.
 - Every OpenCode MCP server not individually reviewed for this profile, and every model provider other than GitHub Copilot.
 - Slack export binaries, the Slack cookie reader, and the `gh-slackdump` extension.
 - Server-only Caddy configuration, Docker service setup, DNF packages, and systemd services.
@@ -48,7 +48,7 @@ chezmoi deploys the portable configuration plus Ghostty, Yabai/skhd, and the win
 
 OpenCode is configured differently on this profile than on the others:
 
-- MCP servers are opt-in per name rather than inherited from the other profiles. Only `playwright` is declared. The Agent MCP endpoint and the Obsidian server are omitted, because neither is reviewed for the enterprise network. `scripts/validate.sh` enforces the allowlist, so adding a server means adding its name there and recording that its outbound behaviour was reviewed.
+- MCP servers are opt-in per name rather than inherited from the other profiles. Only `playwright` is declared. The Agent MCP endpoint is omitted because it is not reviewed for the enterprise network. `scripts/validate.sh` enforces the allowlist, so adding a server means adding its name there and recording that its outbound behaviour was reviewed.
 - The Playwright server runs with `--browser chrome` so it drives the installed Google Chrome. Playwright's own browser builds come from `cdn.playwright.dev` rather than the private npm mirror, and selecting the system browser avoids that download entirely. The npm package itself resolves through Artifactory normally.
 - `enabled_providers` is set to `["github-copilot"]`, so every other model provider is ignored regardless of what credentials are present. GitHub Copilot is the only approved provider; authenticate through the device flow at `https://github.com/login/device`.
 - The Plannotator plugin is installed by npm through Artifactory and loaded from its local `dist/server.js`. This avoids OpenCode's bundled bun installer, which does not read npm's registry or custom-CA configuration.
@@ -93,6 +93,6 @@ No secret values are managed. The following paths are always ignored:
 - GitHub, Google Cloud, Docker, and OpenCode authentication state.
 - Shell history, OAuth tokens, provider credentials, cookies, caches, databases, and agent sessions.
 - SSH private keys, Caddy private keys, and application keychain material.
-- Obsidian vault content beyond the desktop-only app setting.
+- Journal content beyond the managed Clerk configuration.
 
 Run `gitleaks detect --source . --no-git` before bootstrap to repeat the repository secret scan. The authoritative policy is in `docs/secrets-v2.md`.

@@ -29,7 +29,6 @@
 # Personal desktop integrations are not deployed to restricted macOS.
 .config/opencode/opencode-vm.env
 Library
-Documents/obsidian-vault
 {{- end }}
 
 {{- if ne .profile "desktop" }}

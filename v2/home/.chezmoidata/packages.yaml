@@ -41,6 +41,7 @@ packages:
   npm:
     "@opencode/cli": "2.0.16"
     "@plannotator/opencode": "0.27.17"
+    tokscale: "4.17.0"
     tree-sitter-cli: "0.26.12"
 
   macos:

@@ -17,6 +17,17 @@ if [ -f "$legacy_unit" ]; then
   sudo systemctl daemon-reload
 fi
 
+# OpenCode requires a server password even when bound to loopback. Keep the
+# shared value as VM-local runtime state: it is neither rendered nor committed.
+runtime_env="$HOME/.config/opencode/server.env"
+if [ ! -s "$runtime_env" ]; then
+  umask 077
+  mkdir -p "${runtime_env%/*}"
+  password="$(openssl rand -base64 48 | tr -d '\n')"
+  printf 'OPENCODE_SERVER_PASSWORD=%s\n' "$password" > "$runtime_env"
+fi
+chmod 600 "$runtime_env"
+
 systemctl --user daemon-reload
 systemctl --user enable opencode.service openchamber.service
 systemctl --user restart opencode.service

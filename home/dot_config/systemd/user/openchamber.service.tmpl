@@ -9,6 +9,7 @@ Requires=opencode.service
 Type=simple
 Environment=HOME={{ .chezmoi.homeDir }}
 Environment=PATH={{ .chezmoi.homeDir }}/.local/bin:{{ .chezmoi.homeDir }}/.local/share/mise/shims:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=-{{ .chezmoi.homeDir }}/.config/opencode/server.env
 Environment=OPENCODE_HOST=http://127.0.0.1:49374
 Environment=OPENCODE_SKIP_START=true
 ExecStart={{ .chezmoi.homeDir }}/.local/bin/openchamber serve --foreground --port 3000

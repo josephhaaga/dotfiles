@@ -8,6 +8,7 @@ Wants=network-online.target
 Type=simple
 Environment=HOME={{ .chezmoi.homeDir }}
 Environment=PATH={{ .chezmoi.homeDir }}/.local/bin:{{ .chezmoi.homeDir }}/.local/share/mise/shims:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=-{{ .chezmoi.homeDir }}/.config/opencode/server.env
 ExecStart={{ .chezmoi.homeDir }}/.local/bin/opencode serve --hostname 127.0.0.1 --port 49374
 Restart=on-failure
 RestartSec=5s

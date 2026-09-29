@@ -60,6 +60,10 @@ the VM (`127.0.0.1:49374`). OpenChamber connects using its documented external
 server mode (`OPENCODE_HOST` plus `OPENCODE_SKIP_START=true`); it neither bundles
 OpenCode nor uses an OpenChamber-specific wrapper.
 
+The server's pairing password is a VM-local runtime value in
+`~/.config/opencode/server.env`. Both user services read it; the file is never
+managed by chezmoi or committed.
+
 OpenAI redirects browser authentication to the fixed loopback URL
 `http://localhost:1455/auth/callback`. For authentication initiated by the
 VM-hosted OpenCode server, temporarily forward that local port to the VM.

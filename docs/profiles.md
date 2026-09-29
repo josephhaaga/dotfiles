@@ -1,6 +1,6 @@
 # Machine Profiles
 
-Profiles are selected automatically by `v2/home/.chezmoi.toml.tmpl` and can be overridden with `DOTFILES_PROFILE` during bootstrap.
+Profiles are selected automatically by `home/.chezmoi.toml.tmpl` and can be overridden with `DOTFILES_PROFILE` during bootstrap.
 
 ## desktop
 

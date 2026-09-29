@@ -7,7 +7,7 @@ if [ "$#" -ne 0 ]; then
 fi
 
 source_dir="$(chezmoi source-path)"
-dotfiles_repo="$(cd "$source_dir/../.." && pwd)"
+dotfiles_repo="$(cd "$source_dir/.." && pwd)"
 repos=("$HOME/Documents/journal" "$dotfiles_repo")
 exit_code=0
 

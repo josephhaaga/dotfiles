@@ -2,13 +2,13 @@
 
 ## Workflow
 
-- The active cross-platform chezmoi source is `v2/home/`. It supports the `desktop`, `enterprise`, `server`, and `container` profiles described in `docs/profiles.md`.
-- `.chezmoiroot` points to `v2/home`; `setup` remains the explicit bootstrap path.
-- Preview v2 with `chezmoi apply --dry-run --source "$PWD" --override-data '{"profile":"desktop"}'`.
-- chezmoi copies and renders files; it does not symlink them. Do not edit deployed files while developing v2.
-- `v2/home/.chezmoidata/packages.yaml` is the package and portable-tool source of truth. Homebrew owns macOS packages, DNF owns Amazon Linux system packages, and mise owns portable tools and runtimes.
+- The active cross-platform chezmoi source is `home/`. It supports the `desktop`, `enterprise`, `server`, and `container` profiles described in `docs/profiles.md`.
+- `.chezmoiroot` points to `home`; `setup` remains the explicit bootstrap path.
+- Preview the active source with `chezmoi apply --dry-run --source "$PWD" --override-data '{"profile":"desktop"}'`.
+- chezmoi copies and renders files; it does not symlink them. Do not edit deployed files while developing the source.
+- `home/.chezmoidata/packages.yaml` is the package and portable-tool source of truth. Homebrew owns macOS packages, DNF owns Amazon Linux system packages, and mise owns portable tools and runtimes.
 - There is no work/personal split. Platform profiles control only capabilities such as GUI applications, services, and local-vault integration.
-- Run `bash scripts/validate.sh` before every commit. Use `bash scripts/smoke-test.sh` after applying v2 to a target.
+- Run `bash scripts/validate.sh` before every commit. Use `bash scripts/smoke-test.sh` after applying the source to a target.
 
 ## Configuration Boundaries
 
@@ -19,7 +19,7 @@
 
 ## Packages And Services
 
-- Edit only `v2/home/.chezmoidata/packages.yaml`; `v2/home/dot_config/brew/Brewfile.tmpl` and the mise config are generated from it.
+- Edit only `home/.chezmoidata/packages.yaml`; `home/dot_config/brew/Brewfile.tmpl` and the mise config are generated from it.
 - Third-party Homebrew taps execute formula code. Add one only when the retained application requires it and keep the trust decision visible in review.
 - Amazon Linux uses Docker Engine and `crond` under systemd. Docker group membership grants root-equivalent access.
 - The desktop profile uses Docker Desktop; desktop and enterprise use the managed Yabai/skhd restart hook.

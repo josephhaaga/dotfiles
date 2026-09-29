@@ -2,7 +2,7 @@
 
 Cross-platform development environment managed by [chezmoi](https://www.chezmoi.io/) and [mise](https://mise.jdx.dev/).
 
-The v2 source supports:
+The managed source supports:
 
 - Apple Silicon macOS desktops.
 - MDM-controlled macOS development laptops.
@@ -11,7 +11,7 @@ The v2 source supports:
 
 ## Safe Preview
 
-The active chezmoi source is `v2/home/`. Previous configurations remain available through Git history.
+The active chezmoi source is `home/`. Previous configurations remain available through Git history.
 
 Preview the desktop profile without applying it:
 
@@ -23,7 +23,7 @@ chezmoi apply --dry-run \
 
 ## Bootstrap
 
-Clone the repository and explicitly run `setup` when ready to apply v2:
+Clone the repository and explicitly run `setup` when ready to apply the source:
 
 ```bash
 git clone https://github.com/josephhaaga/dotfiles ~/Documents/dotfiles
@@ -69,4 +69,4 @@ chezmoi apply --source "$PWD"
 - [`docs/vm-web-access.md`](docs/vm-web-access.md): mTLS-protected VM web access.
 - [`docs/vm-hosted-reports.md`](docs/vm-hosted-reports.md): publish responsive reports to approved devices.
 
-The inventory intentionally keeps Neofetch, asciiquarium, cowsay, lolcat, and ponysay. tmux is not part of v2.
+The inventory intentionally keeps Neofetch, asciiquarium, cowsay, lolcat, and ponysay. tmux is not part of the managed baseline.

@@ -39,33 +39,37 @@ if command -v gitleaks >/dev/null 2>&1; then
 fi
 
 # Validate the active cross-platform source without applying it to $HOME.
-V2_SOURCE="$DOTFILES/v2/home"
-if [ -d "$V2_SOURCE" ]; then
+source_root_file="$DOTFILES/.chezmoiroot"
+[ -f "$source_root_file" ] || { echo "chezmoi source-root file is missing" >&2; exit 1; }
+source_root="$(< "$source_root_file")"
+[ -n "$source_root" ] && [[ "$source_root" != /* ]] || { echo "invalid chezmoi source root: $source_root" >&2; exit 1; }
+SOURCE="$DOTFILES/$source_root"
+if [ -d "$SOURCE" ]; then
   bash -n "$DOTFILES/setup"
 
   while IFS= read -r -d '' file; do
     if head -n 1 "$file" | grep -qE '^#!.*(ba)?sh'; then
       bash -n "$file"
     fi
-  done < <(find "$V2_SOURCE" -type f \( -name '*.sh' -o -name 'executable_*' \) ! -name '*.tmpl' -print0)
+  done < <(find "$SOURCE" -type f \( -name '*.sh' -o -name 'executable_*' \) ! -name '*.tmpl' -print0)
 
-  zsh -n "$V2_SOURCE/dot_config/zsh/dot_zshrc"
+  zsh -n "$SOURCE/dot_config/zsh/dot_zshrc"
 
-  jq empty "$V2_SOURCE/dot_config/nvim/lazyvim.json"
+  jq empty "$SOURCE/dot_config/nvim/lazyvim.json"
 
   python3 -c 'import pathlib, sys; compile(pathlib.Path(sys.argv[1]).read_bytes(), sys.argv[1], "exec")' \
-    "$V2_SOURCE/dot_local/lib/dotfiles/format_slackdump_as_md.py"
+    "$SOURCE/dot_local/lib/dotfiles/format_slackdump_as_md.py"
 
-  if DOTFILES_PROFILE=invalid chezmoi execute-template --source "$V2_SOURCE" \
-    < "$V2_SOURCE/.chezmoi.toml.tmpl" >/dev/null 2>&1; then
-    echo "v2 accepted an invalid profile" >&2
+  if DOTFILES_PROFILE=invalid chezmoi execute-template --source "$SOURCE" \
+    < "$SOURCE/.chezmoi.toml.tmpl" >/dev/null 2>&1; then
+    echo "source accepted an invalid profile" >&2
     exit 1
   fi
 
   # Without an explicit sourceDir chezmoi defaults to ~/.local/share/chezmoi,
   # which this repository never creates, so bare chezmoi commands fail.
-  if ! DOTFILES_PROFILE=desktop chezmoi execute-template --source "$V2_SOURCE" \
-    < "$V2_SOURCE/.chezmoi.toml.tmpl" | grep -q '^sourceDir = '; then
+  if ! DOTFILES_PROFILE=desktop chezmoi execute-template --source "$SOURCE" \
+    < "$SOURCE/.chezmoi.toml.tmpl" | grep -q '^sourceDir = '; then
     echo "generated chezmoi.toml does not pin sourceDir" >&2
     exit 1
   fi
@@ -76,9 +80,9 @@ if [ -d "$V2_SOURCE" ]; then
   profile_home="$(mktemp -d)"
   mkdir -p "$profile_home/.config/chezmoi"
   printf 'sourceDir = %s\n\n[data]\n    profile = "enterprise"\n    managedSecrets = false\n' \
-    "\"$V2_SOURCE\"" > "$profile_home/.config/chezmoi/chezmoi.toml"
+    "\"$SOURCE\"" > "$profile_home/.config/chezmoi/chezmoi.toml"
   recorded_profile="$(HOME="$profile_home" chezmoi --config "$profile_home/.config/chezmoi/chezmoi.toml" execute-template \
-    --source "$V2_SOURCE" < "$V2_SOURCE/.chezmoi.toml.tmpl" |
+    --source "$SOURCE" < "$SOURCE/.chezmoi.toml.tmpl" |
     sed -n 's/^ *profile = "\(.*\)"$/\1/p')"
   rm -rf "$profile_home"
   if [ "$recorded_profile" != "enterprise" ]; then
@@ -89,27 +93,27 @@ if [ -d "$V2_SOURCE" ]; then
   for profile in desktop enterprise server container; do
     data="{\"profile\":\"$profile\"}"
 
-    chezmoi execute-template --source "$V2_SOURCE" --override-data "$data" \
-      < "$V2_SOURCE/dot_config/opencode/opencode.json.tmpl" | jq empty
+    chezmoi execute-template --source "$SOURCE" --override-data "$data" \
+      < "$SOURCE/dot_config/opencode/opencode.json.tmpl" | jq empty
 
     if command -v uv >/dev/null 2>&1; then
-      chezmoi execute-template --source "$V2_SOURCE" --override-data "$data" \
-        < "$V2_SOURCE/dot_config/mise/config.toml.tmpl" |
+      chezmoi execute-template --source "$SOURCE" --override-data "$data" \
+        < "$SOURCE/dot_config/mise/config.toml.tmpl" |
         uv run --quiet --no-project --with tomli python -c \
           'import sys, tomli; tomli.loads(sys.stdin.read())'
     else
-      chezmoi execute-template --source "$V2_SOURCE" --override-data "$data" \
-        < "$V2_SOURCE/dot_config/mise/config.toml.tmpl" |
+      chezmoi execute-template --source "$SOURCE" --override-data "$data" \
+        < "$SOURCE/dot_config/mise/config.toml.tmpl" |
         python3 -c 'import sys, tomllib; tomllib.loads(sys.stdin.read())'
     fi
 
     while IFS= read -r -d '' template; do
-      chezmoi execute-template --source "$V2_SOURCE" --override-data "$data" \
+      chezmoi execute-template --source "$SOURCE" --override-data "$data" \
         < "$template" | bash -n
-    done < <(find "$V2_SOURCE/.chezmoiscripts" -type f -name '*.sh.tmpl' -print0)
+    done < <(find "$SOURCE/.chezmoiscripts" -type f -name '*.sh.tmpl' -print0)
   done
 
-  enterprise_managed="$(chezmoi managed --source "$V2_SOURCE" \
+  enterprise_managed="$(chezmoi managed --source "$SOURCE" \
     --override-data '{"profile":"enterprise"}')"
   enterprise_excluded='^(\.config/caddy(/|$)|\.config/opencode/opencode-vm\.env$|\.local/bin/slackmd$|Library(/|$))'
   if printf '%s\n' "$enterprise_managed" | grep -Eq "$enterprise_excluded"; then
@@ -124,9 +128,9 @@ if [ -d "$V2_SOURCE" ]; then
   # opt-in per name rather than inherited from the other profiles; adding one
   # here is the record that its outbound behaviour was reviewed.
   enterprise_mcp_allowlist='["playwright"]'
-  enterprise_opencode="$(chezmoi execute-template --source "$V2_SOURCE" \
+  enterprise_opencode="$(chezmoi execute-template --source "$SOURCE" \
     --override-data '{"profile":"enterprise"}' \
-    < "$V2_SOURCE/dot_config/opencode/opencode.json.tmpl")"
+    < "$SOURCE/dot_config/opencode/opencode.json.tmpl")"
   if ! printf '%s' "$enterprise_opencode" |
     jq -e --argjson allowed "$enterprise_mcp_allowlist" \
       '((.mcp.servers // {}) | keys) - $allowed | length == 0' >/dev/null; then
@@ -146,9 +150,9 @@ if [ -d "$V2_SOURCE" ]; then
   # or remote server so an incorrectly nested or malformed server cannot reach
   # the runtime.
   for profile in desktop enterprise server container; do
-    rendered="$(chezmoi execute-template --source "$V2_SOURCE" \
+    rendered="$(chezmoi execute-template --source "$SOURCE" \
       --override-data "{\"profile\":\"$profile\"}" \
-      < "$V2_SOURCE/dot_config/opencode/opencode.json.tmpl")"
+      < "$SOURCE/dot_config/opencode/opencode.json.tmpl")"
 
     if ! printf '%s' "$rendered" |
       jq -e '(.mcp.servers // {}) as $m
@@ -174,9 +178,9 @@ if [ -d "$V2_SOURCE" ]; then
   # shellcheck disable=SC2016 # matching the literal shell source, not expanding it
   registry_flag='--registry "$npm_registry"'
   for profile in desktop enterprise server container; do
-    if ! chezmoi execute-template --source "$V2_SOURCE" \
+    if ! chezmoi execute-template --source "$SOURCE" \
       --override-data "{\"profile\":\"$profile\"}" \
-      < "$V2_SOURCE/.chezmoiscripts/run_onchange_after_50-install-agent-tools.sh.tmpl" |
+      < "$SOURCE/.chezmoiscripts/run_onchange_after_50-install-agent-tools.sh.tmpl" |
       grep -qF -- "$registry_flag"; then
       echo "agent tool install for $profile does not pin the npm registry" >&2
       exit 1
@@ -185,18 +189,18 @@ if [ -d "$V2_SOURCE" ]; then
 
   if ruby --version >/dev/null 2>&1; then
     for profile in desktop enterprise; do
-      chezmoi execute-template --source "$V2_SOURCE" \
+      chezmoi execute-template --source "$SOURCE" \
         --override-data "{\"profile\":\"$profile\"}" \
-        < "$V2_SOURCE/dot_config/brew/Brewfile.tmpl" | ruby -c >/dev/null
+        < "$SOURCE/dot_config/brew/Brewfile.tmpl" | ruby -c >/dev/null
     done
   elif [ "$(uname -s)" = Darwin ]; then
     echo "ruby is required to validate generated Brewfiles on macOS" >&2
     exit 1
   fi
 
-  enterprise_casks="$(chezmoi execute-template --source "$V2_SOURCE" \
+  enterprise_casks="$(chezmoi execute-template --source "$SOURCE" \
     --override-data '{"profile":"enterprise"}' \
-    < "$V2_SOURCE/dot_config/brew/Brewfile.tmpl" |
+    < "$SOURCE/dot_config/brew/Brewfile.tmpl" |
     sed -n 's/^cask "\([^"]*\)"$/\1/p' | sort)"
   expected_enterprise_casks="$(printf '%s\n' \
     font-hack-nerd-font font-jetbrains-mono ghostty | sort)"
@@ -206,13 +210,13 @@ if [ -d "$V2_SOURCE" ]; then
     exit 1
   fi
 
-  if grep -Rqi --exclude='*.spl' 'tmux' "$V2_SOURCE"; then
-    echo "v2 must not contain tmux configuration or dependencies" >&2
+  if grep -Rqi --exclude='*.spl' 'tmux' "$SOURCE"; then
+    echo "source must not contain tmux configuration or dependencies" >&2
     exit 1
   fi
 
-  if grep -Rq --exclude='*.spl' -E '/Users/[^/]+|Documents/dotfiles' "$V2_SOURCE"; then
-    echo "v2 contains a hard-coded home or repository path" >&2
+  if grep -Rq --exclude='*.spl' -E '/Users/[^/]+|Documents/dotfiles' "$SOURCE"; then
+    echo "source contains a hard-coded home or repository path" >&2
     exit 1
   fi
 fi

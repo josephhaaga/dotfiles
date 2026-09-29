@@ -15,7 +15,7 @@ The detected profile is `desktop`.
 Do not use the automatically detected `desktop` profile. Preview and apply the restricted profile explicitly:
 
 ```bash
-chezmoi apply --dry-run --source "$PWD/v2/home" --override-data '{"profile":"enterprise"}'
+chezmoi apply --dry-run --source "$PWD/home" --override-data '{"profile":"enterprise"}'
 DOTFILES_PROFILE=enterprise ./setup
 ```
 
@@ -76,6 +76,16 @@ The image must provide `curl`, `git`, `zsh`, a C/C++ build toolchain, and CA cer
 DOTFILES_PROFILE=container ./setup
 ```
 
+## Updating an existing checkout
+
+After pulling a source-root migration, run `setup` once so chezmoi records the
+new source directory:
+
+```bash
+git pull --ff-only
+./setup
+```
+
 ## Safe preview
 
 Preview the active source without changing `$HOME`:
@@ -84,4 +94,4 @@ Preview the active source without changing `$HOME`:
 chezmoi apply --dry-run --source "$PWD" --override-data '{"profile":"desktop"}'
 ```
 
-`./setup` is the explicit action that applies v2.
+`./setup` is the explicit action that applies the active source.

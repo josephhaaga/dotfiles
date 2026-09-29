@@ -1,6 +1,6 @@
-# Dotfiles v2 Inventory
+# Dotfiles Inventory
 
-Every retained item has one installation owner. Anything not listed here is intentionally outside the v2 baseline.
+Every retained item has one installation owner. Anything not listed here is intentionally outside the managed baseline.
 
 ## Portable tools
 
@@ -40,7 +40,7 @@ Neofetch, asciiquarium, cowsay, lolcat, and ponysay are intentional. They are no
 
 `slackmd` is desktop-only. It combines `gh-slackdump` with a Markdown formatter and can decrypt the Slack desktop cookie to download private images. OAuth state and cookies remain unmanaged.
 
-## Removed from v2
+## Removed from the managed baseline
 
 - tmux and TPM; Herdr owns persistent sessions.
 - Pi, OMP, Crush, Claude Code, Codex, OMO, agent profiler, OpenPortal Hub, and browser MCP servers.

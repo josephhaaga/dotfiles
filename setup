@@ -4,10 +4,14 @@ set -euo pipefail
 umask 022
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source_dir="$repo_dir/v2/home"
+source_root_file="$repo_dir/.chezmoiroot"
+[ -f "$source_root_file" ] || { printf 'chezmoi source-root file not found: %s\n' "$source_root_file" >&2; exit 1; }
+source_root="$(< "$source_root_file")"
+[ -n "$source_root" ] && [[ "$source_root" != /* ]] || { printf 'invalid chezmoi source root: %s\n' "$source_root" >&2; exit 1; }
+source_dir="$repo_dir/$source_root"
 
 if [ ! -d "$source_dir" ]; then
-  printf 'v2 chezmoi source not found: %s\n' "$source_dir" >&2
+  printf 'chezmoi source not found: %s\n' "$source_dir" >&2
   exit 1
 fi
 

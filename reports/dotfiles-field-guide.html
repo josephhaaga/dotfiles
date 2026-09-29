@@ -679,7 +679,7 @@
           </div>
 
           <h3>Where the truth lives</h3>
-          <p>The active chezmoi root is declared by <a href="https://github.com/josephhaaga/dotfiles/blob/master/.chezmoiroot"><code>.chezmoiroot</code></a> as <code>v2/home</code>. Package membership and versions live in <a href="https://github.com/josephhaaga/dotfiles/blob/master/v2/home/.chezmoidata/packages.yaml"><code>.chezmoidata/packages.yaml</code></a>. Authentication, tokens, databases, caches, and sessions remain local runtime state and are deliberately excluded.</p>
+          <p>The active chezmoi root is declared by <a href="https://github.com/josephhaaga/dotfiles/blob/master/.chezmoiroot"><code>.chezmoiroot</code></a> as <code>home</code>. Package membership and versions live in <a href="https://github.com/josephhaaga/dotfiles/blob/master/home/.chezmoidata/packages.yaml"><code>.chezmoidata/packages.yaml</code></a>. Authentication, tokens, databases, caches, and sessions remain local runtime state and are deliberately excluded.</p>
         </div>
       </div>
     </section>
@@ -702,10 +702,10 @@
 
           <div class="verdict">
             <strong>Verdict</strong>
-            <p>The prefix now communicates provenance, not architecture. Renaming <code>v2/home</code> to <code>home</code> would reduce nesting and eliminate a label that implies another live version exists.</p>
+            <p>The migration prefix has been removed. The active source now lives at <code>home</code>, without implying that another live version exists.</p>
           </div>
 
-          <p>The rename is worthwhile but not urgent. First fix scripts that hard-code <code>v2/home</code>; otherwise the cosmetic simplification can create bootstrap drift.</p>
+            <p>The rename follows source-root discovery, so bootstrap scripts no longer contain a path that can drift.</p>
         </div>
       </div>
     </section>
@@ -717,7 +717,7 @@
           <p>The important distinction is source versus rendered output.</p>
         </header>
         <div class="section-body">
-          <p class="lead">Your understanding is correct: files ending in <code>.tmpl</code> under <code>v2/home</code> are source code. You edit them, and chezmoi renders them for the current profile.</p>
+          <p class="lead">Your understanding is correct: files ending in <code>.tmpl</code> under <code>home</code> are source code. You edit them, and chezmoi renders them for the current profile.</p>
 
           <div class="verdict">
             <strong>Correction to the repository wording</strong>
@@ -727,7 +727,7 @@
           <table class="rule-table">
             <thead><tr><th>File</th><th>Edit?</th><th>When</th></tr></thead>
             <tbody>
-              <tr><td data-label="File"><code>v2/home/.../*.tmpl</code></td><td data-label="Edit?" class="yes">Yes</td><td data-label="When">Change profile conditions, rendering behavior, or static configuration.</td></tr>
+              <tr><td data-label="File"><code>home/.../*.tmpl</code></td><td data-label="Edit?" class="yes">Yes</td><td data-label="When">Change profile conditions, rendering behavior, or static configuration.</td></tr>
               <tr><td data-label="File"><code>.chezmoidata/packages.yaml</code></td><td data-label="Edit?" class="yes">Yes</td><td data-label="When">Add, remove, or change package versions.</td></tr>
               <tr><td data-label="File"><code>~/.config/brew/Brewfile</code></td><td data-label="Edit?" class="no">No</td><td data-label="When">It is rendered output and can be replaced by the next apply.</td></tr>
               <tr><td data-label="File"><code>~/.config/mise/config.toml</code></td><td data-label="Edit?" class="no">No</td><td data-label="When">It is rendered output; direct edits create drift from the source.</td></tr>
@@ -744,7 +744,7 @@
             </div>
           </div>
 
-          <p>For example, adding a cask belongs in <code>packages.yaml</code>. Changing how enterprise and desktop casks are selected belongs in <a href="https://github.com/josephhaaga/dotfiles/blob/master/v2/home/dot_config/brew/Brewfile.tmpl"><code>Brewfile.tmpl</code></a>. The current comment saying “Edit the inventory, not this file” means “do not put package facts here”; it should not imply that rendering logic is untouchable.</p>
+          <p>For example, adding a cask belongs in <code>packages.yaml</code>. Changing how enterprise and desktop casks are selected belongs in <a href="https://github.com/josephhaaga/dotfiles/blob/master/home/dot_config/brew/Brewfile.tmpl"><code>Brewfile.tmpl</code></a>. The current comment saying “Edit the inventory, not this file” means “do not put package facts here”; it should not imply that rendering logic is untouchable.</p>
 
           <h3>Three template behaviors</h3>
           <details open><summary>Ordinary configuration templates</summary><p><code>dot_config/opencode/opencode.json.tmpl</code> renders to <code>~/.config/opencode/opencode.json</code>. Chezmoi strips <code>.tmpl</code> and decodes prefixes such as <code>dot_</code> and <code>private_</code>.</p></details>
@@ -820,7 +820,7 @@ MISE_VERSION=v2026.8.6 sh "$installer"</code></pre>
 cd dotfiles
 ./setup</code></pre>
 
-          <p>The setup script downloads a versioned chezmoi release binary, verifies its repository-held SHA-256 digest, then applies the source rooted at <code>v2/home</code>.</p>
+          <p>The setup script downloads a versioned chezmoi release binary, verifies its repository-held SHA-256 digest, then applies the source rooted at <code>home</code>.</p>
 
           <div class="verdict">
             <strong>Important tradeoff</strong>
@@ -845,8 +845,8 @@ cd dotfiles
             <li><div><strong>Fix immutable downloads now</strong><p>Version installer URLs, retain checksums, and make validation reject moving endpoints paired with frozen hashes. This addresses almost every recent container failure.</p></div></li>
             <li><div><strong>Split render validation from network installation</strong><p>Run profile rendering and syntax checks on every push. Run the full internet-dependent container bootstrap on changes to bootstrap inputs, on a schedule, or as a non-blocking canary.</p></div></li>
             <li><div><strong>Choose one bootstrap owner</strong><p>Prefer direct remote chezmoi initialization. Let chezmoi acquire the repository and let the repository install mise, rather than installing mise solely to acquire chezmoi.</p></div></li>
-            <li><div><strong>Derive the source root once</strong><p><code>setup</code> and <code>validate.sh</code> both hard-code <code>v2/home</code>. Read <code>.chezmoiroot</code> instead so a future rename cannot break one path but not another.</p></div></li>
-            <li><div><strong>Retire the migration label</strong><p>After source derivation is centralized, rename <code>v2/home</code> to <code>home</code> and update the documentation. This is clarity work, not a reliability fix.</p></div></li>
+            <li><div><strong>Derive the source root once</strong><p><code>setup</code> and <code>validate.sh</code> read <code>.chezmoiroot</code>, so a future rename cannot break one path but not another.</p></div></li>
+            <li><div><strong>Retire the migration label</strong><p>The source is now rooted at <code>home</code>, and the active documentation uses that path. This was clarity work, not a reliability fix.</p></div></li>
           </ol>
 
           <h3>Documentation fix worth making</h3>

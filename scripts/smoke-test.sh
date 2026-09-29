@@ -4,6 +4,9 @@ set -euo pipefail
 
 export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 profile="${DOTFILES_PROFILE:-}"
 if [ -z "$profile" ]; then
   if [ "$(uname -s)" = Darwin ]; then
@@ -23,10 +26,30 @@ case "$profile" in
     ;;
 esac
 
-required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode openchamber kubectl kubelogin neofetch tree-sitter)
+required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode kubectl kubelogin neofetch tree-sitter)
 
 if [ "$profile" = server ]; then
   required+=(caddy)
+fi
+
+# Derive profile-specific npm commands from the same package inventory used by
+# chezmoi, so smoke coverage follows packages.yaml without a second list.
+package_data="$DOTFILES/home/.chezmoidata/packages.yaml"
+if [ -f "$package_data" ]; then
+  npm_groups=(npm)
+  [ "$profile" = server ] && npm_groups+=(npm_server)
+  for npm_group in "${npm_groups[@]}"; do
+    while IFS= read -r package; do
+      case "$package" in
+        @opencode/cli) command_name=opencode ;;
+        @openchamber/web) command_name=openchamber ;;
+        @plannotator/opencode) continue ;;
+        tree-sitter-cli) command_name=tree-sitter ;;
+        *) command_name="${package##*/}" ;;
+      esac
+      required+=("$command_name")
+    done < <(sed -n "/^  ${npm_group}:/,/^  [[:alnum:]_][[:alnum:]_]*:/s/^    \"\{0,1\}\([^\"]*\)\"\{0,1\}: .*/\1/p" "$package_data")
+  done
 fi
 status=0
 
@@ -41,7 +64,6 @@ done
 
 herdr --version >/dev/null
 opencode --version >/dev/null
-openchamber --version >/dev/null
 kubectl version --client >/dev/null
 kubelogin --version >/dev/null
 

@@ -2,13 +2,14 @@
 
 set -euo pipefail
 
-# OpenChamber is installed from its official package and uses the OpenCode V2
-# CLI installed by the shared agent-tools script.
+# OpenChamber is installed from its official package. It connects to the
+# separately managed OpenCode V2 service; it does not bundle or wrap OpenCode.
 # OpenChamber package: {{ index .packages.npm_server "@openchamber/web" }}
 
 {{ if eq .profile "server" -}}
-# Remove the retired system-wide preview service before enabling OpenChamber's
-# official per-user startup integration.
+# Remove the retired system-wide preview service. The user services below are
+# source-managed so Node upgrades cannot leave a generated unit pointing at an
+# obsolete mise installation.
 legacy_unit="/etc/systemd/system/openchamber.service"
 if [ -f "$legacy_unit" ]; then
   sudo systemctl disable --now openchamber.service || true
@@ -16,7 +17,10 @@ if [ -f "$legacy_unit" ]; then
   sudo systemctl daemon-reload
 fi
 
-openchamber startup enable
+systemctl --user daemon-reload
+systemctl --user enable opencode.service openchamber.service
+systemctl --user restart opencode.service
+systemctl --user restart openchamber.service
 {{ else -}}
 printf '%s\n' 'OpenChamber is only configured on the server profile.'
 {{ end -}}

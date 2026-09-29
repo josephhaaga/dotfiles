@@ -1,0 +1,19 @@
+[Unit]
+Description=OpenChamber web server
+Documentation=https://docs.openchamber.dev/
+After=network-online.target opencode.service
+Wants=network-online.target
+Requires=opencode.service
+
+[Service]
+Type=simple
+Environment=HOME={{ .chezmoi.homeDir }}
+Environment=PATH={{ .chezmoi.homeDir }}/.local/bin:{{ .chezmoi.homeDir }}/.local/share/mise/shims:/usr/local/bin:/usr/bin:/bin
+Environment=OPENCODE_HOST=http://127.0.0.1:49374
+Environment=OPENCODE_SKIP_START=true
+ExecStart={{ .chezmoi.homeDir }}/.local/bin/openchamber serve --foreground --port 3000
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target

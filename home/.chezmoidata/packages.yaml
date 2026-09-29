@@ -40,6 +40,10 @@ packages:
     tree-sitter-cli: "0.27.0"
 
   npm_server:
+    # Keep the VM's OpenCode V2 version coupled to the OpenChamber release we
+    # have verified against it. Desktop and container OpenCode updates remain
+    # independent under packages.npm.
+    "@opencode/cli": "2.0.19"
     "@openchamber/web": "2.0.4"
 
   macos:

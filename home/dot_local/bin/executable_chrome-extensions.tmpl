@@ -65,6 +65,7 @@ EXTENSIONS
 if [ "$missing" -eq 1 ]; then
   if [ "$install_missing" = true ]; then
     printf '%s\n' 'Confirm each installation in Chrome.'
+    exit 0
   else
     printf '%s\n' 'Run chrome-extensions --install-missing to open missing extension pages.'
   fi

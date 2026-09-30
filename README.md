@@ -61,11 +61,11 @@ chezmoi apply --source "$PWD"
 chrome-extensions
 ```
 
-`chrome-extensions` audits the desktop Chrome profile against the extension
-inventory in `home/.chezmoidata/packages.yaml`. Run
-`chrome-extensions --install-missing` to open Chrome Web Store pages for any
-missing extensions; Chrome requires interactive confirmation. Chrome Sync is
-responsible for cross-device extension installation.
+Every desktop `chezmoi apply` audits the Chrome Default profile against the
+extension inventory in `home/.chezmoidata/packages.yaml` and opens Chrome Web
+Store pages for missing extensions. Chrome requires interactive confirmation;
+the audit safely skips a newly installed Chrome until it has created its Default
+profile. `chrome-extensions` remains available for manual audits.
 
 ## Documentation
 

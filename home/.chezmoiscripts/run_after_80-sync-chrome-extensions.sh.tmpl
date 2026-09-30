@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Keep the Chrome extension inventory aligned whenever the desktop source is
+# applied. Chrome itself still requires confirmation for Web Store installs.
+set -euo pipefail
+
+{{ if eq .profile "desktop" -}}
+profile_dir="$HOME/Library/Application Support/Google/Chrome/Default"
+if [ ! -d "$profile_dir" ]; then
+  printf '%s\n' 'Chrome Default profile not created yet; skipping extension audit.'
+  exit 0
+fi
+
+"$HOME/.local/bin/chrome-extensions" --install-missing
+{{ else -}}
+printf '%s\n' 'Chrome extension synchronization is available on the desktop profile only.'
+{{ end -}}

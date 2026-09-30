@@ -42,6 +42,46 @@ packages:
   npm_server:
     "@openchamber/web": "2.0.4"
 
+  # Chrome Sync remains responsible for cross-device installation. This inventory
+  # lets `chrome-extensions` audit the local Chrome profile and open missing
+  # Chrome Web Store pages for interactive installation.
+  chrome:
+    extensions:
+      - id: cfodljgdikllebejmhoifnmmcbfmamij
+        name: Google Calendar Time Spent
+      - id: chhjbpecpncaggjpdakmflnfcopglcmi
+        name: Rakuten
+      - id: ddkjiahejlhfcafbddmgiahcphecmpfh
+        name: uBlock Origin Lite
+      - id: dmhgdnbkjkejeddddlklojinngaideac
+        name: Nudge
+      - id: eimadpbcbfnmbkopoojfekhnkhdbieeh
+        name: Dark Reader
+      - id: fmkadmapgofadopljbjfkapdkoienihi
+        name: React Developer Tools
+      - id: ghbmnnjooekpmoecnnnilnnbdlolhkhi
+        name: Google Docs Offline
+      - id: gighmmpiobklfepjocnamgkkbiglidom
+        name: AdBlock
+      - id: gppongmhjkpfnbhagpmjfkannfbllamg
+        name: Wappalyzer
+      - id: hehggadaopoacecdllhhajmbjkdcmajg
+        name: ChatGPT
+      - id: kbmfpngjjgdllneeigpgjifpgocmfgmb
+        name: Reddit Enhancement Suite
+      - id: kchgllkpfcggmdaoopkhlkbcokngahlg
+        name: DF Tube
+      - id: knheggckgoiihginacbkhaalnibhilkk
+        name: Notion Web Clipper
+      - id: lmhkpmbekcpmknklioeibfkpmmfibljd
+        name: Redux DevTools
+      - id: ngmfehckdahhmlbabjemcepfhgnoddlo
+        name: Draw on Page
+      - id: olhelnoplefjdmncknfphenjclimckaf
+        name: Catppuccin Chrome Theme - Frappe
+      - id: pejdijmoenmkgeppbflobdenhhabjlaj
+        name: iCloud Passwords
+
   macos:
     taps:
       - asmvik/formulae

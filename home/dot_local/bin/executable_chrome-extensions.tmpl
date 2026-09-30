@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+# Audit the declarative Chrome extension inventory. Chrome requires a user
+# confirmation before an extension can be installed from the Web Store.
+set -euo pipefail
+
+usage() {
+  cat >&2 <<'EOF'
+Usage: chrome-extensions [--profile NAME] [--install-missing]
+
+Audit the configured extensions against a local Google Chrome profile.
+  --profile NAME      Chrome profile directory to inspect (default: Default)
+  --install-missing   Open Chrome Web Store pages for missing extensions
+EOF
+  exit 2
+}
+
+profile="Default"
+install_missing=false
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --profile)
+      [ "$#" -ge 2 ] || usage
+      profile="$2"
+      shift 2
+      ;;
+    --install-missing)
+      install_missing=true
+      shift
+      ;;
+    -h|--help) usage ;;
+    *) usage ;;
+  esac
+done
+
+if [ "$(uname -s)" != "Darwin" ]; then
+  printf '%s\n' 'chrome-extensions supports the macOS Google Chrome profile only.' >&2
+  exit 1
+fi
+
+extensions_dir="$HOME/Library/Application Support/Google/Chrome/$profile/Extensions"
+if [ ! -d "$extensions_dir" ]; then
+  printf 'Chrome profile not found: %s\n' "$profile" >&2
+  exit 1
+fi
+
+missing=0
+while IFS=$'\t' read -r id name; do
+  if [ -d "$extensions_dir/$id" ]; then
+    printf '[installed] %s\n' "$name"
+    continue
+  fi
+
+  printf '[missing] %s\n' "$name"
+  missing=1
+  if [ "$install_missing" = true ]; then
+    open "https://chromewebstore.google.com/detail/$id"
+  fi
+done <<'EXTENSIONS'
+{{- range .packages.chrome.extensions }}
+{{ .id }}	{{ .name }}
+{{- end }}
+EXTENSIONS
+
+if [ "$missing" -eq 1 ]; then
+  if [ "$install_missing" = true ]; then
+    printf '%s\n' 'Confirm each installation in Chrome.'
+  else
+    printf '%s\n' 'Run chrome-extensions --install-missing to open missing extension pages.'
+  fi
+  exit 1
+fi
+
+printf '%s\n' 'All configured Chrome extensions are installed.'

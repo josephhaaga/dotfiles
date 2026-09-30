@@ -28,6 +28,7 @@
 {{- if ne .profile "desktop" }}
 # Personal desktop integrations are not deployed to restricted macOS.
 .config/opencode/opencode-vm.env
+.local/bin/chrome-extensions
 Library
 {{- end }}
 

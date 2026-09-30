@@ -58,7 +58,14 @@ Alternatively, SSH first and run `herdr`. Detaching leaves remote panes and agen
 bash scripts/validate.sh
 bash scripts/smoke-test.sh
 chezmoi apply --source "$PWD"
+chrome-extensions
 ```
+
+`chrome-extensions` audits the desktop Chrome profile against the extension
+inventory in `home/.chezmoidata/packages.yaml`. Run
+`chrome-extensions --install-missing` to open Chrome Web Store pages for any
+missing extensions; Chrome requires interactive confirmation. Chrome Sync is
+responsible for cross-device extension installation.
 
 ## Documentation
 

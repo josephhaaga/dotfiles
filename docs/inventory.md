@@ -19,7 +19,7 @@ Every retained item has one installation owner. Anything not listed here is inte
 | shellcheck, gitleaks | mise | all | Static and secret checks |
 | Docker, Compose, kubectl, Azure kubelogin | native + mise | all | Containers and Kubernetes client tooling |
 
-The enterprise profile uses an existing, MDM-approved Homebrew installation for CLI formulae, Yabai/skhd, Ghostty, and fonts. It excludes the rest of the desktop casks.
+The enterprise profile uses an existing, MDM-approved Homebrew installation for CLI formulae, Yabai/skhd, Ghostty, fonts, and OpenChamber. It excludes the rest of the desktop casks.
 
 ## macOS applications
 
@@ -28,6 +28,7 @@ The enterprise profile uses an existing, MDM-approved Homebrew installation for 
 | Terminal/windowing | Ghostty, Yabai, skhd, Hack Nerd Font, JetBrains Mono |
 | Security/network | 1Password, 1Password CLI, Tailscale |
 | Browser/knowledge | Google Chrome, Obsidian |
+| AI workspace | OpenChamber |
 | Collaboration | Slack, Microsoft Teams, Zoom, Linear, Granola |
 | Voice/input | Wispr Flow, Handy |
 | Containers | Docker Desktop |

@@ -18,7 +18,7 @@ The enterprise profile requires Homebrew to be available already; it will not bo
 
 - All formulae under `packages.macos.brews`, including age, Bash, chezmoi, CMake, Git tools, GnuPG, jq, mise, tree, wget, Yabai/skhd, and the deliberately retained fun commands.
 - The trusted third-party `asmvik/formulae` tap required by Yabai/skhd.
-- Ghostty, Hack Nerd Font, and JetBrains Mono. No other casks are included.
+- Ghostty, Hack Nerd Font, JetBrains Mono, and OpenChamber. No other casks are included.
 
 It also installs the following software under the user's home directory:
 
@@ -35,7 +35,7 @@ The profile may run `chsh` to select an already approved shell from `/etc/shells
 
 The enterprise profile excludes all desktop-only paths through `.chezmoiignore` and profile-gated scripts:
 
-- Homebrew bootstrap and all casks except Ghostty and the two fonts.
+- Homebrew bootstrap and all casks except Ghostty, the two fonts, and OpenChamber.
 - Docker Desktop, macOS defaults, and repository-managed LaunchAgents.
 - The OpenCode VM environment file.
 - Every OpenCode MCP server not individually reviewed for this profile, and every model provider other than GitHub Copilot.

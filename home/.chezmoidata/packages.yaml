@@ -119,6 +119,7 @@ packages:
       - linear
       - microsoft-teams
       - obsidian
+      - openchamber
       - slack
       - tailscale-app
       - wispr-flow
@@ -127,6 +128,7 @@ packages:
       - font-hack-nerd-font
       - font-jetbrains-mono
       - ghostty
+      - openchamber
 
   amazon_linux:
     - alsa-lib

@@ -8,7 +8,7 @@
 - chezmoi copies and renders files; it does not symlink them. Do not edit deployed files while developing the source.
 - `home/.chezmoidata/packages.yaml` is the package and portable-tool source of truth. Homebrew owns macOS packages, DNF owns Amazon Linux system packages, and mise owns portable tools and runtimes.
 - There is no work/personal split. Platform profiles control only capabilities such as GUI applications, services, and local-vault integration.
-- Run `bash scripts/validate.sh` before every commit. Use `bash scripts/smoke-test.sh` after applying the source to a target.
+- Run validation scoped to the changed files before committing. Run `bash scripts/validate.sh` for changes to chezmoi templates, profiles, package definitions, setup scripts, or shared validation; do not run it for isolated editor configuration changes unless relevant. Use `bash scripts/smoke-test.sh` after applying the source to a target.
 
 ## Configuration Boundaries
 

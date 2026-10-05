@@ -32,7 +32,15 @@
     "servers": {
       "playwright": {
         "type": "local",
-        "command": ["npx", "-y", "@playwright/mcp@0.0.79", "--browser", "chrome"],
+        "command": [
+          "npx",
+          "--offline",
+          "-y",
+          "@playwright/mcp@0.0.79",
+          "--executable-path",
+          "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+          "--headless"
+        ],
         "disabled": false
       }
     }

@@ -203,7 +203,7 @@ if [ -d "$SOURCE" ]; then
     < "$SOURCE/dot_config/brew/Brewfile.tmpl" |
     sed -n 's/^cask "\([^"]*\)"$/\1/p' | sort)"
    expected_enterprise_casks="$(printf '%s\n' \
-     font-hack-nerd-font font-jetbrains-mono ghostty openchamber | sort)"
+      font-hack-nerd-font font-jetbrains-mono ghostty | sort)"
   if [ "$enterprise_casks" != "$expected_enterprise_casks" ]; then
     echo "enterprise Brewfile casks differ from the approved allowlist" >&2
     printf '%s\n' "$enterprise_casks" >&2

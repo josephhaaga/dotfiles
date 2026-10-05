@@ -128,7 +128,6 @@ packages:
       - font-hack-nerd-font
       - font-jetbrains-mono
       - ghostty
-      - openchamber
 
   amazon_linux:
     - alsa-lib

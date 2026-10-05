@@ -127,7 +127,7 @@ if [ -d "$SOURCE" ]; then
   # provider allowlist and only individually reviewed MCP servers. Servers are
   # opt-in per name rather than inherited from the other profiles; adding one
   # here is the record that its outbound behaviour was reviewed.
-  enterprise_mcp_allowlist='["playwright"]'
+  enterprise_mcp_allowlist='["outlook-teams", "playwright"]'
   enterprise_opencode="$(chezmoi execute-template --source "$SOURCE" \
     --override-data '{"profile":"enterprise"}' \
     < "$SOURCE/dot_config/opencode/opencode.json.tmpl")"

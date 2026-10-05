@@ -41,6 +41,16 @@
           "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
         ],
         "disabled": false
+      },
+      "outlook-teams": {
+        "type": "local",
+        "command": [
+          "node",
+          "{{ .chezmoi.homeDir }}/Documents/FIS/fis-engineering-context/joe-data/outlook-teams-mcp/dist/index.js",
+          "--profile-dir",
+          "{{ .chezmoi.homeDir }}/.outlook-teams-mcp/chrome-profile"
+        ],
+        "disabled": false
       }
     }
   },

@@ -33,6 +33,7 @@ keybind = ctrl+b>l=goto_split:right
 keybind = ctrl+b>z=toggle_split_zoom
 keybind = ctrl+b>ctrl+b=text:\x02
 keybind = ctrl+b>t=toggle_quick_terminal
+keybind = global:cmd+backquote=toggle_quick_terminal
 keybind = ctrl+b>shift+;=toggle_command_palette
 
 ## More ideas from `ghostty +list_actions`

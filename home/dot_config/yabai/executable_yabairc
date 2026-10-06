@@ -81,6 +81,20 @@ yabai -m rule --add app='Goland IDEA' title='Edit configuration' manage=off
 yabai -m signal --add event=window_created label=redirect_same_app_split \
   action="$HOME/.config/yabai/scripts/redirect-same-app-split.sh"
 
+# Local, title-free workspace history for later layout analysis. Logs are
+# generated under ~/.local/state/workspace-tracker (not managed by chezmoi).
+workspace_event_log="$HOME/.config/yabai/scripts/workspace-event-log.sh"
+yabai -m signal --add event=window_created label=workspace_tracker_window_created \
+  action="$workspace_event_log window_created"
+yabai -m signal --add event=window_destroyed label=workspace_tracker_window_destroyed \
+  action="$workspace_event_log window_destroyed"
+yabai -m signal --add event=window_focused label=workspace_tracker_window_focused \
+  action="$workspace_event_log window_focused"
+yabai -m signal --add event=window_moved label=workspace_tracker_window_moved \
+  action="$workspace_event_log window_moved"
+yabai -m signal --add event=space_changed label=workspace_tracker_space_changed \
+  action="$workspace_event_log space_changed"
+
 # Animations
 # yabai -m config window_animation_duration    0.9
 # yabai -m config window_animation_easing      ease_in_out_sine

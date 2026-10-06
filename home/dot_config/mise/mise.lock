@@ -459,7 +459,6 @@ version = "0.0.12"
 backend = "pipx:josephhaaga-clerk"
 specifiers = ["0.0.12"]
 
-
 [[tools."pipx:mempalace"]]
 version = "3.10.0"
 backend = "pipx:mempalace"

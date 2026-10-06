@@ -43,8 +43,8 @@ packages:
     "@openchamber/web": "2.1.1"
 
   # Chrome Sync remains responsible for cross-device installation. This inventory
-  # lets `chrome-extensions` audit the local Chrome profile and open missing
-  # Chrome Web Store pages for interactive installation.
+  # lets `chrome-extensions` audit the local Chrome profile. Missing Chrome Web
+  # Store pages can be opened later with its explicit --install-missing option.
   chrome:
     extensions:
       - id: cfodljgdikllebejmhoifnmmcbfmamij

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Audit the declarative Chrome extension inventory. Chrome requires a user
-# confirmation before an extension can be installed from the Web Store.
+# Audit the declarative Chrome extension inventory. Opening Chrome Web Store
+# pages requires the explicit --install-missing option.
 set -euo pipefail
 
 usage() {
@@ -44,15 +44,15 @@ if [ ! -d "$extensions_dir" ]; then
   exit 1
 fi
 
-missing=0
+installed_extensions=()
+missing_extensions=()
 while IFS=$'\t' read -r id name; do
   if [ -d "$extensions_dir/$id" ]; then
-    printf '[installed] %s\n' "$name"
+    installed_extensions+=("$name")
     continue
   fi
 
-  printf '[missing] %s\n' "$name"
-  missing=1
+  missing_extensions+=("$name")
   if [ "$install_missing" = true ]; then
     open "https://chromewebstore.google.com/detail/$id"
   fi
@@ -62,14 +62,22 @@ done <<'EXTENSIONS'
 {{- end }}
 EXTENSIONS
 
-if [ "$missing" -eq 1 ]; then
-  if [ "$install_missing" = true ]; then
-    printf '%s\n' 'Confirm each installation in Chrome.'
-    exit 0
-  else
-    printf '%s\n' 'Run chrome-extensions --install-missing to open missing extension pages.'
-  fi
-  exit 1
+printf '%s\n' 'Installed:'
+if [ "${#installed_extensions[@]}" -eq 0 ]; then
+  printf '%s\n' '  (none)'
+else
+  printf '  - %s\n' "${installed_extensions[@]}"
 fi
 
-printf '%s\n' 'All configured Chrome extensions are installed.'
+printf '%s\n' 'Missing:'
+if [ "${#missing_extensions[@]}" -eq 0 ]; then
+  printf '%s\n' '  (none)'
+else
+  printf '  - %s\n' "${missing_extensions[@]}"
+fi
+
+if [ "$install_missing" = true ]; then
+  printf '%s\n' 'Confirm each installation in Chrome.'
+else
+  printf '%s\n' 'Run chrome-extensions --install-missing to open missing extension pages.'
+fi

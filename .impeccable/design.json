@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-07T00:00:00Z",
+  "title": "Design System: Spaces Lab",
+  "extensions": {
+    "colorMeta": {
+      "ground": {"role":"neutral","displayName":"Cool-gray ground","tonalRamp":["oklch(15% .015 255)","oklch(27% .015 255)","oklch(38% .015 255)","oklch(50% .015 255)","oklch(61% .015 255)","oklch(73% .015 255)","oklch(84% .015 255)","oklch(95% .015 255)"]},
+      "paper": {"role":"neutral","displayName":"White canvas","tonalRamp":["oklch(15% 0 0)","oklch(27% 0 0)","oklch(38% 0 0)","oklch(50% 0 0)","oklch(61% 0 0)","oklch(73% 0 0)","oklch(84% 0 0)","oklch(95% 0 0)"]},
+      "ink": {"role":"neutral","displayName":"Navy ink","tonalRamp":["oklch(15% .047 258)","oklch(27% .047 258)","oklch(38% .047 258)","oklch(50% .047 258)","oklch(61% .047 258)","oklch(73% .047 258)","oklch(84% .047 258)","oklch(95% .047 258)"]},
+      "muted": {"role":"neutral","displayName":"Slate supporting text","tonalRamp":["oklch(15% .043 257)","oklch(27% .043 257)","oklch(38% .043 257)","oklch(50% .043 257)","oklch(61% .043 257)","oklch(73% .043 257)","oklch(84% .043 257)","oklch(95% .043 257)"]},
+      "line": {"role":"neutral","displayName":"Cool-gray rule","tonalRamp":["oklch(15% .020 254)","oklch(27% .020 254)","oklch(38% .020 254)","oklch(50% .020 254)","oklch(61% .020 254)","oklch(73% .020 254)","oklch(84% .020 254)","oklch(95% .020 254)"]},
+      "blue": {"role":"primary","displayName":"Action blue","tonalRamp":["oklch(15% .188 260)","oklch(27% .188 260)","oklch(38% .188 260)","oklch(50% .188 260)","oklch(61% .188 260)","oklch(73% .188 260)","oklch(84% .188 260)","oklch(95% .188 260)"]},
+      "wash": {"role":"primary","displayName":"Selection wash","tonalRamp":["oklch(15% .022 266)","oklch(27% .022 266)","oklch(38% .022 266)","oklch(50% .022 266)","oklch(61% .022 266)","oklch(73% .022 266)","oklch(84% .022 266)","oklch(95% .022 266)"]},
+      "danger": {"role":"semantic","displayName":"Removal red","tonalRamp":["oklch(15% .160 22)","oklch(27% .160 22)","oklch(38% .160 22)","oklch(50% .160 22)","oklch(61% .160 22)","oklch(73% .160 22)","oklch(84% .160 22)","oklch(95% .160 22)"]},
+      "success": {"role":"semantic","displayName":"Completion green","tonalRamp":["oklch(15% .080 158)","oklch(27% .080 158)","oklch(38% .080 158)","oklch(50% .080 158)","oklch(61% .080 158)","oklch(73% .080 158)","oklch(84% .080 158)","oklch(95% .080 158)"]}
+    },
+    "typographyMeta": {
+      "headline":{"displayName":"Utility headline","purpose":"Spaces Lab title; 24px at mobile breakpoint."},
+      "title":{"displayName":"Section title","purpose":"Overview, inventory, inspector, and apply section headings."},
+      "body":{"displayName":"Control and body text","purpose":"System UI controls and explanatory copy; tabular numerals."},
+      "label":{"displayName":"Field label","purpose":"Visible labels above native controls."},
+      "shortcut":{"displayName":"Shortcut notation","purpose":"Keyboard caps; generated code uses this family with 1.7 line height."}
+    },
+    "shadows": [],
+    "motion": [{"name":"card-border","value":"border-color .16s ease-out","purpose":"Space-card border transition; disabled by prefers-reduced-motion. No decorative animation."}],
+    "breakpoints": [{"name":"stack-max","value":"740px"},{"name":"compact-max","value":"1000px"},{"name":"three-column-min","value":"1350px"}]
+  },
+  "components": [
+    {
+      "name":"Primary action","kind":"button","refersTo":"button-primary","description":"Save source, not apply configuration.",
+      "html":"<button class=\"ds-primary\">Save to source</button>",
+      "css":".ds-primary{font:600 15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--blue,#1859c9);color:var(--paper,#fff);border:1px solid var(--blue,#1859c9);border-radius:5px;padding:8px 12px;cursor:pointer}.ds-primary:hover{background:#1147a5}.ds-primary:focus-visible{outline:3px solid var(--blue,#1859c9);outline-offset:3px}.ds-primary:disabled{opacity:.5;cursor:not-allowed}"
+    },
+    {
+      "name":"Secondary action","kind":"button","refersTo":"button-secondary","description":"Preview, add, refresh, or explicitly test.",
+      "html":"<button class=\"ds-secondary\">Preview changes</button>",
+      "css":".ds-secondary{font:600 15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper,#fff);color:var(--ink,#18283f);border:1px solid var(--line,#c9d3df);border-radius:5px;padding:8px 12px;cursor:pointer}.ds-secondary:hover{background:var(--wash,#e9f0ff);border-color:var(--blue,#1859c9)}.ds-secondary:focus-visible{outline:3px solid var(--blue,#1859c9);outline-offset:3px}.ds-secondary:disabled{opacity:.5;cursor:not-allowed}"
+    },
+    {
+      "name":"Quiet action","kind":"button","refersTo":"button-quiet","description":"Mobile return control; removal variant uses danger text.",
+      "html":"<button class=\"ds-quiet\">Back to space overview</button>",
+      "css":".ds-quiet{font:600 15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:transparent;color:var(--ink,#18283f);border:1px solid var(--line,#c9d3df);border-radius:5px;padding:8px 12px;cursor:pointer}.ds-quiet:hover{border-color:var(--blue,#1859c9)}.ds-quiet:focus-visible{outline:3px solid var(--blue,#1859c9);outline-offset:3px}"
+    },
+    {
+      "name":"Labeled field","kind":"input","refersTo":"field","description":"Native input with a visible wrapping label.",
+      "html":"<label class=\"ds-field\"><span>Purpose</span><input value=\"Build\" placeholder=\"Build, Browse, Talk…\"></label>",
+      "css":".ds-field{display:block;font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--ink,#18283f);margin-bottom:16px}.ds-field>span{display:block;font-size:13px;font-weight:600;margin-bottom:5px}.ds-field input{font:inherit;width:100%;min-width:0;background:var(--paper,#fff);color:var(--ink,#18283f);border:1px solid #9dabbe;border-radius:4px;padding:8px 10px;caret-color:var(--blue,#1859c9)}.ds-field input::placeholder{color:var(--muted,#53647b)}.ds-field input:focus-visible{outline:3px solid var(--blue,#1859c9);outline-offset:3px}"
+    },
+    {
+      "name":"Shortcut cap","kind":"custom","refersTo":"shortcut","description":"Noninteractive skhd notation; wraps rather than truncates.",
+      "html":"<kbd class=\"ds-shortcut\">ctrl + alt - t</kbd>",
+      "css":".ds-shortcut{font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink,#18283f);display:inline-block;white-space:normal;background:#f3f6fa;border:1px solid var(--line,#c9d3df);border-bottom-width:2px;border-radius:4px;padding:3px 7px}"
+    },
+    {
+      "name":"Selected space","kind":"card","refersTo":"space-card","description":"Map selection button linked to the single inspector.",
+      "html":"<article class=\"ds-space\"><button class=\"ds-space-heading\" aria-pressed=\"true\"><span>Desktop 1</span><h3>Build</h3><kbd>cmd + ctrl + alt - 1</kbd></button><div class=\"ds-space-body\">Ghostty</div></article>",
+      "css":".ds-space{font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--ink,#18283f);background:var(--paper,#fff);border:1px solid var(--blue,#1859c9);border-radius:var(--radius,8px);overflow:hidden;min-width:0;outline:2px solid var(--blue,#1859c9);outline-offset:0;transition:border-color .16s ease-out}.ds-space-heading{display:block;width:100%;font:600 15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:inherit;border:0;border-bottom:1px solid var(--line,#c9d3df);border-radius:0;text-align:left;padding:17px 18px;background:var(--wash,#e9f0ff);cursor:pointer}.ds-space-heading span{font-size:12px;font-weight:500;color:var(--muted,#53647b)}.ds-space-heading h3{font-size:20px;overflow-wrap:anywhere;margin:4px 0 9px}.ds-space-heading kbd{font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3f6fa;border:1px solid var(--line,#c9d3df);border-bottom-width:2px;border-radius:4px;padding:3px 7px;display:inline-block;white-space:normal}.ds-space-heading:hover{border-color:var(--blue,#1859c9)}.ds-space-heading:focus-visible{outline:3px solid var(--blue,#1859c9);outline-offset:3px}.ds-space-body{padding:7px 18px 12px;min-height:115px}@media(prefers-reduced-motion:reduce){.ds-space{transition:none!important}}"
+    }
+  ],
+  "narrative": {
+    "northStar":"Spaces Lab workbench",
+    "overview":"This document applies only to `home/dot_local/share/yabai-spaces/index.html`. The user selected a light, blue-accented space overview with an inspector. Cool-gray ground, white canvases, navy text, ruled rows, and restrained corners make destinations and source-editing state visible without decorative desktop imagery.",
+    "keyCharacteristics":["Functional space map and one linked inspector.","Blue selection and actions; textual state and recovery guidance.","System UI controls, monospace shortcuts, flat bordered surfaces."],
+    "rules":[{"name":"The Visible State Rule","body":"Pair selection and operation colors with explicit control or status semantics.","section":"colors"},{"name":"The Source Boundary Rule","body":"Save, apply, and focus tests remain visibly distinct actions; saving never installs configuration or moves windows.","section":"components"}],
+    "dos":["Do preserve visible labels, focus outlines, selection semantics, and status messages.","Do keep planned spaces separate from read-only live inventory.","Do preserve mobile focus transfer and the return-to-overview control."],
+    "donts":["Don't attribute this surface's visual identity to the entire dotfiles repository.","Don't collapse save, apply, and focus tests into one action or use color alone to communicate state."]
+  }
+}

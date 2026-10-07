@@ -23,6 +23,9 @@
 .config/yabai
 .config/brew
 .local/bin/window-manager
+.local/bin/space-shortcuts
+.local/lib/dotfiles/space_shortcuts.py
+.local/share/yabai-spaces
 {{- end }}
 
 {{- if ne .profile "desktop" }}

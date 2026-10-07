@@ -60,6 +60,8 @@ if [ -d "$SOURCE" ]; then
   python3 -c 'import pathlib, sys; compile(pathlib.Path(sys.argv[1]).read_bytes(), sys.argv[1], "exec")' \
     "$SOURCE/dot_local/lib/dotfiles/format_slackdump_as_md.py"
 
+  python3 -m unittest discover -s "$DOTFILES/tests" -p 'test_space_shortcuts.py'
+
   if DOTFILES_PROFILE=invalid chezmoi execute-template --source "$SOURCE" \
     < "$SOURCE/.chezmoi.toml.tmpl" >/dev/null 2>&1; then
     echo "source accepted an invalid profile" >&2

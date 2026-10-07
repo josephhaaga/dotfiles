@@ -28,7 +28,7 @@ mkdir -p "$ZSH_CACHE_DIR" "${ZSH_COMPDUMP:h}"
 
 ZSH_THEME=""
 ZSH_DISABLE_COMPFIX=true
-plugins=(git httpie jira shrink-path uv)
+plugins=(git httpie shrink-path uv)
 
 source "$ZSH/oh-my-zsh.sh"
 
@@ -49,7 +49,6 @@ alias vim=nvim
 alias vi=nvim
 alias vimdiff='nvim -d'
 alias ll='ls -lah'
-alias fish=asciiquarium
 
 if command -v op >/dev/null 2>&1 && command -v opencode >/dev/null 2>&1 && [[ -f "$HOME/.config/opencode/opencode-vm.env" ]]; then
   alias opencode-vm='op run --env-file="$HOME/.config/opencode/opencode-vm.env" -- opencode --server http://127.0.0.1:14096'

@@ -6,6 +6,17 @@
   "agents": {
     "title": {
       "model": "openai/gpt-5.6-terra-fast"
+    },
+    "context-researcher": {
+      "description": "Answers questions requiring connected work context.",
+      "mode": "subagent",
+      "system": "Use the connected work-context MCP servers only when needed. Return a concise, sourced answer to the parent agent. Do not edit files.",
+      "permissions": [
+        { "action": "agent-mcp_*", "resource": "*", "effect": "allow" },
+        { "action": "granola_*", "resource": "*", "effect": "allow" },
+        { "action": "mempalace_*", "resource": "*", "effect": "allow" },
+        { "action": "edit", "resource": "*", "effect": "deny" }
+      ]
     }
   },
   "experimental": {
@@ -81,7 +92,11 @@
   },
 {{- end }}
   "permissions": [
+    { "action": "agent-mcp_*", "resource": "*", "effect": "deny" },
+    { "action": "granola_*", "resource": "*", "effect": "deny" },
+    { "action": "mempalace_*", "resource": "*", "effect": "deny" },
     { "action": "subagent", "resource": "build", "effect": "deny" },
-    { "action": "subagent", "resource": "plan", "effect": "deny" }
+    { "action": "subagent", "resource": "plan", "effect": "deny" },
+    { "action": "subagent", "resource": "context-researcher", "effect": "allow" }
   ]
 }

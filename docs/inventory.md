@@ -12,12 +12,15 @@ Every retained item has one installation owner. Anything not listed here is inte
 | Herdr | mise | all | Persistent local and remote terminal sessions |
 | Neovim/LazyVim | mise | all | Editor with Go, Python, TypeScript, Docker, JSON, Markdown, and TOML support |
 | OpenCode V2 | pinned npm install | all | Primary coding agent |
-| Plannotator, Graphify | vendor/OpenCode config | all | Review and graphing workflows |
+| Plannotator, Graphify | pinned external OpenCode skills | all | Review and graphing workflows |
 | uv, Node, Bun, Go | mise | all | Language runtimes and package execution |
 | ripgrep, fd, bat, fzf, tree, jq | mise/native | all | Search and shell utilities |
 | gh, Git LFS, git-filter-repo, GnuPG | mise/native | desktop, server | Git and GitHub workflows |
 | shellcheck, gitleaks | mise | all | Static and secret checks |
-| Docker, Compose, kubectl, Azure kubelogin | native + mise | all | Containers and Kubernetes client tooling |
+| Docker, Compose | native + mise | all | Container workflows |
+| Azure CLI | mise capability `cloud` | opt-in | Azure workflows |
+| kubectl, Azure kubelogin | mise capability `kubernetes` | opt-in | Kubernetes workflows |
+| gitleaks | mise capability `security` | opt-in | Secret scanning |
 
 The enterprise profile uses an existing, MDM-approved Homebrew installation for CLI formulae, Yabai/skhd, Ghostty, fonts, and OpenChamber. It excludes the rest of the desktop casks.
 
@@ -30,7 +33,7 @@ The enterprise profile uses an existing, MDM-approved Homebrew installation for 
 | Browser/knowledge | Google Chrome, Obsidian |
 | AI workspace | OpenChamber |
 | Collaboration | Slack, Microsoft Teams, Zoom, Linear, Granola |
-| Voice/input | Wispr Flow, Handy |
+| Voice/input | Wispr Flow, Handy; Handy is optional on enterprise |
 | Containers | Docker Desktop |
 
 ## Deliberately retained fun
@@ -39,13 +42,15 @@ Neofetch, asciiquarium, cowsay, lolcat, and ponysay are intentional. They are no
 
 ## Retained custom workflow
 
-`slackmd` is desktop-only. It combines `gh-slackdump` with a Markdown formatter and can decrypt the Slack desktop cookie to download private images. OAuth state and cookies remain unmanaged.
+The journal directory and Clerk integration are retained. They are installed by
+the source-managed journal bootstrap script; credentials and runtime state are
+not managed.
 
 ## Removed from the managed baseline
 
 - tmux and TPM; Herdr owns persistent sessions.
 - Pi, OMP, Crush, Claude Code, Codex, OMO, agent profiler, OpenPortal Hub, and browser MCP servers.
-- Google Drive, Karabiner, Notion, Loom, AI desktop apps, LM Studio, OpenTypeless, and mitmproxy.
+- Google Drive, Karabiner, Notion, Loom, AI desktop apps, LM Studio, and mitmproxy.
 - gcloud/BigQuery, Azure, Heroku, Redis, DuckDB, and FFmpeg.
-- Clerk/journal automation, `herdr-pr`, save/load scripts, TCC maintenance, stale GitHub scripts, and log rotation.
+- `herdr-pr`, save/load scripts, TCC maintenance, stale GitHub scripts, Slack export, and log rotation.
 - Fish residue, Neovim example/mono files, Raindrop watchdog, generated browser state, and historical package snapshots.

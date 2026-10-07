@@ -39,7 +39,6 @@ The enterprise profile excludes all desktop-only paths through `.chezmoiignore` 
 - Docker Desktop, macOS defaults, and repository-managed LaunchAgents.
 - The OpenCode VM environment file.
 - Every OpenCode MCP server not individually reviewed for this profile, and every model provider other than GitHub Copilot.
-- Slack export binaries, the Slack cookie reader, and the `gh-slackdump` extension.
 - Server-only Caddy configuration, Docker service setup, DNF packages, and systemd services.
 
 ## Managed Configuration

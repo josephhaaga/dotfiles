@@ -42,6 +42,9 @@ The profile is detected automatically:
 
 Set `DOTFILES_PROFILE=enterprise` or `DOTFILES_PROFILE=container` to override detection.
 
+Cloud, Kubernetes, and secret-scanning tools are opt-in capabilities. Set
+`DOTFILES_CAPABILITIES=cloud,kubernetes,security` during bootstrap or apply.
+
 ## Remote Development
 
 Herdr owns persistent sessions on the VM. Attach directly from a local terminal:

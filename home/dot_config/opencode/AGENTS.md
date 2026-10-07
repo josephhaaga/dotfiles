@@ -1,5 +1,11 @@
 # Global Instructions
 
+## Work-context research
+
+When a question requires Slack, Linear, Glean, or another connected work
+system, delegate it to the `context-researcher` subagent. Do not call those
+MCP tools directly; they are intentionally denied to normal agents.
+
 ## Slack Messages
 
 Whenever drafting, proposing, or sending a Slack message, use Tribe's two-part structure:

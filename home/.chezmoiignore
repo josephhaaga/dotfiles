@@ -23,9 +23,6 @@
 .config/yabai
 .config/brew
 .local/bin/window-manager
-.local/bin/space-shortcuts
-.local/lib/dotfiles/space_shortcuts.py
-.local/share/yabai-spaces
 {{- end }}
 
 {{- if ne .profile "desktop" }}
@@ -33,12 +30,6 @@
 .config/opencode/opencode-vm.env
 .local/bin/chrome-extensions
 Library
-{{- end }}
-
-{{- if ne .profile "desktop" }}
-# Headless profiles do not carry the macOS-only Slack export workflow.
-.local/bin/slackmd
-.local/lib/dotfiles/format_slackdump_as_md.py
 {{- end }}
 
 {{- if ne .profile "server" }}

@@ -1,5 +1,7 @@
 min_version = "2026.8.0"
 
+{{- $capabilities := dig "capabilities" (splitList "," (env "DOTFILES_CAPABILITIES")) . }}
+
 {{- /*
   A tool is either a bare version string, or a map carrying a version plus
   backend options. mise rewrites this file in place when a backend needs an
@@ -22,6 +24,21 @@ min_version = "2026.8.0"
 {{- end }}
 {{- if eq .profile "server" }}
 {{- range $tool, $version := .packages.mise_server }}
+{{ $tool | quote }} = {{ $version | quote }}
+{{- end }}
+{{- end }}
+{{- if has "cloud" $capabilities }}
+{{- range $tool, $version := .packages.mise_cloud }}
+{{ $tool | quote }} = {{ $version | quote }}
+{{- end }}
+{{- end }}
+{{- if has "kubernetes" $capabilities }}
+{{- range $tool, $version := .packages.mise_kubernetes }}
+{{ $tool | quote }} = {{ $version | quote }}
+{{- end }}
+{{- end }}
+{{- if has "security" $capabilities }}
+{{- range $tool, $version := .packages.mise_security }}
 {{ $tool | quote }} = {{ $version | quote }}
 {{- end }}
 {{- end }}

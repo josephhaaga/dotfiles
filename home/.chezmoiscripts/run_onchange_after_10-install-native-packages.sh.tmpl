@@ -12,6 +12,11 @@ else
 fi
 eval "$("$brew_bin" shellenv)"
 brew bundle --file="{{ .chezmoi.homeDir }}/.config/brew/Brewfile"
+{{ if eq .profile "enterprise" -}}
+for cask in {{ range .packages.macos.enterprise_optional_casks }}{{ printf "%q " . }}{{ end }}; do
+  brew install --cask "$cask" || printf 'Optional enterprise cask failed: %s\n' "$cask" >&2
+done
+{{ end -}}
 {{ else if eq .profile "server" -}}
 packages=(
 {{- range .packages.amazon_linux }}

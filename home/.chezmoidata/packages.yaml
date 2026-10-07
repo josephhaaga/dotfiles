@@ -1,22 +1,15 @@
 packages:
   mise:
-    azure-cli: "2.90.0"
-    "aqua:Azure/kubelogin": "0.2.19"
     bat: "0.26.1"
     bun: "1.4.2"
     fd: "10.5.0"
     fzf: "0.74.4"
     gh: "2.101.0"
-    gitleaks: "8.30.1"
     go: "1.27.1"
     herdr: "0.9.1"
-    kubectl: "1.37.0"
     neovim: "0.12.5"
     "pipx:josephhaaga-clerk": "0.0.12"
     node: "26.10.0"
-    # azure-cli resolves to the pipx backend, which needs Python 3.10 or newer.
-    # The macOS system Python is 3.9, so pin an interpreter rather than
-    # depending on whatever the host happens to ship.
     python: "3.14.7"
     ripgrep: "15.2.0"
     shellcheck: "0.11.0"
@@ -24,6 +17,17 @@ packages:
     stylua: "2.5.2"
     tealdeer: "1.9.0"
     uv: "0.12.17"
+
+  mise_cloud:
+    # azure-cli resolves to the pipx backend, which needs Python 3.10 or newer.
+    azure-cli: "2.90.0"
+
+  mise_kubernetes:
+    "aqua:Azure/kubelogin": "0.2.19"
+    kubectl: "1.37.0"
+
+  mise_security:
+    gitleaks: "8.30.1"
 
   mise_desktop:
     "pipx:mempalace": "3.10.0"
@@ -124,6 +128,8 @@ packages:
       - tailscale-app
       - wispr-flow
       - zoom
+    enterprise_optional_casks:
+      - handy
     enterprise_casks:
       - font-hack-nerd-font
       - font-jetbrains-mono

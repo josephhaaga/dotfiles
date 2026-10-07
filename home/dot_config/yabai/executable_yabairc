@@ -95,12 +95,6 @@ yabai -m signal --add event=window_moved label=workspace_tracker_window_moved \
 yabai -m signal --add event=space_changed label=workspace_tracker_space_changed \
   action="$workspace_event_log space_changed"
 
-# Restore only explicitly configured space labels and future-window routing.
-# Empty plans do nothing. Existing windows are never moved by this helper.
-if [ -x "$HOME/.local/bin/space-shortcuts" ]; then
-  "$HOME/.local/bin/space-shortcuts" restore
-fi
-
 # Animations
 # yabai -m config window_animation_duration    0.9
 # yabai -m config window_animation_easing      ease_in_out_sine

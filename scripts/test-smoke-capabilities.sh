@@ -18,7 +18,7 @@ else
 fi
 EOF
 chmod +x "$fixture/bin/fake-tool"
-for tool in chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode neofetch tree-sitter; do
+for tool in chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode neofetch tree-sitter tokscale; do
   ln -s fake-tool "$fixture/bin/$tool"
 done
 export MOCK_TOOL_LOG="$fixture/tools.log"
@@ -31,7 +31,7 @@ for enabled in false true; do
     ln -s fake-tool "$fixture/bin/kubelogin"
   fi
   : > "$MOCK_TOOL_LOG"
-  HOME="$fixture/home" PATH="$fixture/bin:$PATH" DOTFILES_PROFILE=container \
+  HOME="$fixture/home" PATH="$fixture/bin:/usr/bin:/bin" DOTFILES_PROFILE=container \
     DOTFILES_CAPABILITIES='' MOCK_KUBERNETES="$enabled" \
     bash "$DOTFILES/scripts/smoke-test.sh" > "$fixture/output"
   if [ "$enabled" = true ]; then

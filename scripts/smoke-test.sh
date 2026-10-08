@@ -26,7 +26,15 @@ case "$profile" in
     ;;
 esac
 
-required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode kubectl kubelogin neofetch tree-sitter)
+required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode neofetch tree-sitter)
+
+# Match the mise template: recorded capabilities outrank the bootstrap env.
+# Kubernetes tools are deliberately absent from an ordinary container install.
+kubernetes_enabled="$(chezmoi execute-template --source "$DOTFILES/home" \
+  '{{ has "kubernetes" (dig "capabilities" (splitList "," (env "DOTFILES_CAPABILITIES")) .) }}')"
+if [ "$kubernetes_enabled" = true ]; then
+  required+=(kubectl kubelogin)
+fi
 
 if [ "$profile" = server ]; then
   required+=(caddy)
@@ -63,8 +71,10 @@ done
 
 herdr --version >/dev/null
 opencode --version >/dev/null
-kubectl version --client >/dev/null
-kubelogin --version >/dev/null
+if [ "$kubernetes_enabled" = true ]; then
+  kubectl version --client >/dev/null
+  kubelogin --version >/dev/null
+fi
 
 zsh -lic 'alias gst >/dev/null'
 if command -v nvim >/dev/null 2>&1; then

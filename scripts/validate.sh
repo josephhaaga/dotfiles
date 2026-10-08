@@ -64,6 +64,7 @@ if [ -d "$SOURCE" ]; then
   jq empty "$SOURCE/dot_config/dotfiles/openchamber-workflow-defaults.json" \
     "$DOTFILES/docs/examples/openchamber/project.json"
   PYTHONDONTWRITEBYTECODE=1 python3 "$DOTFILES/scripts/test-openchamber-workflows.py"
+  bash "$DOTFILES/scripts/test-smoke-capabilities.sh"
   if command -v node >/dev/null 2>&1; then
     node --check "$DOTFILES/scripts/check-openchamber-contract.mjs"
   fi

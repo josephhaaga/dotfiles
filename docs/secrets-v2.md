@@ -8,6 +8,7 @@ Excluded runtime state includes:
 
 - GitHub and cloud CLI OAuth configuration.
 - OpenCode provider and MCP authentication.
+- OpenChamber settings/preferences, OAuth, pairing cookies/tokens, project mappings, and scheduled-task runtime state. Only a separate nonsecret workflow overlay is source-managed; see [native workflows](openchamber-workflows.md).
 - Caddy client-certificate and client-CA private keys.
 - Docker registry credentials.
 - Slack cookies and keychain material.

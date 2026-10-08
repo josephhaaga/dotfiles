@@ -1,0 +1,21 @@
+{
+  "contractVersion": 1,
+  "openchamberVersions": ["2.1.1"],
+  "settings": {
+    "sessionWorkEnabled": true,
+    "sessionWorkAutoOpen": true,
+    "sessionRecapEnabled": true,
+    "sessionSuggestionEnabled": true,
+    "nativeNotificationsEnabled": true,
+    "notificationMode": "hidden-only",
+    "notifyOnQuestion": true,
+    "notifyOnError": true,
+    "notifyOnCompletion": true,
+    "notifyOnSubtasks": false,
+    "permissionDefaultMode": "ask",
+    "sessionGoalEnabled": false,
+    "sessionGoalDefaultBudgetEnabled": true,
+    "sessionGoalDefaultBudget": 20000,
+    "sessionGoalMaxAutoTurns": 1
+  }
+}

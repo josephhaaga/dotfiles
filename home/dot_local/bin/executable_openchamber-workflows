@@ -1,0 +1,213 @@
+#!/usr/bin/env python3
+"""Explicit, narrow updates to OpenChamber's version-dependent internal API."""
+
+import argparse
+import getpass
+import ipaddress
+import json
+import os
+from pathlib import Path
+import ssl
+import stat
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+
+SUPPORTED_VERSIONS = {"2.1.1"}
+BOOLEAN_KEYS = {
+    "sessionWorkEnabled", "sessionWorkAutoOpen", "sessionRecapEnabled",
+    "sessionSuggestionEnabled", "nativeNotificationsEnabled", "notifyOnQuestion",
+    "notifyOnError", "notifyOnCompletion", "notifyOnSubtasks", "sessionGoalEnabled",
+    "sessionGoalDefaultBudgetEnabled",
+}
+ENUM_KEYS = {
+    "notificationMode": {"always", "hidden-only"},
+    "permissionDefaultMode": {"ask", "safety", "auto"},
+}
+INTEGER_KEYS = {"sessionGoalDefaultBudget": (1, None), "sessionGoalMaxAutoTurns": (1, 200)}
+
+
+class WorkflowError(Exception):
+    pass
+
+
+def load_defaults(path):
+    try:
+        document = json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        raise WorkflowError("Cannot read defaults JSON") from None
+    if not isinstance(document, dict) or document.get("contractVersion") != 1:
+        raise WorkflowError("Unsupported defaults contract")
+    versions = document.get("openchamberVersions")
+    if not isinstance(versions, list) or not versions or any(
+        not isinstance(v, str) or v not in SUPPORTED_VERSIONS for v in versions
+    ):
+        raise WorkflowError("Defaults require an unreviewed OpenChamber version")
+    settings = document.get("settings")
+    if not isinstance(settings, dict) or not settings:
+        raise WorkflowError("Defaults must contain settings")
+    for key, value in settings.items():
+        if key in BOOLEAN_KEYS:
+            valid = type(value) is bool
+        elif key in ENUM_KEYS:
+            valid = isinstance(value, str) and value in ENUM_KEYS[key]
+        elif key in INTEGER_KEYS:
+            low, high = INTEGER_KEYS[key]
+            valid = type(value) is int and value >= low and (high is None or value <= high)
+        else:
+            raise WorkflowError("Defaults contain a field outside the workflow allowlist")
+        if not valid:
+            raise WorkflowError(f"Invalid default: {key}")
+    return document
+
+
+def validate_origin(url):
+    try:
+        parsed = urllib.parse.urlsplit(url)
+        port = parsed.port
+    except ValueError:
+        raise WorkflowError("Invalid endpoint origin") from None
+    if (parsed.scheme not in {"http", "https"} or not parsed.hostname
+            or parsed.username is not None or parsed.password is not None
+            or parsed.path not in {"", "/"} or parsed.query or parsed.fragment
+            or any(c.isspace() for c in url) or "\\" in url):
+        raise WorkflowError("Endpoint must be an explicit HTTP(S) origin, without credentials or path")
+    if parsed.scheme == "http":
+        try:
+            loopback = ipaddress.ip_address(parsed.hostname).is_loopback
+        except ValueError:
+            loopback = parsed.hostname == "localhost"
+        if not loopback:
+            raise WorkflowError("Plain HTTP is allowed only on loopback (use an SSH tunnel)")
+    if port is not None and not 1 <= port <= 65535:
+        raise WorkflowError("Invalid endpoint port")
+    return url.rstrip("/")
+
+
+def read_cookie(auth_file, origin):
+    if auth_file:
+        try:
+            with open(auth_file) as stream:
+                info = os.fstat(stream.fileno())
+                if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid()
+                        or info.st_mode & 0o077):
+                    raise WorkflowError("Auth file must be owned by you and mode 600")
+                auth = json.load(stream)
+        except (OSError, ValueError):
+            raise WorkflowError("Cannot read auth JSON") from None
+        if not isinstance(auth, dict) or auth.get("origin") != origin:
+            raise WorkflowError("Auth file origin does not match the explicit endpoint")
+        cookie = auth.get("cookie")
+    else:
+        if not sys.stdin.isatty():
+            raise WorkflowError("Use a private, origin-bound --auth-file for noninteractive requests")
+        cookie = getpass.getpass("Paste this endpoint's Cookie header (hidden, not saved): ")
+    if (not isinstance(cookie, str) or not cookie.strip() or "=" not in cookie
+            or any(ord(c) < 32 or ord(c) > 126 for c in cookie)):
+        raise WorkflowError("Invalid authentication cookie")
+    return cookie
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise WorkflowError("Redirect refused; use the intended endpoint directly")
+
+
+class Client:
+    def __init__(self, origin, cookie, cert=None, key=None, ca=None):
+        self.origin = origin
+        self.cookie = cookie
+        context = ssl.create_default_context(cafile=ca)
+        if cert:
+            context.load_cert_chain(cert, key)
+        # Do not send credentials through ambient HTTP proxy configuration.
+        self.opener = urllib.request.build_opener(
+            urllib.request.ProxyHandler({}), NoRedirect(),
+            urllib.request.HTTPSHandler(context=context),
+        )
+
+    def request(self, method, path, body=None):
+        data = None if body is None else json.dumps(body).encode()
+        req = urllib.request.Request(self.origin + path, data=data, method=method, headers={
+            "Accept": "application/json", "Content-Type": "application/json",
+            "Cookie": self.cookie, "Origin": self.origin,
+        })
+        try:
+            with self.opener.open(req, timeout=15) as response:
+                raw = response.read(2 * 1024 * 1024 + 1)
+                if len(raw) > 2 * 1024 * 1024:
+                    raise WorkflowError("API response exceeds size limit")
+                payload = json.loads(raw)
+        except urllib.error.HTTPError as error:
+            # Never print URLs, response bodies, headers, or credentials.
+            raise WorkflowError(f"API request failed (HTTP {error.code})") from None
+        except (urllib.error.URLError, OSError, ValueError):
+            raise WorkflowError("API request failed; check endpoint, authentication, and TLS") from None
+        if not isinstance(payload, dict):
+            raise WorkflowError("API returned an unexpected response shape")
+        return payload
+
+
+def differences(current, desired):
+    return {key: value for key, value in desired.items()
+            if key not in current or type(current[key]) is not type(value) or current[key] != value}
+
+
+def reconcile(client, document, mode):
+    version = client.request("GET", "/api/version").get("openchamberVersion")
+    if not isinstance(version, str) or version not in document["openchamberVersions"]:
+        raise WorkflowError("Server version is not reviewed for this internal API; run the contract check")
+    current = client.request("GET", "/api/config/settings")
+    delta = differences(current, document["settings"])
+    if not delta:
+        print("Workflow defaults verified; no update needed.")
+        return 0
+    if mode != "apply":
+        # Print desired values only, never values from runtime state.
+        print(json.dumps({"desiredChanges": delta}, indent=2, sort_keys=True))
+        return 1 if mode == "verify" else 0
+    client.request("PUT", "/api/config/settings", delta)
+    remaining = differences(client.request("GET", "/api/config/settings"), document["settings"])
+    if remaining:
+        raise WorkflowError("Post-apply verification failed for: " + ", ".join(sorted(remaining)))
+    print(f"Applied and verified {len(delta)} workflow defaults.")
+    return 0
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--dry-run", action="store_true", help="default; no PUT (GET can migrate server state)")
+    mode.add_argument("--verify", action="store_true", help="exit 1 for drift; no PUT")
+    mode.add_argument("--apply", action="store_true", help="explicitly update and verify defaults")
+    parser.add_argument("--defaults", default=str(Path(os.environ.get("XDG_CONFIG_HOME", str(Path.home() / ".config"))) / "dotfiles/openchamber-workflow-defaults.json"))
+    parser.add_argument("--url", help="explicit OpenChamber origin; omitted = offline dry-run")
+    parser.add_argument("--auth-file", help="local mode-600 JSON with origin and cookie; never commit it")
+    parser.add_argument("--client-cert", help="existing PEM mTLS certificate")
+    parser.add_argument("--client-key", help="existing PEM mTLS key")
+    parser.add_argument("--ca", help="existing trusted CA PEM; TLS verification always enabled")
+    args = parser.parse_args(argv)
+    try:
+        document = load_defaults(args.defaults)
+        if not args.url:
+            if args.apply or args.verify or args.auth_file or args.client_cert or args.client_key or args.ca:
+                raise WorkflowError("Network operations require an explicit --url")
+            print(json.dumps({"offlineDefaults": document["settings"]}, indent=2, sort_keys=True))
+            return 0
+        if bool(args.client_cert) != bool(args.client_key):
+            raise WorkflowError("Provide both --client-cert and --client-key")
+        origin = validate_origin(args.url)
+        cookie = read_cookie(args.auth_file, origin)
+        client = Client(origin, cookie, args.client_cert, args.client_key, args.ca)
+        return reconcile(client, document, "apply" if args.apply else "verify" if args.verify else "dry-run")
+    except (WorkflowError, OSError, ValueError):
+        # WorkflowError messages are deliberately safe; other exceptions may contain secret paths.
+        error = sys.exc_info()[1]
+        print(str(error) if isinstance(error, WorkflowError) else "Cannot initialize secure API client", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())

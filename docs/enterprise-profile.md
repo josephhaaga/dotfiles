@@ -43,7 +43,7 @@ The enterprise profile excludes all desktop-only paths through `.chezmoiignore` 
 
 ## Managed Configuration
 
-chezmoi deploys the portable configuration plus Ghostty, Yabai/skhd, and the window-manager helper. This includes zsh, Git aliases, mise, Neovim, Starship, tealdeer, neofetch, herdr, and OpenCode configuration, commands, and skills.
+chezmoi deploys the portable configuration plus Ghostty, Yabai/skhd, and the window-manager helper. This includes zsh, Git aliases, mise, Neovim, Starship, tealdeer, neofetch, herdr, and minimal OpenCode configuration. Global agent instructions, downloaded skills, and Plannotator hooks are no longer managed; the enterprise provider and MCP allowlists remain enforced.
 
 OpenCode is configured differently on this profile than on the others:
 

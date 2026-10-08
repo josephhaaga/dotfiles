@@ -17,7 +17,7 @@ fi
 
 npm_packages=(
 {{- range $package, $version := .packages.npm }}
-{{- if and (or (ne $.profile "server") (ne $package "tree-sitter-cli")) (or (eq $.profile "enterprise") (ne $package "@plannotator/opencode")) }}
+{{- if or (ne $.profile "server") (ne $package "tree-sitter-cli") }}
   {{ printf "%s@%s" $package $version | quote }}
 {{- end }}
 {{- end }}
@@ -46,31 +46,3 @@ npm install --global --prefix "$HOME/.local" \
   --registry "$npm_registry" \
   --allow-scripts=@opencode/cli,node-pty,tree-sitter-cli \
   --ignore-scripts=false "${npm_packages[@]}"
-
-plannotator_version="0.27.22"
-# Commit behind the v0.27.22 installer. Pinning its object ID makes the script
-# URL immutable; the SHA-256 below verifies its bytes before execution.
-plannotator_installer_commit="3c9d79b36dbfbfcb7a180a52a9b7c60fc7d315df"
-installer="$(mktemp)"
-trap 'rm -f "$installer"' EXIT
-
-verify_installer() {
-  local expected="$1"
-  local actual
-  if command -v sha256sum >/dev/null 2>&1; then
-    actual="$(sha256sum "$installer" | awk '{print $1}')"
-  else
-    actual="$(shasum -a 256 "$installer" | awk '{print $1}')"
-  fi
-  [ "$actual" = "$expected" ]
-}
-
-curl -fsSL "https://raw.githubusercontent.com/backnotprop/plannotator/${plannotator_installer_commit}/scripts/install.sh" -o "$installer"
-verify_installer "1f39df5467569566e59393eacb5ac294e9b05992ab14e7e841f6b11ea5e3377d" || {
-  printf '%s\n' 'Plannotator installer checksum mismatch' >&2
-  exit 1
-}
-# The vendor installer has no Pi opt-out and updates Pi whenever it is on PATH.
-PATH="$HOME/.local/share/mise/shims:/usr/bin:/bin:/usr/sbin:/sbin" \
-  bash "$installer" --version "$plannotator_version" --non-interactive \
-  --skip-skills --skip-codex --skip-gemini --skip-kiro --skip-opencode

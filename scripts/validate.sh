@@ -117,6 +117,10 @@ if [ -d "$SOURCE" ]; then
       echo "$profile must not manage OpenChamber runtime state or deploy schedules" >&2
       exit 1
     fi
+    if printf '%s\n' "$workflow_managed" | grep -Eq '^\.config/opencode/(AGENTS\.md$|skills(/|$)|commands(/|$))'; then
+      echo "$profile must not deploy retired global prompts, skills, or commands" >&2
+      exit 1
+    fi
 
     chezmoi execute-template --source "$SOURCE" --override-data "$data" \
       < "$SOURCE/dot_config/opencode/opencode.json.tmpl" | jq empty
@@ -187,6 +191,17 @@ if [ -d "$SOURCE" ]; then
       < "$SOURCE/dot_config/opencode/opencode.json.tmpl")"
 
     if ! printf '%s' "$rendered" |
+        jq -e '.plugins == [] and (has("model") | not) and (has("agents") | not)
+          and (.permissions == [
+            {"action":"agent-mcp_*","resource":"*","effect":"ask"},
+            {"action":"granola_*","resource":"*","effect":"ask"},
+            {"action":"mempalace_*","resource":"*","effect":"ask"}
+          ])' >/dev/null; then
+      echo "$profile OpenCode config overrides native workflow choices or MCP approval boundaries" >&2
+      exit 1
+    fi
+
+    if ! printf '%s' "$rendered" |
       jq -e '(.mcp.servers // {}) as $m
         | ([$m[] | select((.type == "local" and (.command | type) == "array")
             or (.type == "remote" and (.url | type) == "string"))] | length)
@@ -210,6 +225,13 @@ if [ -d "$SOURCE" ]; then
   # shellcheck disable=SC2016 # matching the literal shell source, not expanding it
   registry_flag='--registry "$npm_registry"'
   for profile in desktop enterprise server container; do
+    agent_installer="$(chezmoi execute-template --source "$SOURCE" \
+      --override-data "{\"profile\":\"$profile\"}" \
+      < "$SOURCE/.chezmoiscripts/run_onchange_after_50-install-agent-tools.sh.tmpl")"
+    if printf '%s' "$agent_installer" | grep -qi 'plannotator'; then
+      echo "$profile must not reinstall retired Plannotator hooks" >&2
+      exit 1
+    fi
     if ! chezmoi execute-template --source "$SOURCE" \
       --override-data "{\"profile\":\"$profile\"}" \
       < "$SOURCE/.chezmoiscripts/run_onchange_after_50-install-agent-tools.sh.tmpl" |

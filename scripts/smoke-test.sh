@@ -43,7 +43,6 @@ if [ -f "$package_data" ]; then
       case "$package" in
         @opencode/cli) command_name=opencode ;;
         @openchamber/web) command_name=openchamber ;;
-        @plannotator/opencode) continue ;;
         tree-sitter-cli) command_name=tree-sitter ;;
         *) command_name="${package##*/}" ;;
       esac

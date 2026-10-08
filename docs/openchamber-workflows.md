@@ -26,6 +26,21 @@ Nothing under `~/.config/openchamber` is source-managed. Settings, timestamped p
 
 ## Check the internal contract before applying
 
+### OpenCode configuration boundary
+
+Dotfiles no longer ships global OpenCode `AGENTS.md`, downloaded skills, skill-dependent slash commands, or Plannotator's plugin/commands/installer. The repository's root `AGENTS.md` remains: it governs development of dotfiles, not every coding session.
+
+OpenCode configuration is pared down to avoid competing workflow ownership:
+
+- Global model and title-agent overrides are removed so the app/session can choose them.
+- The custom `context-researcher` agent and restrictions on built-in `build`/`plan` subagents are removed. Connected-work MCP tools can be used directly with an `ask` approval instead of a forced delegation path.
+- Dotfiles declares no plugins. This does not disable OpenChamber's separately managed native plugins or repository-local plugins.
+- Existing MCP endpoints, OAuth configuration, shell settings, and provider policy remain. Enterprise still permits only GitHub Copilot and its reviewed MCP servers.
+
+This is a **source-only retirement**, not deletion from deployed machines. Removing files from the chezmoi source does not remove previously deployed global instructions, skills, or commands, and removing a package pin does not uninstall an existing package. Before a later deployment, inspect and archive/remove only the retired files you intend to stop loading; preserve credentials and unrelated local customizations. No automatic cleanup script is added. After deliberately deploying the OpenCode changes and retiring leftover files, restart OpenCode to load them; this PR does neither. Other ancestor/project configuration can still override global defaults.
+
+### Version checks
+
 The supported package is currently `@openchamber/web` **2.1.1**, matching the server package pin in `home/.chezmoidata/packages.yaml`. `/api/version` and GET/PUT `/api/config/settings` are internal, version-dependent APIs, **not a stable public contract**. Desktop releases can differ from the pinned server package; an unreviewed version fails closed.
 
 1. Run the offline unit and mock HTTP tests:

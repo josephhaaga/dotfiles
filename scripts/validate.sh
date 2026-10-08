@@ -42,7 +42,10 @@ fi
 source_root_file="$DOTFILES/.chezmoiroot"
 [ -f "$source_root_file" ] || { echo "chezmoi source-root file is missing" >&2; exit 1; }
 source_root="$(< "$source_root_file")"
-[ -n "$source_root" ] && [[ "$source_root" != /* ]] || { echo "invalid chezmoi source root: $source_root" >&2; exit 1; }
+if [ -z "$source_root" ] || [[ "$source_root" = /* ]]; then
+  echo "invalid chezmoi source root: $source_root" >&2
+  exit 1
+fi
 SOURCE="$DOTFILES/$source_root"
 if [ -d "$SOURCE" ]; then
   bash -n "$DOTFILES/setup"

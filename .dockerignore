@@ -6,7 +6,7 @@
 .DS_Store
 *.swp
 
-# Legacy and local-only trees are not needed by the v2 container test.
+# Legacy trees are not needed by the container test. Keep home/, the active
+# chezmoi source consumed by setup, in the build context.
 Casks
 configs
-home

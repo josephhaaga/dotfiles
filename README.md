@@ -78,5 +78,6 @@ explicitly.
 - [`docs/secrets-v2.md`](docs/secrets-v2.md): unmanaged credentials and runtime state.
 - [`docs/vm-web-access.md`](docs/vm-web-access.md): mTLS-protected VM web access.
 - [`docs/vm-hosted-reports.md`](docs/vm-hosted-reports.md): publish responsive reports to approved devices.
+- [`docs/openchamber-workflows.md`](docs/openchamber-workflows.md): native workflow defaults, offline contract tests, and explicit manual setup.
 
 The inventory intentionally keeps Neofetch, asciiquarium, cowsay, lolcat, and ponysay. tmux is not part of the managed baseline.

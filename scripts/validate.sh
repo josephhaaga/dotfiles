@@ -42,7 +42,10 @@ fi
 source_root_file="$DOTFILES/.chezmoiroot"
 [ -f "$source_root_file" ] || { echo "chezmoi source-root file is missing" >&2; exit 1; }
 source_root="$(< "$source_root_file")"
-[ -n "$source_root" ] && [[ "$source_root" != /* ]] || { echo "invalid chezmoi source root: $source_root" >&2; exit 1; }
+if [ -z "$source_root" ] || [[ "$source_root" = /* ]]; then
+  echo "invalid chezmoi source root: $source_root" >&2
+  exit 1
+fi
 SOURCE="$DOTFILES/$source_root"
 if [ -d "$SOURCE" ]; then
   bash -n "$DOTFILES/setup"
@@ -56,6 +59,24 @@ if [ -d "$SOURCE" ]; then
   zsh -n "$SOURCE/dot_config/zsh/dot_zshrc"
 
   jq empty "$SOURCE/dot_config/nvim/lazyvim.json"
+
+  # Native OpenChamber defaults are inert source files, never live settings.
+  jq empty "$SOURCE/dot_config/dotfiles/openchamber-workflow-defaults.json" \
+    "$DOTFILES/docs/examples/openchamber/project.json"
+  PYTHONDONTWRITEBYTECODE=1 python3 "$DOTFILES/scripts/test-openchamber-workflows.py"
+  bash "$DOTFILES/scripts/test-smoke-capabilities.sh"
+  if command -v node >/dev/null 2>&1; then
+    node --check "$DOTFILES/scripts/check-openchamber-contract.mjs"
+  fi
+  openchamber_pin="$(chezmoi execute-template --source "$SOURCE" \
+    --override-data '{"profile":"server"}' \
+    '{{ index .packages.npm_server "@openchamber/web" }}')"
+  if ! jq -e --arg version "$openchamber_pin" \
+      '.openchamberVersions | index($version) != null' \
+      "$SOURCE/dot_config/dotfiles/openchamber-workflow-defaults.json" >/dev/null; then
+    echo "OpenChamber package pin needs a reviewed workflow contract" >&2
+    exit 1
+  fi
 
   if DOTFILES_PROFILE=invalid chezmoi execute-template --source "$SOURCE" \
     < "$SOURCE/.chezmoi.toml.tmpl" >/dev/null 2>&1; then
@@ -89,6 +110,21 @@ if [ -d "$SOURCE" ]; then
 
   for profile in desktop enterprise server container; do
     data="{\"profile\":\"$profile\"}"
+
+    workflow_managed="$(chezmoi managed --source "$SOURCE" --override-data "$data")"
+    if ! printf '%s\n' "$workflow_managed" | grep -Fxq '.config/dotfiles/openchamber-workflow-defaults.json' \
+        || ! printf '%s\n' "$workflow_managed" | grep -Fxq '.local/bin/openchamber-workflows'; then
+      echo "$profile is missing the inert OpenChamber overlay or manual helper" >&2
+      exit 1
+    fi
+    if printf '%s\n' "$workflow_managed" | grep -Eq '^(\.config/openchamber(/|$)|\.agents/loops(/|$))'; then
+      echo "$profile must not manage OpenChamber runtime state or deploy schedules" >&2
+      exit 1
+    fi
+    if printf '%s\n' "$workflow_managed" | grep -Eq '^\.config/opencode/(AGENTS\.md$|skills(/|$)|commands(/|$))'; then
+      echo "$profile must not deploy retired global prompts, skills, or commands" >&2
+      exit 1
+    fi
 
     chezmoi execute-template --source "$SOURCE" --override-data "$data" \
       < "$SOURCE/dot_config/opencode/opencode.json.tmpl" | jq empty
@@ -159,6 +195,17 @@ if [ -d "$SOURCE" ]; then
       < "$SOURCE/dot_config/opencode/opencode.json.tmpl")"
 
     if ! printf '%s' "$rendered" |
+        jq -e '.plugins == [] and (has("model") | not) and (has("agents") | not)
+          and (.permissions == [
+            {"action":"agent-mcp_*","resource":"*","effect":"ask"},
+            {"action":"granola_*","resource":"*","effect":"ask"},
+            {"action":"mempalace_*","resource":"*","effect":"ask"}
+          ])' >/dev/null; then
+      echo "$profile OpenCode config overrides native workflow choices or MCP approval boundaries" >&2
+      exit 1
+    fi
+
+    if ! printf '%s' "$rendered" |
       jq -e '(.mcp.servers // {}) as $m
         | ([$m[] | select((.type == "local" and (.command | type) == "array")
             or (.type == "remote" and (.url | type) == "string"))] | length)
@@ -182,6 +229,13 @@ if [ -d "$SOURCE" ]; then
   # shellcheck disable=SC2016 # matching the literal shell source, not expanding it
   registry_flag='--registry "$npm_registry"'
   for profile in desktop enterprise server container; do
+    agent_installer="$(chezmoi execute-template --source "$SOURCE" \
+      --override-data "{\"profile\":\"$profile\"}" \
+      < "$SOURCE/.chezmoiscripts/run_onchange_after_50-install-agent-tools.sh.tmpl")"
+    if printf '%s' "$agent_installer" | grep -qi 'plannotator'; then
+      echo "$profile must not reinstall retired Plannotator hooks" >&2
+      exit 1
+    fi
     if ! chezmoi execute-template --source "$SOURCE" \
       --override-data "{\"profile\":\"$profile\"}" \
       < "$SOURCE/.chezmoiscripts/run_onchange_after_50-install-agent-tools.sh.tmpl" |

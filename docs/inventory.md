@@ -12,7 +12,6 @@ Every retained item has one installation owner. Anything not listed here is inte
 | Herdr | mise | all | Persistent local and remote terminal sessions |
 | Neovim/LazyVim | mise | all | Editor with Go, Python, TypeScript, Docker, JSON, Markdown, and TOML support |
 | OpenCode V2 | pinned npm install | all | Primary coding agent |
-| Plannotator, Graphify | pinned external OpenCode skills | all | Review and graphing workflows |
 | uv, Node, Bun, Go | mise | all | Language runtimes and package execution |
 | ripgrep, fd, bat, fzf, tree, jq | mise/native | all | Search and shell utilities |
 | gh, Git LFS, git-filter-repo, GnuPG | mise/native | desktop, server | Git and GitHub workflows |
@@ -47,6 +46,8 @@ the source-managed journal bootstrap script; credentials and runtime state are
 not managed.
 
 ## Removed from the managed baseline
+
+Global OpenCode instructions, downloaded skills (Impeccable, Graphify, Retro), and Plannotator's plugin, commands, and installer are retired. Native OpenChamber owns the plan/review workflow; model selection is no longer pinned by dotfiles. Repository-local instructions remain supported. See [native workflows](openchamber-workflows.md) for the source-only cleanup boundary.
 
 - tmux and TPM; Herdr owns persistent sessions.
 - Pi, OMP, Crush, Claude Code, Codex, OMO, agent profiler, OpenPortal Hub, and browser MCP servers.

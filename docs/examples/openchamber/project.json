@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "setupWorktree": ["printf '%s\n' 'Review this repository setup before installing dependencies.'"],
+  "setupWorktreeWait": true,
+  "projectActions": [
+    {
+      "id": "git-status",
+      "name": "Git status",
+      "command": "git status --short --branch"
+    }
+  ]
+}

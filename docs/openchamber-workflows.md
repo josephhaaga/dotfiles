@@ -41,7 +41,7 @@ This is a **source-only retirement**, not deletion from deployed machines. Remov
 
 ### Version checks
 
-The supported package is currently `@openchamber/web` **2.1.1**, matching the server package pin in `home/.chezmoidata/packages.yaml`. `/api/version` and GET/PUT `/api/config/settings` are internal, version-dependent APIs, **not a stable public contract**. Desktop releases can differ from the pinned server package; an unreviewed version fails closed.
+The supported package is currently `@openchamber/web` **2.2.0**, matching the server package pin in `home/.chezmoidata/packages.yaml`. The workflow contract is reviewed for **2.1.1** and **2.2.0**. `/api/version` and GET/PUT `/api/config/settings` are internal, version-dependent APIs, **not a stable public contract**. Desktop releases can differ from the pinned server package; an unreviewed version fails closed.
 
 1. Run the offline unit and mock HTTP tests:
 

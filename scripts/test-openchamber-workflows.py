@@ -66,11 +66,18 @@ class WorkflowTests(unittest.TestCase):
                     workflows.load_defaults(file)
 
     def test_version_failure_precedes_settings_read(self):
-        for version in ["2.2.0", None, 2]:
+        for version in ["2.3.0", None, 2]:
             client = MockClient(version=version)
             with self.assertRaises(workflows.WorkflowError):
                 workflows.reconcile(client, self.document, "apply")
             self.assertEqual(len(client.calls), 1)
+
+    def test_reviewed_versions_accept_defaults(self):
+        for version in ["2.1.1", "2.2.0"]:
+            with self.subTest(version=version):
+                client = MockClient(version=version)
+                self.assertEqual(workflows.reconcile(client, self.document, "apply"), 0)
+                self.assertEqual(client.current, self.document["settings"])
 
     def test_dry_run_and_verify_never_put_or_print_runtime_values(self):
         for mode, status in [("dry-run", 0), ("verify", 1)]:

@@ -15,7 +15,7 @@ import urllib.parse
 import urllib.request
 
 
-SUPPORTED_VERSIONS = {"2.1.1"}
+SUPPORTED_VERSIONS = {"2.1.1", "2.2.0"}
 BOOLEAN_KEYS = {
     "sessionWorkEnabled", "sessionWorkAutoOpen", "sessionRecapEnabled",
     "sessionSuggestionEnabled", "nativeNotificationsEnabled", "notifyOnQuestion",

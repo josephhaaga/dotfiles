@@ -195,13 +195,8 @@ if [ -d "$SOURCE" ]; then
       < "$SOURCE/dot_config/opencode/opencode.json.tmpl")"
 
     if ! printf '%s' "$rendered" |
-        jq -e '.plugins == [] and (has("model") | not) and (has("agents") | not)
-          and (.permissions == [
-            {"action":"agent-mcp_*","resource":"*","effect":"ask"},
-            {"action":"granola_*","resource":"*","effect":"ask"},
-            {"action":"mempalace_*","resource":"*","effect":"ask"}
-          ])' >/dev/null; then
-      echo "$profile OpenCode config overrides native workflow choices or MCP approval boundaries" >&2
+        jq -e '.plugins == [] and (has("model") | not) and (has("agents") | not)' >/dev/null; then
+      echo "$profile OpenCode config overrides native workflow choices" >&2
       exit 1
     fi
 

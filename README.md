@@ -64,11 +64,14 @@ chezmoi apply --source "$PWD"
 chrome-extensions
 ```
 
-Every desktop `chezmoi apply` prints the Chrome Default profile's extension
-inventory, grouped into installed and missing extensions. The audit safely skips
-a newly installed Chrome until it has created its Default profile. To open Chrome
-Web Store pages for missing extensions, run `chrome-extensions --install-missing`
-explicitly.
+Run `chrome-extensions` manually to audit the Chrome Default profile's extension
+inventory, grouped into installed and missing extensions. Applying dotfiles does
+not run this informational audit. To open Chrome Web Store pages for missing
+extensions, run `chrome-extensions --install-missing` explicitly.
+
+The managed mise lockfile includes baseline platform entries added by mise.
+When deliberately updating tools, review and copy lockfile changes back into
+`home/dot_config/mise/mise.lock` so subsequent applies do not undo them.
 
 ## Documentation
 

@@ -146,10 +146,10 @@ if [ -d "$SOURCE" ]; then
     done < <(find "$SOURCE/.chezmoiscripts" -type f -name '*.sh.tmpl' -print0)
   done
 
-  # Applying any profile must never open Chrome Web Store tabs. That remains a
-  # deliberate, manual use of chrome-extensions --install-missing.
-  if grep -R --include='*.sh.tmpl' -- '--install-missing' "$SOURCE/.chezmoiscripts" >/dev/null; then
-    echo "chezmoi apply must not invoke chrome-extensions --install-missing" >&2
+  # Chrome inventory is informational, not pending configuration work. Keep
+  # both the audit and opening Web Store tabs explicit manual actions.
+  if grep -R --include='*.sh.tmpl' -- 'chrome-extensions' "$SOURCE/.chezmoiscripts" >/dev/null; then
+    echo "chezmoi apply must not invoke the manual chrome-extensions audit" >&2
     exit 1
   fi
 

@@ -38,12 +38,12 @@ packages:
     rust: "1.97.1"
 
   npm:
-    "@opencode/cli": "2.0.26"
+    "@opencode/cli": "2.0.28"
     tokscale: "4.17.0"
     tree-sitter-cli: "0.27.0"
 
   npm_server:
-    "@openchamber/web": "2.2.0"
+    "@openchamber/web": "2.3.1"
 
   # Chrome Sync remains responsible for cross-device installation. This inventory
   # lets `chrome-extensions` audit the local Chrome profile. Missing Chrome Web

@@ -54,7 +54,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(settings["sessionGoalMaxAutoTurns"], 1)
 
     def test_overlay_rejects_unknown_fields_and_invalid_types(self):
-        for key, value in [("desktopUiPassword", "fixture"), ("sessionWorkEnabled", 1),
+        for key, value in [("desktopUiPassword", "fixture"), ("sessionWorkAutoOpen", True), ("sessionWorkEnabled", 1),
                            ("sessionGoalMaxAutoTurns", 201), ("sessionGoalDefaultBudget", 0),
                            ("notificationMode", "sometimes"), ("permissionDefaultMode", "bad")]:
             with self.subTest(key=key), tempfile.TemporaryDirectory() as directory:
@@ -73,7 +73,7 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(len(client.calls), 1)
 
     def test_reviewed_versions_accept_defaults(self):
-        for version in ["2.1.1", "2.2.0"]:
+        for version in ["2.1.1", "2.2.0", "2.3.1"]:
             with self.subTest(version=version):
                 client = MockClient(version=version)
                 self.assertEqual(workflows.reconcile(client, self.document, "apply"), 0)

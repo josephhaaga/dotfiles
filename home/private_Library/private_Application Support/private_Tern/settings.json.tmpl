@@ -3,7 +3,10 @@
   "copy_on_select": true,
   "link_click": "Command",
   "font_size": 16,
+  "agent_command": "tern acp opencode",
   "agents": {
+    "auto_acp": true,
+    "keep_tui": ["claude", "codex", "copilot"],
     "custom": [
       {
         "id": "opencode",
@@ -11,6 +14,18 @@
         "command": {{ printf "%s/.local/bin/opencode" .chezmoi.homeDir | toJson }},
         "args": ["acp"]
       }
-    ]
+    ],
+    "own_tools": ["opencode"]
+  },
+  "keybinds": {
+    "ctrl+b>|": "split_right",
+    "ctrl+b>-": "split_down",
+    "ctrl+b>h": "focus_pane:left",
+    "ctrl+b>j": "focus_pane:down",
+    "ctrl+b>k": "focus_pane:up",
+    "ctrl+b>l": "focus_pane:right",
+    "ctrl+b>z": "zoom",
+    "ctrl+b>ctrl+b": "text:\\x02",
+    "ctrl+b>:": "palette"
   }
 }

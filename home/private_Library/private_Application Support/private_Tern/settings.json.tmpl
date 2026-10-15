@@ -1,0 +1,16 @@
+{
+  "theme": "System",
+  "copy_on_select": true,
+  "link_click": "Command",
+  "font_size": 16,
+  "agents": {
+    "custom": [
+      {
+        "id": "opencode",
+        "name": "OpenCode",
+        "command": {{ printf "%s/.local/bin/opencode" .chezmoi.homeDir | toJson }},
+        "args": ["acp"]
+      }
+    ]
+  }
+}

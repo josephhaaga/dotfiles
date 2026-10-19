@@ -2,30 +2,48 @@
   "theme": "System",
   "copy_on_select": true,
   "link_click": "Command",
-  "font_size": 16,
-  "agent_command": "tern acp opencode",
+  "font_size": 15,
+  "agent_command": "tern acp omp",
   "agents": {
     "auto_acp": true,
-    "keep_tui": ["claude", "codex", "copilot"],
+    "keep_tui": [
+      "claude",
+      "codex",
+      "copilot"
+    ],
     "custom": [
       {
         "id": "opencode",
         "name": "OpenCode",
         "command": {{ printf "%s/.local/bin/opencode" .chezmoi.homeDir | toJson }},
-        "args": ["acp"]
+        "args": [
+          "acp"
+        ],
+        "env": {}
+      },
+      {
+        "id": "omp",
+        "name": "OMP",
+        "command": {{ printf "%s/.local/bin/omp" .chezmoi.homeDir | toJson }},
+        "args": [
+          "acp"
+        ],
+        "env": {}
       }
     ],
-    "own_tools": ["opencode"]
+    "own_tools": [
+      "opencode"
+    ]
   },
   "keybinds": {
-    "ctrl+b>|": "split_right",
     "ctrl+b>-": "split_down",
+    "ctrl+b>:": "palette",
+    "ctrl+b>ctrl+b": "text:\\x02",
     "ctrl+b>h": "focus_pane:left",
     "ctrl+b>j": "focus_pane:down",
     "ctrl+b>k": "focus_pane:up",
     "ctrl+b>l": "focus_pane:right",
     "ctrl+b>z": "zoom",
-    "ctrl+b>ctrl+b": "text:\\x02",
-    "ctrl+b>:": "palette"
+    "ctrl+b>|": "split_right"
   }
 }

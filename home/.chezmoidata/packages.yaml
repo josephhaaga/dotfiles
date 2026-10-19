@@ -9,6 +9,7 @@ packages:
     herdr: "0.9.1"
     neovim: "0.12.5"
     "pipx:josephhaaga-clerk": "0.0.12"
+    "pipx:gcalcli": "4.5.1"
     node: "26.10.0"
     python: "3.14.7"
     ripgrep: "15.2.0"

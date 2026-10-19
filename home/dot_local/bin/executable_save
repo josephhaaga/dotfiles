@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# Save journal changes without staging or publishing dotfiles changes.
+set -euo pipefail
+
+if [ "$#" -ne 0 ]; then
+  printf '%s\n' 'Usage: save' >&2
+  exit 2
+fi
+
+journal_repo="$HOME/Documents/journal"
+
+if ! git -C "$journal_repo" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  printf 'Journal repository not found: %s\n' "$journal_repo" >&2
+  exit 1
+fi
+
+if [ -z "$(git -C "$journal_repo" status --porcelain)" ]; then
+  printf '%s: no changes to save.\n' "$journal_repo"
+  exit 0
+fi
+
+printf '%s:\n' "$journal_repo"
+git -C "$journal_repo" diff --stat HEAD || true
+git -C "$journal_repo" add --all
+git -C "$journal_repo" commit -m "Autosave at $(date)"
+git -C "$journal_repo" push

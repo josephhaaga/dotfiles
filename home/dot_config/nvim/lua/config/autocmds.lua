@@ -24,9 +24,9 @@ local function journal_date()
   return filename
 end
 
-local function calendar_checklist_item(fields)
-  local start_time = fields[2]
-  local title = fields[6]
+local function calendar_checklist_item(fields, columns)
+  local start_time = fields[columns.start_time]
+  local title = fields[columns.title]
 
   if not title or title == "" then
     return nil
@@ -37,6 +37,41 @@ local function calendar_checklist_item(fields)
   end
 
   return string.format("- [ ] %s — %s", start_time, title)
+end
+
+local function calendar_is_authorized()
+  local result = vim.system({ "gcalcli", "util", "inspect-auth" }, { text = true }):wait()
+  local output = result.stdout .. result.stderr
+
+  return result.code == 0 and not output:find("No existing auth token found", 1, true)
+end
+
+local calendar_namespace = vim.api.nvim_create_namespace("journal-calendar")
+local calendar_requests = {}
+local loading_frames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+
+local function start_calendar_loading()
+  local timer = vim.uv.new_timer()
+  local frame = 1
+
+  timer:start(
+    0,
+    100,
+    vim.schedule_wrap(function()
+      if timer:is_closing() then
+        return
+      end
+
+      vim.api.nvim_echo({ { string.format("%s Loading calendar…", loading_frames[frame]), "Normal" } }, false, {})
+      frame = (frame % #loading_frames) + 1
+    end)
+  )
+
+  return function()
+    timer:stop()
+    timer:close()
+    vim.api.nvim_echo({ { "", "Normal" } }, false, {})
+  end
 end
 
 vim.api.nvim_create_user_command("Calendar", function()
@@ -51,6 +86,20 @@ vim.api.nvim_create_user_command("Calendar", function()
     return
   end
 
+  if not calendar_is_authorized() then
+    vim.notify(
+      "Google Calendar is not authorized. Run gcalcli init in a terminal, then try :Calendar again.",
+      vim.log.levels.ERROR
+    )
+    return
+  end
+
+  local bufnr = vim.api.nvim_get_current_buf()
+  if calendar_requests[bufnr] then
+    vim.notify("Calendar import is already running.", vim.log.levels.INFO)
+    return
+  end
+
   local next_date = os.date(
     "%Y-%m-%d",
     os.time({
@@ -59,19 +108,55 @@ vim.api.nvim_create_user_command("Calendar", function()
       day = tonumber(date:sub(9, 10)) + 1,
     })
   )
-  local bufnr = vim.api.nvim_get_current_buf()
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local cursor_mark = vim.api.nvim_buf_set_extmark(bufnr, calendar_namespace, cursor[1] - 1, cursor[2], {
+    right_gravity = false,
+  })
+  local request = {}
+  calendar_requests[bufnr] = request
+  local stop_loading = start_calendar_loading()
 
   vim.system({ "gcalcli", "agenda", "--tsv", date, next_date }, { text = true }, function(result)
     vim.schedule(function()
+      if calendar_requests[bufnr] ~= request then
+        return
+      end
+
+      calendar_requests[bufnr] = nil
+      stop_loading()
+
+      if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+      end
+
+      local cursor_position = vim.api.nvim_buf_get_extmark_by_id(bufnr, calendar_namespace, cursor_mark, {})
+      vim.api.nvim_buf_del_extmark(bufnr, calendar_namespace, cursor_mark)
+
       if result.code ~= 0 then
         vim.notify("Calendar import failed: " .. vim.trim(result.stderr), vim.log.levels.ERROR)
         return
       end
 
+      local lines = vim.split(result.stdout, "\n", { plain = true, trimempty = true })
+      if #lines == 0 then
+        vim.notify("No calendar events for " .. date .. ".")
+        return
+      end
+
+      local columns = {}
+      for index, column in ipairs(vim.split(lines[1], "\t", { plain = true })) do
+        columns[column] = index
+      end
+
+      if not columns.start_time or not columns.title then
+        vim.notify("Calendar import returned an unexpected TSV format.", vim.log.levels.ERROR)
+        return
+      end
+
       local items = {}
-      for line in vim.gsplit(result.stdout, "\n", { plain = true, trimempty = true }) do
+      for _, line in ipairs(vim.list_slice(lines, 2)) do
         local fields = vim.split(line, "\t", { plain = true })
-        local item = calendar_checklist_item(fields)
+        local item = calendar_checklist_item(fields, columns)
         if item then
           table.insert(items, item)
         end
@@ -82,7 +167,8 @@ vim.api.nvim_create_user_command("Calendar", function()
         return
       end
 
-      if not vim.api.nvim_buf_is_valid(bufnr) then
+      if #cursor_position == 0 then
+        vim.notify("Calendar import target is no longer available.", vim.log.levels.ERROR)
         return
       end
 
@@ -96,7 +182,7 @@ vim.api.nvim_create_user_command("Calendar", function()
         return
       end
 
-      vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, new_items)
+      vim.api.nvim_buf_set_lines(bufnr, cursor_position[1] + 1, cursor_position[1] + 1, false, new_items)
       vim.notify(string.format("Added %d calendar event(s) for %s.", #new_items, date))
     end)
   end)

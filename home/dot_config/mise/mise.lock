@@ -316,7 +316,19 @@ url = "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_am
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/565857134"
 provenance = "github-attestations"
 
+[tools.gh."platforms.linux-x64-baseline"]
+checksum = "sha256:9bca2d1c16825f109907a23307628a2f0698fbf99662b73a5cf0b020293072b8"
+url = "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/565857134"
+provenance = "github-attestations"
+
 [tools.gh."platforms.linux-x64-musl"]
+checksum = "sha256:9bca2d1c16825f109907a23307628a2f0698fbf99662b73a5cf0b020293072b8"
+url = "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/565857134"
+provenance = "github-attestations"
+
+[tools.gh."platforms.linux-x64-musl-baseline"]
 checksum = "sha256:9bca2d1c16825f109907a23307628a2f0698fbf99662b73a5cf0b020293072b8"
 url = "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_amd64.tar.gz"
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/565857134"
@@ -329,6 +341,12 @@ url_api = "https://api.github.com/repos/cli/cli/releases/assets/565857200"
 provenance = "github-attestations"
 
 [tools.gh."platforms.macos-x64"]
+checksum = "sha256:a6fd66c88e2f07d6e4e058173db341d07dd74d58cf8f19ae668293d2bb614ca3"
+url = "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_macOS_amd64.zip"
+url_api = "https://api.github.com/repos/cli/cli/releases/assets/565857203"
+provenance = "github-attestations"
+
+[tools.gh."platforms.macos-x64-baseline"]
 checksum = "sha256:a6fd66c88e2f07d6e4e058173db341d07dd74d58cf8f19ae668293d2bb614ca3"
 url = "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_macOS_amd64.zip"
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/565857203"
@@ -477,7 +495,15 @@ url = "https://dl.k8s.io/v1.37.0/bin/linux/arm64/kubectl"
 checksum = "sha256:6129359f4e1f3848a5572ccb0b26cf28b8ca08cef38c95a765b2f64a2c961a2f"
 url = "https://dl.k8s.io/v1.37.0/bin/linux/amd64/kubectl"
 
+[tools.kubectl."platforms.linux-x64-baseline"]
+checksum = "sha256:6129359f4e1f3848a5572ccb0b26cf28b8ca08cef38c95a765b2f64a2c961a2f"
+url = "https://dl.k8s.io/v1.37.0/bin/linux/amd64/kubectl"
+
 [tools.kubectl."platforms.linux-x64-musl"]
+checksum = "sha256:6129359f4e1f3848a5572ccb0b26cf28b8ca08cef38c95a765b2f64a2c961a2f"
+url = "https://dl.k8s.io/v1.37.0/bin/linux/amd64/kubectl"
+
+[tools.kubectl."platforms.linux-x64-musl-baseline"]
 checksum = "sha256:6129359f4e1f3848a5572ccb0b26cf28b8ca08cef38c95a765b2f64a2c961a2f"
 url = "https://dl.k8s.io/v1.37.0/bin/linux/amd64/kubectl"
 
@@ -486,6 +512,10 @@ checksum = "sha256:583beedaebe422e71d3f1a96acef8b1fef86ea2f09a45ad01aa6c9ce287c1
 url = "https://dl.k8s.io/v1.37.0/bin/darwin/arm64/kubectl"
 
 [tools.kubectl."platforms.macos-x64"]
+checksum = "sha256:d5276c0f4fde77fc446070290f345944a7f1fda153df6b960e5fde93b7a9bccd"
+url = "https://dl.k8s.io/v1.37.0/bin/darwin/amd64/kubectl"
+
+[tools.kubectl."platforms.macos-x64-baseline"]
 checksum = "sha256:d5276c0f4fde77fc446070290f345944a7f1fda153df6b960e5fde93b7a9bccd"
 url = "https://dl.k8s.io/v1.37.0/bin/darwin/amd64/kubectl"
 
@@ -561,6 +591,12 @@ url = "https://nodejs.org/dist/v26.10.0/node-v26.10.0-darwin-x64.tar.gz"
 [tools.node."platforms.macos-x64-baseline"]
 checksum = "sha256:ebbe9ab9b58ad6bb54390d6e2c862c1afa7d4475fb7e8ae8146acde211bf70df"
 url = "https://nodejs.org/dist/v26.10.0/node-v26.10.0-darwin-x64.tar.gz"
+
+[[tools."pipx:gcalcli"]]
+version = "4.5.1"
+backend = "pipx:gcalcli"
+specifiers = ["4.5.1"]
+uv = { path = "locks/pipx-gcalcli/4.5.1", digest = "sha256:15ccf64772a50ac34c26804c503eacc6a426b6f1b089d59c8c2cffb18a94a967" }
 
 [[tools."pipx:josephhaaga-clerk"]]
 version = "0.0.12"

@@ -36,21 +36,15 @@ if [ "$kubernetes_enabled" = true ]; then
   required+=(kubectl kubelogin)
 fi
 
-if [ "$profile" = server ]; then
-  required+=(caddy)
-fi
-
 # Derive profile-specific npm commands from the same package inventory used by
 # chezmoi, so smoke coverage follows packages.yaml without a second list.
 package_data="$DOTFILES/home/.chezmoidata/packages.yaml"
 if [ -f "$package_data" ]; then
   npm_groups=(npm)
-  [ "$profile" = server ] && npm_groups+=(npm_server)
   for npm_group in "${npm_groups[@]}"; do
     while IFS= read -r package; do
       case "$package" in
         @opencode/cli) command_name=opencode ;;
-        @openchamber/web) command_name=openchamber ;;
         tree-sitter-cli) command_name=tree-sitter ;;
         *) command_name="${package##*/}" ;;
       esac
@@ -87,12 +81,10 @@ if [ "$profile" = desktop ] || [ "$profile" = server ]; then
 fi
 
 if [ "$profile" = server ]; then
-  systemctl is-active --quiet caddy.service || status=1
   systemctl --user is-active --quiet opencode.service || status=1
-  systemctl --user is-active --quiet openchamber.service || status=1
+  systemctl --user is-active --quiet tern-remote.service || status=1
   systemctl is-active --quiet docker.service || status=1
   systemctl is-active --quiet crond.service || status=1
-  curl --fail --silent --output /dev/null http://127.0.0.1:3000/ || status=1
 fi
 
 exit "$status"

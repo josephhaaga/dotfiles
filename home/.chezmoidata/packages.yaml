@@ -35,16 +35,12 @@ packages:
 
   mise_server:
     "cargo:tree-sitter-cli": "0.26.12"
-    caddy: "2.11.4"
     rust: "1.97.1"
 
   npm:
     "@opencode/cli": "2.0.28"
     tokscale: "4.17.0"
     tree-sitter-cli: "0.27.0"
-
-  npm_server:
-    "@openchamber/web": "2.3.1"
 
   # Chrome Sync remains responsible for cross-device installation. This inventory
   # lets `chrome-extensions` audit the local Chrome profile. Missing Chrome Web
@@ -123,7 +119,6 @@ packages:
       - linear
       - microsoft-teams
       - obsidian
-      - openchamber
       - slack
       - tailscale-app
       - wispr-flow

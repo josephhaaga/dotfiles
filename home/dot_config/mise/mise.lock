@@ -153,41 +153,6 @@ url = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.2/bun-darwin-x6
 checksum = "sha256:bad5bbd6cf14d0980d115f5954c9ff904df619d5e994d2da1ffccd3f316300b0"
 url = "https://github.com/oven-sh/bun/releases/download/bun-v1.4.2/bun-darwin-x64-baseline.zip"
 
-[[tools.caddy]]
-version = "2.11.4"
-backend = "aqua:caddyserver/caddy"
-specifiers = ["2.11.4"]
-
-[tools.caddy."platforms.linux-arm64"]
-checksum = "sha256:52d42ae12b3462097e9868da6dfed3c9648ae12edd3b3638102312af84cb6904"
-url = "https://github.com/caddyserver/caddy/releases/download/v2.11.4/caddy_2.11.4_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/caddyserver/caddy/releases/assets/436912318"
-
-[tools.caddy."platforms.linux-arm64-musl"]
-checksum = "sha256:52d42ae12b3462097e9868da6dfed3c9648ae12edd3b3638102312af84cb6904"
-url = "https://github.com/caddyserver/caddy/releases/download/v2.11.4/caddy_2.11.4_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/caddyserver/caddy/releases/assets/436912318"
-
-[tools.caddy."platforms.linux-x64"]
-checksum = "sha256:527fbf917c39189a1e3b31d34fa955601680b2d5c8055d2a87b8b9588dec7bb9"
-url = "https://github.com/caddyserver/caddy/releases/download/v2.11.4/caddy_2.11.4_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/caddyserver/caddy/releases/assets/436912315"
-
-[tools.caddy."platforms.linux-x64-musl"]
-checksum = "sha256:527fbf917c39189a1e3b31d34fa955601680b2d5c8055d2a87b8b9588dec7bb9"
-url = "https://github.com/caddyserver/caddy/releases/download/v2.11.4/caddy_2.11.4_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/caddyserver/caddy/releases/assets/436912315"
-
-[tools.caddy."platforms.macos-arm64"]
-checksum = "sha256:9efb0af2d6cf09cfb5053c0e51721b9b3d4956d346234f39368d943d25a3c9a7"
-url = "https://github.com/caddyserver/caddy/releases/download/v2.11.4/caddy_2.11.4_mac_arm64.tar.gz"
-url_api = "https://api.github.com/repos/caddyserver/caddy/releases/assets/436912311"
-
-[tools.caddy."platforms.macos-x64"]
-checksum = "sha256:34bc9e5cceee8d67844ef51da624f5b79e8d070f27236e050c3f0066a2dba534"
-url = "https://github.com/caddyserver/caddy/releases/download/v2.11.4/caddy_2.11.4_mac_amd64.tar.gz"
-url_api = "https://api.github.com/repos/caddyserver/caddy/releases/assets/436912339"
-
 [[tools."cargo:tree-sitter-cli"]]
 version = "0.26.12"
 backend = "cargo:tree-sitter-cli"

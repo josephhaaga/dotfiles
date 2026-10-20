@@ -60,23 +60,7 @@ if [ -d "$SOURCE" ]; then
 
   jq empty "$SOURCE/dot_config/nvim/lazyvim.json"
 
-  # Native OpenChamber defaults are inert source files, never live settings.
-  jq empty "$SOURCE/dot_config/dotfiles/openchamber-workflow-defaults.json" \
-    "$DOTFILES/docs/examples/openchamber/project.json"
-  PYTHONDONTWRITEBYTECODE=1 python3 "$DOTFILES/scripts/test-openchamber-workflows.py"
   bash "$DOTFILES/scripts/test-smoke-capabilities.sh"
-  if command -v node >/dev/null 2>&1; then
-    node --check "$DOTFILES/scripts/check-openchamber-contract.mjs"
-  fi
-  openchamber_pin="$(chezmoi execute-template --source "$SOURCE" \
-    --override-data '{"profile":"server"}' \
-    '{{ index .packages.npm_server "@openchamber/web" }}')"
-  if ! jq -e --arg version "$openchamber_pin" \
-      '.openchamberVersions | index($version) != null' \
-      "$SOURCE/dot_config/dotfiles/openchamber-workflow-defaults.json" >/dev/null; then
-    echo "OpenChamber package pin needs a reviewed workflow contract" >&2
-    exit 1
-  fi
 
   if DOTFILES_PROFILE=invalid chezmoi execute-template --source "$SOURCE" \
     < "$SOURCE/.chezmoi.toml.tmpl" >/dev/null 2>&1; then
@@ -111,17 +95,12 @@ if [ -d "$SOURCE" ]; then
   for profile in desktop enterprise server container; do
     data="{\"profile\":\"$profile\"}"
 
-    workflow_managed="$(chezmoi managed --source "$SOURCE" --override-data "$data")"
-    if ! printf '%s\n' "$workflow_managed" | grep -Fxq '.config/dotfiles/openchamber-workflow-defaults.json' \
-        || ! printf '%s\n' "$workflow_managed" | grep -Fxq '.local/bin/openchamber-workflows'; then
-      echo "$profile is missing the inert OpenChamber overlay or manual helper" >&2
+    managed_paths="$(chezmoi managed --source "$SOURCE" --override-data "$data")"
+    if printf '%s\n' "$managed_paths" | grep -Eq '^(\.config/openchamber(/|$)|\.config/caddy(/|$)|\.agents/loops(/|$))'; then
+      echo "$profile must not manage retired OpenChamber, Caddy, or schedule paths" >&2
       exit 1
     fi
-    if printf '%s\n' "$workflow_managed" | grep -Eq '^(\.config/openchamber(/|$)|\.agents/loops(/|$))'; then
-      echo "$profile must not manage OpenChamber runtime state or deploy schedules" >&2
-      exit 1
-    fi
-    if printf '%s\n' "$workflow_managed" | grep -Eq '^\.config/opencode/(AGENTS\.md$|skills(/|$)|commands(/|$))'; then
+    if printf '%s\n' "$managed_paths" | grep -Eq '^\.config/opencode/(AGENTS\.md$|skills(/|$)|commands(/|$))'; then
       echo "$profile must not deploy retired global prompts, skills, or commands" >&2
       exit 1
     fi
@@ -155,7 +134,7 @@ if [ -d "$SOURCE" ]; then
 
   enterprise_managed="$(chezmoi managed --source "$SOURCE" \
     --override-data '{"profile":"enterprise"}')"
-  enterprise_excluded='^(\.config/caddy(/|$)|\.config/opencode/opencode-vm\.env$|Library(/|$))'
+  enterprise_excluded='^(\.config/opencode/opencode-vm\.env$|Library(/|$))'
   if printf '%s\n' "$enterprise_managed" | grep -Eq "$enterprise_excluded"; then
     echo "enterprise profile manages a desktop, server, or local-vault path" >&2
     printf '%s\n' "$enterprise_managed" | grep -E "$enterprise_excluded" >&2

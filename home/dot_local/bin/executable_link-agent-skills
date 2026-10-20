@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 # Make the personal skills checkout available to every agent that supports the
-# Agent Skills user location (~/.agents/skills). This command never changes the
-# checkout or replaces an existing directory/link.
+# Agent Skills user location (~/.agents/skills). Package-managed skills may
+# already live there, so this command links each personal skill individually.
+# It never changes the checkout or replaces an existing path.
 set -euo pipefail
 
 source_dir="${PERSONAL_SKILLS_DIR:-$HOME/Documents/skills}/skills"
-destination="$HOME/.agents/skills"
+destination_dir="$HOME/.agents/skills"
 
 if ! source_dir="$(cd -P "$source_dir" 2>/dev/null && pwd)"; then
   printf 'Personal skills source is unavailable: %s\n' \
@@ -20,26 +21,39 @@ if ! find "$source_dir" -type f -name SKILL.md -print -quit | grep -q .; then
   exit 1
 fi
 
-mkdir -p "$(dirname "$destination")"
+mkdir -p "$destination_dir"
 
-if [[ -L "$destination" ]]; then
-  if ! current_target="$(cd -P "$destination" 2>/dev/null && pwd)"; then
-    printf 'Refusing to replace dangling skills symlink: %s\n' "$destination" >&2
-    exit 1
+linked=0
+unchanged=0
+conflicts=0
+
+for skill_file in "$source_dir"/*/SKILL.md; do
+  [[ -f "$skill_file" ]] || continue
+  skill_dir="$(dirname "$skill_file")"
+  skill_name="$(basename "$skill_dir")"
+  [[ "$skill_name" == _* ]] && continue
+  destination="$destination_dir/$skill_name"
+
+  if [[ -L "$destination" ]]; then
+    if ! current_target="$(cd -P "$destination" 2>/dev/null && pwd)"; then
+      printf 'Refusing to replace dangling skill symlink: %s\n' "$destination" >&2
+      conflicts=$((conflicts + 1))
+    elif [[ "$current_target" == "$skill_dir" ]]; then
+      unchanged=$((unchanged + 1))
+    else
+      printf 'Refusing to replace existing skill symlink: %s -> %s\n' \
+        "$destination" "$current_target" >&2
+      conflicts=$((conflicts + 1))
+    fi
+  elif [[ -e "$destination" ]]; then
+    printf 'Refusing to replace existing skill path: %s\n' "$destination" >&2
+    conflicts=$((conflicts + 1))
+  else
+    ln -s "$skill_dir" "$destination"
+    linked=$((linked + 1))
   fi
-  if [[ "$current_target" == "$source_dir" ]]; then
-    printf 'Agent skills are already linked: %s -> %s\n' "$destination" "$source_dir"
-    exit 0
-  fi
-  printf 'Refusing to replace existing skills symlink: %s -> %s\n' \
-    "$destination" "$current_target" >&2
-  exit 1
-fi
+done
 
-if [[ -e "$destination" ]]; then
-  printf 'Refusing to replace existing path: %s\n' "$destination" >&2
-  exit 1
-fi
-
-ln -s "$source_dir" "$destination"
-printf 'Linked agent skills: %s -> %s\n' "$destination" "$source_dir"
+printf 'Personal agent skills: %d linked, %d already linked, %d conflict(s).\n' \
+  "$linked" "$unchanged" "$conflicts"
+[[ "$conflicts" -eq 0 ]]

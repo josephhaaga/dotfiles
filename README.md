@@ -71,9 +71,11 @@ not run this informational audit. To open Chrome Web Store pages for missing
 extensions, run `chrome-extensions --install-missing` explicitly.
 
 `link-agent-skills` exposes the checked-out personal skills repository to
-OpenCode, Pi, OMP, and Codex through `~/.agents/skills`. It links the default
-source, `~/Documents/skills/skills`, without modifying the checkout or replacing
-an existing path. Set `PERSONAL_SKILLS_DIR` when the repository lives elsewhere.
+OpenCode, Pi, OMP, and Codex through `~/.agents/skills`. It links every skill
+from the default source, `~/Documents/skills/skills`, individually, so
+package-managed skills already in that directory remain untouched. It never
+modifies the checkout or replaces an existing path. Set `PERSONAL_SKILLS_DIR`
+when the repository lives elsewhere.
 
 The managed mise lockfile includes baseline platform entries added by mise.
 When deliberately updating tools, review and copy lockfile changes back into

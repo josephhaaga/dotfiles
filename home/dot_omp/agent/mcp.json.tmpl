@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json",
+  "mcpServers": {
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "mempalace": {
+      "type": "stdio",
+      "command": "mempalace-mcp",
+      "enabled": true
+    },
+    "agent-mcp": {
+      "type": "http",
+      "url": "https://agent-mcp-production-db5b.up.railway.app/mcp",
+      "enabled": true
+    },
+    "granola": {
+      "type": "http",
+      "url": "https://mcp.granola.ai/mcp",
+      "enabled": true
+    }
+  }
+}

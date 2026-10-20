@@ -3,7 +3,7 @@
   "copy_on_select": true,
   "link_click": "Command",
   "font_size": 15,
-  "agent_command": "tern acp omp",
+  "agent_command": "omp",
   "agents": {
     "auto_acp": true,
     "keep_tui": [
@@ -25,9 +25,7 @@
         "id": "omp",
         "name": "OMP",
         "command": {{ printf "%s/.local/bin/omp" .chezmoi.homeDir | toJson }},
-        "args": [
-          "acp"
-        ],
+        "args": [],
         "env": {}
       }
     ],

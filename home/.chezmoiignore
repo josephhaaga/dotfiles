@@ -30,6 +30,7 @@
 .config/opencode/opencode-vm.env
 .local/bin/chrome-extensions
 Library
+.omp
 {{- end }}
 
 {{- if ne .profile "server" }}

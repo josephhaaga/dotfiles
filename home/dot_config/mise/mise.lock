@@ -561,7 +561,6 @@ url = "https://nodejs.org/dist/v26.10.0/node-v26.10.0-darwin-x64.tar.gz"
 version = "4.5.1"
 backend = "pipx:gcalcli"
 specifiers = ["4.5.1"]
-uv = { path = "locks/pipx-gcalcli/4.5.1", digest = "sha256:15ccf64772a50ac34c26804c503eacc6a426b6f1b089d59c8c2cffb18a94a967" }
 
 [[tools."pipx:josephhaaga-clerk"]]
 version = "0.0.12"

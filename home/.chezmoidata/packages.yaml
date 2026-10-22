@@ -9,7 +9,12 @@ packages:
     herdr: "0.9.1"
     neovim: "0.12.5"
     "pipx:josephhaaga-clerk": "0.0.12"
-    "pipx:gcalcli": "4.5.1"
+    # Keep calendar tooling available without blocking applies while PyPI
+    # dependency metadata is unstable. mise installs lazy tools on first use.
+    "pipx:gcalcli":
+      version: "4.5.1"
+      lazy: true
+      lazy_bins: [gcalcli]
     node: "26.10.0"
     python: "3.14.7"
     ripgrep: "15.2.0"

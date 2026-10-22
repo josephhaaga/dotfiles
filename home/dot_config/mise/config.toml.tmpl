@@ -13,7 +13,7 @@ min_version = "2026.8.0"
 [tools]
 {{- range $tool, $spec := .packages.mise }}
 {{- if kindIs "map" $spec }}
-{{ $tool | quote }} = { version = {{ $spec.version | quote }}{{ range $key, $value := omit $spec "version" }}, {{ $key }} = {{ $value | quote }}{{ end }} }{{- else }}
+{{ $tool | quote }} = { version = {{ $spec.version | quote }}{{ range $key, $value := omit $spec "version" }}, {{ $key }} = {{ if or (kindIs "bool" $value) (kindIs "slice" $value) }}{{ $value | toJson }}{{ else }}{{ $value | quote }}{{ end }}{{ end }} }{{- else }}
 {{ $tool | quote }} = {{ $spec | quote }}
 {{- end }}
 {{- end }}

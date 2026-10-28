@@ -96,6 +96,8 @@ packages:
   macos:
     taps:
       - asmvik/formulae
+      # Whiteboard requires its publisher's tap; cask code is trusted explicitly.
+      - devdotfast/tap
     trusted_taps:
       - asmvik/formulae
     brews:
@@ -133,6 +135,7 @@ packages:
       - slack
       - tailscale-app
       - wispr-flow
+      - devdotfast/tap/whiteboard
       - zoom
     enterprise_optional_casks:
       - handy

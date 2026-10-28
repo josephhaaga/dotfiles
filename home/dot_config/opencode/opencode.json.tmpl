@@ -59,6 +59,10 @@
         "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
       },
       {{- if eq .profile "desktop" }}
+      "whiteboard": {
+        "type": "local",
+        "command": ["{{ .chezmoi.homeDir }}/.local/bin/whiteboard", "mcp"]
+      },
       "mempalace": {
         "type": "local",
         "command": ["mempalace-mcp"],

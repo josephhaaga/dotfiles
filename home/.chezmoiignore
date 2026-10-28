@@ -28,6 +28,8 @@
 {{- if ne .profile "desktop" }}
 # Personal desktop integrations are not deployed to restricted macOS.
 .config/opencode/opencode-vm.env
+.config/opencode/agents/whiteboard.md
+.config/opencode/local-plugins/whiteboard
 .local/bin/chrome-extensions
 Library
 .omp

@@ -15,6 +15,9 @@
     ]
   },
   "plugins": [
+    {{- if eq .profile "desktop" }}
+    "./local-plugins/whiteboard",
+    {{- end }}
     {
       "package": {{ printf "opencode-agent-profiler@%s" .packages.opencode_plugins.agent_profiler | quote }},
       "options": {
@@ -24,6 +27,16 @@
       }
     }
   ],
+{{- if eq .profile "desktop" }}
+  "commands": {
+    "whiteboard": {
+      "description": "Collaborate on the task's persistent Whiteboard via MCP",
+      "agent": "whiteboard",
+      "subagent": false,
+      "template": "Use Whiteboard as the primary answer surface for this task. Resume this session's bound board if it exists. $ARGUMENTS"
+    }
+  },
+{{- end }}
 {{- if eq .profile "enterprise" }}
   "mcp": {
     "servers": {

@@ -28,6 +28,33 @@ loopback and creates private runtime files. Never commit its database, logs,
 or exported traces; `~/.agent-profiler/` is deliberately unmanaged.
 
 The V2 plugin records token/cache/cost metrics, tool failures, request context,
-prompt segments, and tool definitions. Capture starts when the plugin loads;
-there is no historical backfill. Auxiliary title, compaction, and transient
-generation calls are not yet instrumented. Segment token counts are estimates.
+prompt segments, and tool definitions. Live capture starts when the plugin loads.
+Auxiliary title, compaction, and transient generation calls are not yet
+instrumented live. Segment token counts are estimates.
+
+## Historical import
+
+CLI version `0.2.0` adds an explicit, read-only OpenCode V2 backfill. Dotfiles
+installs the command but does not import session content automatically:
+
+```sh
+agent-profiler import opencode --session ses_...
+# Or import all active and archived sessions:
+agent-profiler import opencode
+```
+
+Keep OpenCode and the collector running. The command uses authenticated local
+service discovery and the session export API, not direct database access.
+Original OpenCode session IDs group the records. Repeated imports are safe,
+and identifiable live/import overlap is deduplicated. Older collector records
+without source message/tool IDs cause that session to be explicitly skipped
+rather than risk double-counting.
+
+Recorded usage, cache reads/writes, cost, and assistant tool history are retained.
+Missing metrics display as Unknown, not zero. Imported history is labeled partial:
+exact outgoing prompts and historical tool schemas cannot be reconstructed, and
+recorded cost is not necessarily billed spend. The collector also retains the
+exported-session snapshot, including synthetic/metadata messages.
+
+Import includes unredacted saved content and does not apply the live plugin's
+redaction settings. Keep imported data private, like live traces.

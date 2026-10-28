@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# collector: {{ index .packages.npm "@josephhaaga/agent-profiler" }}
+# launcher: {{ include "dot_local/bin/executable_agent-profiler-serve" | sha256sum }}
+# launchd: {{ include "private_Library/private_LaunchAgents/com.josephhaaga.agent-profiler.plist.tmpl" | sha256sum }}
+# systemd: {{ include "dot_config/systemd/user/agent-profiler.service.tmpl" | sha256sum }}
+
+umask 077
+mkdir -p "$HOME/.agent-profiler" "$HOME/.local/state/agent-profiler"
+{{ if eq .profile "desktop" -}}
+label="com.josephhaaga.agent-profiler"
+domain="gui/$(id -u)"
+launchctl bootout "$domain/$label" 2>/dev/null || true
+launchctl enable "$domain/$label"
+launchctl bootstrap "$domain" "$HOME/Library/LaunchAgents/$label.plist"
+{{ else if eq .profile "server" -}}
+systemctl --user daemon-reload
+systemctl --user enable --now agent-profiler.service
+systemctl --user restart agent-profiler.service
+{{ else -}}
+# Enterprise does not deploy LaunchAgents; containers do not own systemd.
+# Start a local daemon on apply without adding privileged or GUI services.
+BUN_PATH="$HOME/.local/share/mise/shims/bun" \
+  AGENT_PROFILER_HOST=127.0.0.1 \
+  "$HOME/.local/bin/agent-profiler" start
+{{ end -}}

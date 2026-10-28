@@ -44,9 +44,14 @@ packages:
     rust: "1.97.1"
 
   npm:
+    "@josephhaaga/agent-profiler": "0.1.5"
     "@opencode/cli": "2.2.0"
     tokscale: "4.17.0"
     tree-sitter-cli: "0.27.0"
+
+  # OpenCode owns the plugin cache; dotfiles own the exact package selection.
+  opencode_plugins:
+    agent_profiler: "0.4.0"
 
   # Chrome Sync remains responsible for cross-device installation. This inventory
   # lets `chrome-extensions` audit the local Chrome profile. Missing Chrome Web

@@ -12,6 +12,7 @@ Every retained item has one installation owner. Anything not listed here is inte
 | Herdr | mise | all | Persistent local and remote terminal sessions |
 | Neovim/LazyVim | mise | all | Editor with Go, Python, TypeScript, Docker, JSON, Markdown, and TOML support |
 | OpenCode V2 | pinned npm install | all | Primary coding agent |
+| Agent Profiler | pinned npm CLI + OpenCode-managed pinned plugin | all | Local-only session traces; supervised collector on desktop/server |
 | uv, Node, Bun, Go | mise | all | Language runtimes and package execution |
 | ripgrep, fd, bat, fzf, tree, jq | mise/native | all | Search and shell utilities |
 | gh, Git LFS, git-filter-repo, GnuPG | mise/native | desktop, server | Git and GitHub workflows |

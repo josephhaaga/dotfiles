@@ -35,4 +35,5 @@ Library
 
 {{- if ne .profile "server" }}
 .config/systemd/user/opencode.service
+.config/systemd/user/agent-profiler.service
 {{- end }}

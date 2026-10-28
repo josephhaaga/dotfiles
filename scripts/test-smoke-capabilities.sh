@@ -18,7 +18,7 @@ else
 fi
 EOF
 chmod +x "$fixture/bin/fake-tool"
-for tool in chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode neofetch tree-sitter tokscale; do
+for tool in chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode neofetch tree-sitter tokscale agent-profiler; do
   ln -s fake-tool "$fixture/bin/$tool"
 done
 export MOCK_TOOL_LOG="$fixture/tools.log"

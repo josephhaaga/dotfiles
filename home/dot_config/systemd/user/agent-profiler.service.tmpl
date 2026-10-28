@@ -1,0 +1,13 @@
+[Unit]
+Description=Local Agent Profiler trace collector
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ .chezmoi.homeDir }}/.local/bin/agent-profiler-serve
+UMask=0077
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

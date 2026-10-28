@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run the pinned npm bundle in the foreground so launchd/systemd can supervise
+# it. Traces and logs are runtime state, never chezmoi source files.
+umask 077
+bundle="$HOME/.local/lib/node_modules/@josephhaaga/agent-profiler/dist"
+export AGENT_PROFILER_HOST=127.0.0.1
+export AGENT_PROFILER_PORT=7070
+export AGENT_PROFILER_WEB_DIST="$bundle/web"
+mkdir -p "$HOME/.agent-profiler" "$HOME/.local/state/agent-profiler"
+exec "$HOME/.local/share/mise/shims/bun" run "$bundle/server/index.js"

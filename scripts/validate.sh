@@ -61,6 +61,7 @@ if [ -d "$SOURCE" ]; then
   jq empty "$SOURCE/dot_config/nvim/lazyvim.json"
 
   bash "$DOTFILES/scripts/test-smoke-capabilities.sh"
+  bash "$DOTFILES/scripts/test-agent-profiler.sh"
 
   if DOTFILES_PROFILE=invalid chezmoi execute-template --source "$SOURCE" \
     < "$SOURCE/.chezmoi.toml.tmpl" >/dev/null 2>&1; then
@@ -173,8 +174,14 @@ if [ -d "$SOURCE" ]; then
       --override-data "{\"profile\":\"$profile\"}" \
       < "$SOURCE/dot_config/opencode/opencode.json.tmpl")"
 
+    profiler_package="$(chezmoi execute-template --source "$SOURCE" --override-data "{\"profile\":\"$profile\"}" \
+      '{{ printf "opencode-agent-profiler@%s" .packages.opencode_plugins.agent_profiler }}')"
     if ! printf '%s' "$rendered" |
-        jq -e '.plugins == [] and (has("model") | not) and (has("agents") | not)' >/dev/null; then
+        jq -e --arg package "$profiler_package" '
+          .plugins == [{"package": $package, "options": {
+            "endpoint": "http://127.0.0.1:7070/v1/traces",
+            "captureContent": true, "captureHeaders": false
+          }}] and (has("model") | not) and (has("agents") | not)' >/dev/null; then
       echo "$profile OpenCode config overrides native workflow choices" >&2
       exit 1
     fi

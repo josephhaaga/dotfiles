@@ -14,7 +14,16 @@
       {{- end }}
     ]
   },
-  "plugins": [],
+  "plugins": [
+    {
+      "package": {{ printf "opencode-agent-profiler@%s" .packages.opencode_plugins.agent_profiler | quote }},
+      "options": {
+        "endpoint": "http://127.0.0.1:7070/v1/traces",
+        "captureContent": true,
+        "captureHeaders": false
+      }
+    }
+  ],
 {{- if eq .profile "enterprise" }}
   "mcp": {
     "servers": {

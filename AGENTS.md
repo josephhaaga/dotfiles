@@ -14,7 +14,7 @@
 
 - Never manage OAuth tokens, provider credentials, Docker credentials, Slack cookies, shell history, application databases, caches, or agent sessions. See `docs/secrets-v2.md`.
 - `~/.config/gh`, `~/.config/gcloud`, and OpenCode authentication remain local runtime state.
-- After changing OpenCode config, commands, or skills, restart OpenCode because it loads configuration at startup.
+- OpenCode V2 watches config, commands, and skills; use its reload action if needed. Restart the service only for service health or to activate an upgraded executable, not routine config edits.
 - Do not reintroduce tmux, a work/personal profile split, removed agent clients, or unpinned runtime downloads without an explicit requirement.
 
 ## Packages And Services

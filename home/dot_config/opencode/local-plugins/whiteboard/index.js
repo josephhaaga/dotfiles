@@ -1,14 +1,17 @@
 // OpenCode V2's Plugin.define is an identity function. The plain Plugin object
 // needs no runtime SDK dependency; see docs/whiteboard.md for the API contract.
+import { readFile } from "node:fs/promises";
+
 const bindingKey = "dotfiles.whiteboard";
 // Serialize claims across location instances of this module in one host.
 let pending = Promise.resolve();
 
-function validateBinding(value, sessionID, repositoryPath) {
+function validateBinding(value, sessionID, repositoryPath, nativeThreadID) {
   if (value === undefined) return null;
   if (
     value === null || typeof value !== "object" || value.version !== 1 ||
     value.sessionID !== sessionID || value.repositoryPath !== repositoryPath ||
+    (value.nativeThreadID !== undefined && value.nativeThreadID !== nativeThreadID) ||
     typeof value.boardID !== "string" || !value.boardID.trim() ||
     typeof value.instanceKey !== "string" || !value.instanceKey.trim()
   ) throw new Error("Whiteboard binding identity is invalid or changed. Ask before rebinding.");
@@ -22,18 +25,33 @@ export default {
     // persistence; no session databases, config files, or viewer files are read.
     const entries = ctx.session.instructions.entry;
     const repositoryPath = ctx.location.directory;
+    // Whiteboard sets this only on the per-conversation `opencode acp` child.
+    // ACP runs a private host, so this cannot change ordinary TUI sessions.
+    const nativeThreadID = process.env.DEV_REVIEW_ASK_THREAD?.trim();
+    const boardAgent = (agent) => agent === "whiteboard" || (nativeThreadID && agent === "build");
+    if (nativeThreadID) {
+      const prompt = (await readFile(new URL("../../agents/whiteboard.md", import.meta.url), "utf8"))
+        .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "").trim();
+      await ctx.session.hook("context", (event) => {
+        // Whiteboard explicitly selects Build through ACP. Add the same
+        // board-first policy there without changing any global agent default.
+        if (event.agent === "build") event.system.push({ type: "text", text: prompt });
+      });
+    }
     const read = async (sessionID) => {
       const saved = (await entries.list({ sessionID })).find((entry) => entry.key === bindingKey);
-      return validateBinding(saved?.value, sessionID, repositoryPath);
+      return validateBinding(saved?.value, sessionID, repositoryPath, nativeThreadID);
     };
     const result = (sessionID, binding) => ({
-      content: JSON.stringify({ sessionID, repositoryPath, binding }),
+      content: JSON.stringify({ sessionID, repositoryPath, binding,
+        ...(nativeThreadID ? { nativeChat: { threadID: nativeThreadID } } : {}),
+      }),
     });
 
     await ctx.tool.hook("execute.before", async (event) => {
-      if (event.agent !== "whiteboard" || !/^whiteboard_(session|review)_/.test(event.tool)) return;
+      if (!boardAgent(event.agent) || !/^whiteboard_(session|review)_/.test(event.tool)) return;
       const saved = await read(event.sessionID);
-      if (/_(session|review)_create$/.test(event.tool) && saved) {
+      if (/_(session|review)_create$/.test(event.tool) && (saved || nativeThreadID)) {
         throw new Error("This task already has a Whiteboard. Update its bound board instead of creating another.");
       }
       const input = event.input;
@@ -66,7 +84,7 @@ export default {
         },
         options: { codemode: false },
         execute: async (input, context) => {
-          if (context.agent !== "whiteboard") throw new Error("Select the Whiteboard agent before binding.");
+          if (!boardAgent(context.agent)) throw new Error("Select the Whiteboard agent before binding.");
           const { boardID, instanceKey } = input;
           if (typeof boardID !== "string" || !boardID.trim() || typeof instanceKey !== "string" || !instanceKey.trim()) {
             throw new Error("An exact board ID and instance key are required.");
@@ -78,8 +96,14 @@ export default {
             if (saved && (saved.boardID !== boardID || saved.instanceKey !== instanceKey)) {
               throw new Error("This session is already bound. Resume its saved board or start a new task session.");
             }
-            const binding = saved ?? { version: 1, sessionID, repositoryPath, boardID, instanceKey };
-            const claimKey = `board/${encodeURIComponent(instanceKey)}/${encodeURIComponent(boardID)}`;
+            const binding = saved ?? { version: 1, sessionID, repositoryPath, boardID, instanceKey,
+              ...(nativeThreadID ? { nativeThreadID } : {}),
+            };
+            // Choosing a board in native Chat is an explicit coauthoring action,
+            // not a takeover of its terminal task. Preserve that task's claim;
+            // scope native ownership to the app's durable conversation ID.
+            const claimKey = `board/${encodeURIComponent(instanceKey)}/${encodeURIComponent(boardID)}` +
+              (nativeThreadID ? `/ask/${encodeURIComponent(nativeThreadID)}` : "");
             const owner = await ctx.storage.get(claimKey);
             context.signal?.throwIfAborted();
             if (owner && (owner.sessionID !== sessionID || owner.repositoryPath !== repositoryPath)) {

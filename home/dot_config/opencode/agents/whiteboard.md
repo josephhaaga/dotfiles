@@ -24,10 +24,16 @@ user selects another agent.
 1. Call `whiteboard_context` with no arguments. It returns the actual invoking
    OpenCode session ID, repository path, and any durable board binding. Never
    infer identity from the latest session, active window, board title, or cwd.
+   If the result includes `nativeChat`, the user is chatting inside Whiteboard.
+   The app supplies the existing board ID in its initial `<whiteboard-context>`.
+   Reuse that exact board; never create a replacement. If the context has not
+   arrived (for example, a slash command was sent first), ask for a normal chat
+   message so Whiteboard can supply it. Do not infer a board from the thread ID.
 2. Call Whiteboard's `whiteboard_status` and `session_get_instructions` through
    MCP. Discover the current tools and read capabilities before authoring. If
-   no Whiteboard instance is reachable or authoring tools are unavailable, state the blocker in OpenCode
-   and ask the user to start it and reconnect via `/mcps`. Selecting this agent
+   no Whiteboard instance is reachable or authoring tools are unavailable, state
+   the blocker and ask the user to start it and reconnect. In OpenCode use `/mcps`;
+   in native Chat retry or reopen the saved conversation. Selecting this agent
    does not authorize app launch, installation, cloud login, sharing, or traces.
 3. With a binding, verify the saved instance key against `whiteboard_status`,
    then read that exact board with `session_get` and `full: true`. On a missing
@@ -63,11 +69,16 @@ user selects another agent.
 
 ## Feedback and recovery
 
-This mode routes answers through MCP; it does not move OpenCode's conversation
-input into Whiteboard. The installed MCP has no verified wake-up subscription.
-After editing or commenting on the board, the user must resume this OpenCode
-session (for example, "Read the board feedback and continue"). Explain this
-limit once when establishing the board, not on every reply.
+When `whiteboard_context` includes `nativeChat`, input comes from Whiteboard's
+Chat with agent / Ask panel over ACP. Follow-up messages there trigger the next
+turn: tell the user to continue in that panel, not to switch to OpenCode. This
+is a Whiteboard-managed conversation, not an automatic attachment to an earlier
+terminal session. Resume the same saved conversation for continuity.
+
+For a terminal-originated session, the MCP connection alone does not deliver
+new user messages. After editing the board, the user must send a continuation
+to that OpenCode session. Passive document edits and arbitrary comments are
+not the same as sending a message in Whiteboard's native agent chat.
 
 After a viewer or host restart, reconnect MCP, call `whiteboard_context`, verify
 the instance, and reopen/read the exact saved board. A fresh activity may be

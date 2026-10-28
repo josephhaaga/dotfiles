@@ -16,9 +16,9 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 
-def request(url, method="GET", body=None):
+def request(url, method="GET", body=None, headers=None):
     data = None if body is None else json.dumps(body).encode()
-    req = Request(url, data=data, method=method, headers={"Content-Type": "application/json"})
+    req = Request(url, data=data, method=method, headers={"Content-Type": "application/json", **(headers or {})})
     with urlopen(req, timeout=30) as response:
         raw = response.read()
         return json.loads(raw) if raw else None
@@ -55,6 +55,9 @@ class Model(BaseHTTPRequestHandler):
     """Exercise host tool dispatch; this is not an evaluation of model judgment."""
     errors = []
     requests = 0
+    native_contexts = []
+    native_policy_seen = False
+    native_board_contexts = []
 
     def log_message(self, *_args):
         pass
@@ -67,12 +70,27 @@ class Model(BaseHTTPRequestHandler):
             text = users[-1]["content"] if users else ""
             if isinstance(text, list):
                 text = "\n".join(p.get("text", "") for p in text)
+            if "<whiteboard-context>" in text:
+                self.native_board_contexts.append(text)
+                type(self).native_policy_seen |= any(
+                    m["role"] == "system" and "# Whiteboard mode" in json.dumps(m.get("content", ""))
+                    for m in body["messages"]
+                )
             marker = "FIXTURE_TOOL_JSON:"
             tools = {t["function"]["name"] for t in body.get("tools", [])}
             # Auxiliary title requests have no tool catalog.
             if marker not in text or not tools:
                 delta, finish = {"content": "Fixture"}, "stop"
             elif body["messages"][-1]["role"] == "tool":
+                try:
+                    content = body["messages"][-1]["content"]
+                    if isinstance(content, list):
+                        content = "\n".join(p.get("text", "") for p in content)
+                    context = json.loads(content)
+                    if isinstance(context, dict) and context.get("nativeChat"):
+                        self.native_contexts.append(context)
+                except (ValueError, TypeError):
+                    pass
                 delta, finish = {"content": "Fixture tool completed."}, "stop"
             else:
                 operation = json.loads(text.split(marker, 1)[1].splitlines()[0])
@@ -193,6 +211,37 @@ def main():
         output = subprocess.check_output(wb_command + ["api", tool, json.dumps(payload)], env=env, cwd=repo, timeout=30)
         return json.loads(output)
 
+    def native_request(path, method="GET", payload=None):
+        # Authenticate only to this test's isolated Whiteboard server. This is
+        # the same backend API used by the installed Chat with agent / Ask UI.
+        discovery = json.loads((root / "boards/review-server/server.json").read_text())
+        assert discovery["url"] == wb_base
+        return request(wb_base + "/reviews-api" + path, method, payload,
+                       {"x-review-token": discovery["token"]})
+
+    def native_snapshot(board, thread_id):
+        discovery = json.loads((root / "boards/review-server/server.json").read_text())
+        req = Request(wb_base + f"/reviews-api/{board}/ask/watch", method="POST",
+                      data=json.dumps({"threads": [thread_id]}).encode(),
+                      headers={"Content-Type": "application/json", "x-review-token": discovery["token"]})
+        with urlopen(req, timeout=10) as response:
+            return json.loads(response.readline())["update"]["snapshot"]
+
+    def native_wait(board, thread_id, turns):
+        for _ in range(150):
+            snapshot = native_snapshot(board, thread_id)
+            if snapshot["status"] in ("failed", "waiting"):
+                raise AssertionError(snapshot)
+            answers = [e for e in snapshot["entries"] if e["kind"] == "agent"]
+            if snapshot["status"] == "idle" and len(answers) >= turns:
+                (root / "native-chat.json").write_text(json.dumps(snapshot, indent=2))
+                return snapshot
+            time.sleep(0.2)
+        raise AssertionError(snapshot)
+
+    def native_question(tool, payload):
+        return {"text": "FIXTURE_TOOL_JSON:" + json.dumps({"tool": tool, "input": payload})}
+
     location = "?" + urlencode({"location[directory]": str(repo)})
 
     def api(path, method="GET", payload=None):
@@ -307,6 +356,44 @@ def main():
         after = wb("session_get", {"sessionId": boards[0], "full": True})
         assert before == after, "Board changed across restart"
         print("PASS real OpenCode + Whiteboard host restart preserves bindings and board content", flush=True)
+
+        # Unlike the preceding terminal/API prompts, every question below is
+        # sent to Whiteboard's own Ask API. Whiteboard launches the real CLI
+        # over ACP and supplies its scoped MCP server, just as Desktop does.
+        native_board = boards[0]
+        started = native_request(f"/{native_board}/ask", "POST", {
+            "agent": "opencode", "permissions": "read-only", "picks": {"model": "fixture/fixture"},
+            "selection": {"target": {"kind": "review"}, "title": "Synthetic native chat"},
+            "question": native_question("whiteboard_context", {}),
+        })
+        thread_id = started["threadId"]
+        native_wait(native_board, thread_id, 1)
+        assert Model.native_policy_seen, "Native ACP Build did not receive the board-first system policy"
+        assert any(native_board in text for text in Model.native_board_contexts), "App did not deliver the selected board context"
+        assert Model.native_contexts and Model.native_contexts[-1]["nativeChat"]["threadID"] == thread_id, Model.native_contexts
+        native_session = Model.native_contexts[-1]["sessionID"]
+        assert native_session not in sessions, "Native Chat must not silently attach to a terminal session"
+        native_request(f"/{native_board}/ask/{thread_id}/prompt", "POST", {
+            "question": native_question("whiteboard_bind", {"boardID": native_board, "instanceKey": key}),
+        })
+        native_wait(native_board, thread_id, 2)
+        native_activity = wb("session_activity_begin", {"sessionId": native_board})["activityId"]
+        native_request(f"/{native_board}/ask/{thread_id}/prompt", "POST", {
+            "question": native_question("whiteboard_session_edit", {"sessionId": native_board, "activityId": native_activity,
+                "edit": {"type": "insert", "content": {"type": "markdown", "markdown": "Written from native Whiteboard Chat via ACP."}}}),
+        })
+        native_wait(native_board, thread_id, 3)
+        assert "Written from native Whiteboard Chat via ACP." in json.dumps(wb("session_get", {"sessionId": native_board, "full": True}))
+        native_request(f"/{native_board}/ask/{thread_id}/close", "POST", {})
+        native_request(f"/{native_board}/ask/{thread_id}/open", "POST", {})
+        native_wait(native_board, thread_id, 3)
+        native_request(f"/{native_board}/ask/{thread_id}/prompt", "POST", {"question": native_question("whiteboard_context", {})})
+        native_wait(native_board, thread_id, 4)
+        assert Model.native_contexts[-1]["sessionID"] == native_session, Model.native_contexts
+        assert Model.native_contexts[-1]["binding"]["boardID"] == native_board, Model.native_contexts
+        native_request(f"/{native_board}/ask/{thread_id}/close", "POST", {})
+        wb("session_activity_end", {"sessionId": native_board, "activityId": native_activity})
+        print("PASS native Whiteboard Chat → real opencode acp → same-board MCP edit and saved-conversation reopen", flush=True)
         assert not Model.errors, Model.errors
     finally:
         for process in reversed(processes):

@@ -19,23 +19,34 @@ function fixture() {
     sessions, claims, entries,
     get writes() { return writes; },
     failPut(value) { failPut = value; },
-    async load(directory = "/fixture/repository") {
+    async load(directory = "/fixture/repository", nativeThreadID) {
       const tools = new Map();
       let before;
-      await plugin.setup({
+      let contextHook;
+      const previousThread = process.env.DEV_REVIEW_ASK_THREAD;
+      if (nativeThreadID) process.env.DEV_REVIEW_ASK_THREAD = nativeThreadID;
+      else delete process.env.DEV_REVIEW_ASK_THREAD;
+      try { await plugin.setup({
         location: { directory },
-        session: { instructions: { entry: entries } },
+        session: {
+          instructions: { entry: entries },
+          hook: async (name, callback) => { assert.equal(name, "context"); contextHook = callback; },
+        },
         storage: { get: async (key) => claims.get(key), set: async (key, value) => { claims.set(key, value); } },
         tool: {
           transform: async (register) => register({ add: (tool) => tools.set(tool.name, tool) }),
           hook: async (name, callback) => { assert.equal(name, "execute.before"); before = callback; },
         },
-      });
+      }); } finally {
+        if (previousThread === undefined) delete process.env.DEV_REVIEW_ASK_THREAD;
+        else process.env.DEV_REVIEW_ASK_THREAD = previousThread;
+      }
       const call = async (name, input = {}, sessionID = "ses_alpha", agent = "whiteboard") => {
         const output = await tools.get(name).execute(input, { sessionID, agent });
         return JSON.parse(output.content);
       };
       call.tools = tools;
+      call.contextHook = contextHook;
       call.before = (tool, input = {}, sessionID = "ses_alpha", agent = "whiteboard") => before({ tool, input, sessionID, agent });
       return call;
     },
@@ -153,4 +164,34 @@ test("MCP authoring is blocked until binding; another task's board and duplicate
   // The opt-in mode must not rewrite other agents' tool behavior.
   await call.before("whiteboard_session_edit", { sessionId: "board-beta" }, "ses_alpha", "build");
   await call.before("whiteboard_session_get_instructions");
+});
+
+test("native ACP Build receives the same board-first policy, without changing ordinary Build", async () => {
+  const f = fixture();
+  const ordinary = await f.load();
+  assert.equal(ordinary.contextHook, undefined);
+  const native = await f.load("/fixture/repository", "thread-native");
+  const event = { agent: "build", system: [] };
+  native.contextHook(event);
+  assert.match(event.system[0].text, /# Whiteboard mode/);
+  const plan = { agent: "plan", system: [] };
+  native.contextHook(plan);
+  assert.deepEqual(plan.system, []);
+  assert.deepEqual((await native("whiteboard_context")).nativeChat, { threadID: "thread-native" });
+  await assert.rejects(native.before("whiteboard_session_create", {}, "ses_native", "build"), /already/);
+  await native("whiteboard_bind", target, "ses_native", "build");
+  await native.before("whiteboard_session_edit", { sessionId: target.boardID }, "ses_native", "build");
+  await assert.rejects(native.before("whiteboard_session_edit", { sessionId: "board-other" }, "ses_native", "build"), /target/);
+});
+
+test("native Chat can coauthor a selected terminal board without replacing its task claim", async () => {
+  const f = fixture();
+  const terminal = await f.load();
+  const original = await terminal("whiteboard_bind", target);
+  const native = await f.load("/fixture/repository", "thread-native");
+  await native("whiteboard_bind", target, "ses_native", "build");
+  assert.deepEqual(await terminal("whiteboard_context"), original);
+  await assert.rejects(terminal("whiteboard_bind", target, "ses_unrelated"), /another task/);
+  const differentThread = await f.load("/fixture/repository", "thread-other");
+  await assert.rejects(differentThread("whiteboard_context", {}, "ses_native", "build"), /identity/);
 });

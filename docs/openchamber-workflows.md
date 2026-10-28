@@ -37,7 +37,9 @@ OpenCode configuration is pared down to avoid competing workflow ownership:
 - Dotfiles declares no plugins. This does not disable OpenChamber's separately managed native plugins or repository-local plugins.
 - Existing MCP endpoints, OAuth configuration, shell settings, and provider policy remain. Enterprise still permits only GitHub Copilot and its reviewed MCP servers.
 
-This is a **source-only retirement**, not deletion from deployed machines. Removing files from the chezmoi source does not remove previously deployed global instructions, skills, or commands, and removing a package pin does not uninstall an existing package. Before a later deployment, inspect and archive/remove only the retired files you intend to stop loading; preserve credentials and unrelated local customizations. No automatic cleanup script is added. After deliberately deploying the OpenCode changes and retiring leftover files, restart OpenCode to load them; this PR does neither. Other ancestor/project configuration can still override global defaults.
+This is a **source-only retirement**, not deletion from deployed machines. Removing files from the chezmoi source does not remove previously deployed global instructions, skills, or commands, and removing a package pin does not uninstall an existing package. Before a later deployment, inspect and archive/remove only the retired files you intend to stop loading; preserve credentials and unrelated local customizations. No automatic cleanup script is added. OpenCode V2 watches configuration changes; use its reload action if needed rather than restarting a healthy service. This PR neither deploys changes nor retires local files. Other ancestor/project configuration can still override global defaults.
+
+The optional [artifact-first workflow](agent-workflow.md) supplies an inert lean-instruction example and skill-ownership guidance without restoring any retired deployment paths.
 
 ### Version checks
 

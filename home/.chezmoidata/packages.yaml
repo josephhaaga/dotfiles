@@ -44,7 +44,7 @@ packages:
     rust: "1.97.1"
 
   npm:
-    "@josephhaaga/agent-profiler": "0.2.1"
+    "@josephhaaga/agent-profiler": "0.3.1"
     "@opencode/cli": "2.2.0"
     tokscale: "4.17.0"
     tree-sitter-cli: "0.27.0"
@@ -98,8 +98,11 @@ packages:
       - asmvik/formulae
       # Whiteboard requires its publisher's tap; cask code is trusted explicitly.
       - devdotfast/tap
+      # Scrawl requires its publisher's tap; cask code is trusted explicitly.
+      - kitlangton/tap
     trusted_taps:
       - asmvik/formulae
+      - kitlangton/tap
     brews:
       - age
       - asciiquarium
@@ -136,6 +139,7 @@ packages:
       - tailscale-app
       - wispr-flow
       - devdotfast/tap/whiteboard
+      - kitlangton/tap/scrawl
       - zoom
     enterprise_optional_casks:
       - handy

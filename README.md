@@ -86,6 +86,7 @@ When deliberately updating tools, review and copy lockfile changes back into
 - [`docs/inventory.md`](docs/inventory.md): retained and removed applications.
 - [`docs/profiles.md`](docs/profiles.md): platform behavior and boundaries.
 - [`docs/whiteboard.md`](docs/whiteboard.md): opt-in Whiteboard-first OpenCode mode, task identity, feedback limits, and recovery.
+- [`docs/opencode-multiplayer.md`](docs/opencode-multiplayer.md): specification for collaborative OpenCode sessions, deliberation polls, and child-session forks.
 - [`docs/bootstrap.md`](docs/bootstrap.md): setup and safe preview commands.
 - [`docs/secrets-v2.md`](docs/secrets-v2.md): unmanaged credentials and runtime state.
 - [`docs/vm-web-access.md`](docs/vm-web-access.md): mTLS-protected VM web access.

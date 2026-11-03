@@ -133,7 +133,6 @@ packages:
       - granola
       - handy
       - linear
-      - microsoft-teams
       - obsidian
       - slack
       - tailscale-app

@@ -32,7 +32,7 @@ The enterprise profile uses an existing, MDM-approved Homebrew installation for 
 | Security/network | 1Password, 1Password CLI, Tailscale |
 | Browser/knowledge | Google Chrome, Obsidian |
 | AI workspace | OpenChamber |
-| Collaboration | Slack, Microsoft Teams, Zoom, Linear, Granola |
+| Collaboration | Slack, Zoom, Linear, Granola |
 | Voice/input | Wispr Flow, Handy; Handy is optional on enterprise |
 | Containers | Docker Desktop |
 

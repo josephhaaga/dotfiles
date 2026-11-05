@@ -75,9 +75,7 @@ package-managed skills already in that directory remain untouched. It never
 modifies the checkout or replaces an existing path. Set `PERSONAL_SKILLS_DIR`
 when the repository lives elsewhere.
 
-The managed mise lockfile includes baseline platform entries added by mise.
-When deliberately updating tools, review and copy lockfile changes back into
-`dot_config/mise/mise.lock` so subsequent applies do not undo them.
+Mise lockfiles are local runtime state. They are not managed by chezmoi.
 
 ## Documentation
 

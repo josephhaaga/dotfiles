@@ -17,6 +17,8 @@ tests
 # Authentication and mutable runtime state are never managed.
 .config/gh
 .config/gcloud
+.config/mise/locks
+.config/mise/mise.lock
 .config/opencode/auth.json
 .docker/config.json
 .local/share/opencode/auth.json

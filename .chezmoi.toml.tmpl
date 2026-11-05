@@ -47,5 +47,5 @@ sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [data]
     profile = {{ $profile | quote }}
-    capabilities = {{ splitList "," (env "DOTFILES_CAPABILITIES") | toJson }}
+    capabilities = {{ compact (splitList "," (env "DOTFILES_CAPABILITIES")) | toJson }}
     managedSecrets = false

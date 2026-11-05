@@ -78,6 +78,16 @@ git -C "$(chezmoi source-path)" pull --ff-only
 chezmoi apply
 ```
 
+### Source-root migration
+
+The source is now at the repository root. Reinitialize an existing install with
+every capability it already uses:
+
+```bash
+DOTFILES_CAPABILITIES=kubernetes mise x chezmoi@2.72.0 -- \
+  chezmoi init --apply josephhaaga/dotfiles
+```
+
 ## Safe preview
 
 Preview the active source without changing `$HOME`:

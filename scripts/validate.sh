@@ -68,6 +68,14 @@ if [ -d "$SOURCE" ]; then
     exit 1
   fi
 
+  empty_capabilities="$(DOTFILES_PROFILE=desktop DOTFILES_CAPABILITIES= \
+    chezmoi execute-template --source "$SOURCE" < "$SOURCE/.chezmoi.toml.tmpl" |
+    sed -n 's/^ *capabilities = \(.*\)$/\1/p')"
+  if [ "$empty_capabilities" != '[]' ]; then
+    echo "generated chezmoi.toml must omit empty capabilities" >&2
+    exit 1
+  fi
+
   # macOS always detects as "desktop", so a re-run of `chezmoi init` on an
   # enterprise machine must not silently revert the profile and install the full
   # desktop cask list. The recorded profile has to outrank OS detection.

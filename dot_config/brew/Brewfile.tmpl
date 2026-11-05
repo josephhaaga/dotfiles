@@ -7,7 +7,7 @@ tap {{ . | quote }}
 {{- end }}
 {{- end }}
 
-{{ range .packages.macos.brews }}
+{{ range .packages.macos.window_manager_brews }}
 brew {{ . | quote }}
 {{- end }}
 

@@ -11,7 +11,7 @@ The managed source supports:
 
 ## Safe Preview
 
-The active chezmoi source is `home/`. Previous configurations remain available through Git history.
+The repository root is the active chezmoi source. Previous configurations remain available through Git history.
 
 Preview the desktop profile without applying it:
 
@@ -23,12 +23,10 @@ chezmoi apply --dry-run \
 
 ## Bootstrap
 
-Clone the repository and explicitly run `setup` when ready to apply the source:
+Bootstrap a fresh machine or DevPod with mise and chezmoi:
 
 ```bash
-git clone https://github.com/josephhaaga/dotfiles ~/Documents/dotfiles
-cd ~/Documents/dotfiles
-./setup
+mise x chezmoi@2.72.0 -- chezmoi init --apply josephhaaga/dotfiles
 ```
 
 The profile is detected automatically:
@@ -79,7 +77,7 @@ when the repository lives elsewhere.
 
 The managed mise lockfile includes baseline platform entries added by mise.
 When deliberately updating tools, review and copy lockfile changes back into
-`home/dot_config/mise/mise.lock` so subsequent applies do not undo them.
+`dot_config/mise/mise.lock` so subsequent applies do not undo them.
 
 ## Documentation
 

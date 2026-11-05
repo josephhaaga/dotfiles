@@ -149,7 +149,7 @@ def main():
     subprocess.run(["git", "init", "-q", str(repo)], check=True, env=env)
     subprocess.run(["git", "-C", str(repo), "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
                     "commit", "--allow-empty", "-qm", "Synthetic fixture"], check=True, env=env)
-    shutil.copytree(source / "home/dot_config/opencode/agents", config / "agents")
+    shutil.copytree(source / "dot_config/opencode/agents", config / "agents")
     model = ThreadingHTTPServer(("127.0.0.1", 0), Model)
     thread = threading.Thread(target=model.serve_forever, daemon=True)
     thread.start()
@@ -158,11 +158,11 @@ def main():
     wb_command = [str(Path(args.whiteboard).resolve()), "--state-dir", str(root / "boards")]
     rendered = json.loads(subprocess.check_output(
         ["chezmoi", "execute-template", "--source", str(source), "--override-data", '{"profile":"desktop"}'],
-        input=(source / "home/dot_config/opencode/opencode.json.tmpl").read_bytes(), env=env,
+        input=(source / "dot_config/opencode/opencode.json.tmpl").read_bytes(), env=env,
     ))
     config_data = {
         "$schema": "https://opencode.ai/config.json",
-        "plugins": [str(source / "home/dot_config/opencode/local-plugins/whiteboard")],
+        "plugins": [str(source / "dot_config/opencode/local-plugins/whiteboard")],
         "commands": rendered["commands"],
         "providers": {"fixture": {
             "name": "Synthetic local fixture", "env": ["FIXTURE_API_KEY"],

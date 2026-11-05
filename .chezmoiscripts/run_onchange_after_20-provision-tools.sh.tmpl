@@ -2,13 +2,11 @@
 
 set -euo pipefail
 
-# tool versions: {{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}
-# package inventory: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
+# mise tools: {{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}
+# npm tools: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
 
-# azure-cli installs through the pipx backend, which runs uv. uv honours
-# SSL_CERT_FILE and treats it as a replacement for the trust store, not an
-# addition, so it needs the full bundle written by the 05 script. Without it
-# uv rejects PyPI, which is not intercepted and serves a real public chain.
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
 if [ -f "$HOME/.config/ssl/ca-bundle.pem" ]; then
   export SSL_CERT_FILE="$HOME/.config/ssl/ca-bundle.pem"
 fi
@@ -24,8 +22,6 @@ else
   installer="$(mktemp)"
   trap 'rm -f "$installer"' EXIT
   mise_version="2026.8.6"
-  # This versioned installer is immutable and embeds checksums for the exact
-  # release assets it selects. Never pair a fixed checksum with https://mise.run.
   curl -fsSL "https://mise.jdx.dev/v${mise_version}/install.sh" -o "$installer"
   expected="18ec854e24388880277a84e73434114eb80cdf2066afcf3671fed2682cb1ea4a"
   if command -v sha256sum >/dev/null 2>&1; then
@@ -40,3 +36,18 @@ fi
 
 "$mise_bin" trust "$HOME/.config/mise"
 "$mise_bin" install --yes
+
+npm_packages=(
+{{- range $package, $version := .packages.npm }}
+{{- if or (ne $.profile "server") (ne $package "tree-sitter-cli") }}
+  {{ printf "%s@%s" $package $version | quote }}
+{{- end }}
+{{- end }}
+)
+
+npm_registry="$(npm config get registry)"
+npm uninstall --global --prefix "$HOME/.local" @opencode-ai/cli opencode-ai
+npm install --global --prefix "$HOME/.local" \
+  --registry "$npm_registry" \
+  --allow-scripts=@opencode/cli,node-pty,tree-sitter-cli \
+  --ignore-scripts=false "${npm_packages[@]}"

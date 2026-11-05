@@ -26,11 +26,11 @@ case "$profile" in
     ;;
 esac
 
-required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode neofetch tree-sitter)
+required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode tree-sitter)
 
 # Match the mise template: recorded capabilities outrank the bootstrap env.
 # Kubernetes tools are deliberately absent from an ordinary container install.
-kubernetes_enabled="$(chezmoi execute-template --source "$DOTFILES/home" \
+kubernetes_enabled="$(chezmoi execute-template --source "$DOTFILES" \
   '{{ has "kubernetes" (dig "capabilities" (splitList "," (env "DOTFILES_CAPABILITIES")) .) }}')"
 if [ "$kubernetes_enabled" = true ]; then
   required+=(kubectl kubelogin)
@@ -38,7 +38,7 @@ fi
 
 # Derive profile-specific npm commands from the same package inventory used by
 # chezmoi, so smoke coverage follows packages.yaml without a second list.
-package_data="$DOTFILES/home/.chezmoidata/packages.yaml"
+package_data="$DOTFILES/.chezmoidata/packages.yaml"
 if [ -f "$package_data" ]; then
   npm_groups=(npm)
   for npm_group in "${npm_groups[@]}"; do

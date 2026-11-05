@@ -1,6 +1,6 @@
 # OpenCode session profiling
 
-`home/.chezmoidata/packages.yaml` pins the Agent Profiler CLI and OpenCode V2
+`.chezmoidata/packages.yaml` pins the Agent Profiler CLI and OpenCode V2
 plugin. The global OpenCode configuration sends primary agent-loop traces from
 every project to `http://127.0.0.1:7070/v1/traces`. No cloud telemetry endpoint or
 credentials are configured.

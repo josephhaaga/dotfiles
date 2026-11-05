@@ -7,7 +7,7 @@ node --test "$DOTFILES/tests/whiteboard-context.test.mjs"
 for profile in desktop enterprise server container; do
   data="{\"profile\":\"$profile\"}"
   rendered="$(chezmoi execute-template --source "$DOTFILES" --override-data "$data" \
-    < "$DOTFILES/home/dot_config/opencode/opencode.json.tmpl")"
+    < "$DOTFILES/dot_config/opencode/opencode.json.tmpl")"
   managed="$(chezmoi managed --source "$DOTFILES" --override-data "$data")"
   if [ "$profile" = desktop ]; then
     printf '%s' "$rendered" | jq -e '

@@ -38,18 +38,9 @@ if command -v gitleaks >/dev/null 2>&1; then
   gitleaks detect --source "$DOTFILES" --no-git
 fi
 
-# Validate the active cross-platform source without applying it to $HOME.
-source_root_file="$DOTFILES/.chezmoiroot"
-[ -f "$source_root_file" ] || { echo "chezmoi source-root file is missing" >&2; exit 1; }
-source_root="$(< "$source_root_file")"
-if [ -z "$source_root" ] || [[ "$source_root" = /* ]]; then
-  echo "invalid chezmoi source root: $source_root" >&2
-  exit 1
-fi
-SOURCE="$DOTFILES/$source_root"
+# Validate the root-level chezmoi source without applying it to $HOME.
+SOURCE="$DOTFILES"
 if [ -d "$SOURCE" ]; then
-  bash -n "$DOTFILES/setup"
-
   while IFS= read -r -d '' file; do
     if head -n 1 "$file" | grep -qE '^#!.*(ba)?sh'; then
       bash -n "$file"
@@ -70,8 +61,7 @@ if [ -d "$SOURCE" ]; then
     exit 1
   fi
 
-  # Without an explicit sourceDir chezmoi defaults to ~/.local/share/chezmoi,
-  # which this repository never creates, so bare chezmoi commands fail.
+  # The generated config records the source directory for future bare commands.
   if ! DOTFILES_PROFILE=desktop chezmoi execute-template --source "$SOURCE" \
     < "$SOURCE/.chezmoi.toml.tmpl" | grep -q '^sourceDir = '; then
     echo "generated chezmoi.toml does not pin sourceDir" >&2
@@ -212,18 +202,18 @@ if [ -d "$SOURCE" ]; then
   # shellcheck disable=SC2016 # matching the literal shell source, not expanding it
   registry_flag='--registry "$npm_registry"'
   for profile in desktop enterprise server container; do
-    agent_installer="$(chezmoi execute-template --source "$SOURCE" \
+    provisioner="$(chezmoi execute-template --source "$SOURCE" \
       --override-data "{\"profile\":\"$profile\"}" \
-      < "$SOURCE/.chezmoiscripts/run_onchange_after_50-install-agent-tools.sh.tmpl")"
-    if printf '%s' "$agent_installer" | grep -qi 'plannotator'; then
+      < "$SOURCE/.chezmoiscripts/run_onchange_after_20-provision-tools.sh.tmpl")"
+    if printf '%s' "$provisioner" | grep -qi 'plannotator'; then
       echo "$profile must not reinstall retired Plannotator hooks" >&2
       exit 1
     fi
     if ! chezmoi execute-template --source "$SOURCE" \
       --override-data "{\"profile\":\"$profile\"}" \
-      < "$SOURCE/.chezmoiscripts/run_onchange_after_50-install-agent-tools.sh.tmpl" |
+      < "$SOURCE/.chezmoiscripts/run_onchange_after_20-provision-tools.sh.tmpl" |
       grep -qF -- "$registry_flag"; then
-      echo "agent tool install for $profile does not pin the npm registry" >&2
+      echo "tool provisioning for $profile does not pin the npm registry" >&2
       exit 1
     fi
   done
@@ -248,6 +238,18 @@ if [ -d "$SOURCE" ]; then
   if [ "$enterprise_casks" != "$expected_enterprise_casks" ]; then
     echo "enterprise Brewfile casks differ from the approved allowlist" >&2
     printf '%s\n' "$enterprise_casks" >&2
+    exit 1
+  fi
+
+  desktop_formulae="$(chezmoi execute-template --source "$SOURCE" \
+    --override-data '{"profile":"desktop"}' \
+    < "$SOURCE/dot_config/brew/Brewfile.tmpl" |
+    sed -n 's/^brew "\([^"]*\)"$/\1/p' | sort)"
+  expected_desktop_formulae="$(printf '%s\n' \
+    asmvik/formulae/skhd asmvik/formulae/yabai | sort)"
+  if [ "$desktop_formulae" != "$expected_desktop_formulae" ]; then
+    echo "desktop Brewfile must contain only window-manager formulae" >&2
+    printf '%s\n' "$desktop_formulae" >&2
     exit 1
   fi
 

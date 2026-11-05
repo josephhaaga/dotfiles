@@ -1,5 +1,18 @@
 # Source-only files.
 .chezmoidata
+.dockerignore
+.gitignore
+AGENTS.md
+CLAUDE.md
+README.md
+configs
+docs
+entities.json
+mempalace.yaml
+reports
+scripts
+test
+tests
 
 # Authentication and mutable runtime state are never managed.
 .config/gh

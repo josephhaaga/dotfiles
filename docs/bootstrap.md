@@ -3,9 +3,7 @@
 ## macOS
 
 ```bash
-git clone https://github.com/josephhaaga/dotfiles ~/Documents/dotfiles
-cd ~/Documents/dotfiles
-./setup
+mise x chezmoi@2.72.0 -- chezmoi init --apply josephhaaga/dotfiles
 ```
 
 The detected profile is `desktop`.
@@ -15,8 +13,7 @@ The detected profile is `desktop`.
 Do not use the automatically detected `desktop` profile. Preview and apply the restricted profile explicitly:
 
 ```bash
-chezmoi apply --dry-run --source "$PWD/home" --override-data '{"profile":"enterprise"}'
-DOTFILES_PROFILE=enterprise ./setup
+DOTFILES_PROFILE=enterprise mise x chezmoi@2.72.0 -- chezmoi init --apply josephhaaga/dotfiles
 ```
 
 The enterprise profile leaves native software and macOS services under MDM control. See [Enterprise profile audit](enterprise-profile.md) for the exact install boundary.
@@ -24,17 +21,13 @@ The enterprise profile leaves native software and macOS services under MDM contr
 ## Amazon Linux 2023
 
 ```bash
-sudo dnf install -y git
-mkdir -p ~/Documents
-git clone https://github.com/josephhaaga/dotfiles.git ~/Documents/dotfiles
-cd ~/Documents/dotfiles
-./setup
+mise x chezmoi@2.72.0 -- chezmoi init --apply josephhaaga/dotfiles
 ```
 
 Reconnect once after bootstrap so zsh and Docker group membership take effect. Then run:
 
 ```bash
-bash scripts/smoke-test.sh
+bash "$(chezmoi source-path)/scripts/smoke-test.sh"
 herdr
 ```
 
@@ -73,17 +66,16 @@ Detaching the client leaves panes and agents running on the VM.
 The image must provide `curl`, `git`, `zsh`, a C/C++ build toolchain, and CA certificates. As the non-root development user:
 
 ```bash
-DOTFILES_PROFILE=container ./setup
+DOTFILES_PROFILE=container mise x chezmoi@2.72.0 -- chezmoi init --apply josephhaaga/dotfiles
 ```
 
 ## Updating an existing checkout
 
-After pulling a source-root migration, run `setup` once so chezmoi records the
-new source directory:
+After pulling updates, apply the checked-out source:
 
 ```bash
-git pull --ff-only
-./setup
+git -C "$(chezmoi source-path)" pull --ff-only
+chezmoi apply
 ```
 
 ## Safe preview
@@ -94,4 +86,5 @@ Preview the active source without changing `$HOME`:
 chezmoi apply --dry-run --source "$PWD" --override-data '{"profile":"desktop"}'
 ```
 
-`./setup` is the explicit action that applies the active source.
+The root-level source is initialized by `chezmoi init`; later applies use the
+recorded source directory.

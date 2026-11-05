@@ -6,39 +6,35 @@ Every retained item has one installation owner. Anything not listed here is inte
 
 | Tool | Owner | Profiles | Purpose |
 |---|---|---|---|
-| chezmoi | bootstrap/native | all | Orchestrate files, templates, packages, and services |
-| mise | native/bootstrap | all | Install pinned portable CLIs and runtimes; enterprise installs it under the user's home directory |
+| chezmoi | mise bootstrap | all | Orchestrate files, templates, packages, and services |
+| mise | bootstrap | all | Install pinned portable CLIs and runtimes; enterprise installs it under the user's home directory |
 | zsh, Oh My Zsh, Starship | native + pinned Git checkout + mise | all | Interactive shell, plugins, and prompt |
 | Herdr | mise | all | Persistent local and remote terminal sessions |
 | Neovim/LazyVim | mise | all | Editor with Go, Python, TypeScript, Docker, JSON, Markdown, and TOML support |
 | OpenCode V2 | pinned npm install | all | Primary coding agent |
 | Agent Profiler | pinned npm CLI + OpenCode-managed pinned plugin | all | Local-only session traces; supervised collector on desktop/server |
 | uv, Node, Bun, Go | mise | all | Language runtimes and package execution |
-| ripgrep, fd, bat, fzf, tree, jq | mise/native | all | Search and shell utilities |
-| gh, Git LFS, git-filter-repo, GnuPG | mise/native | desktop, server | Git and GitHub workflows |
+| ripgrep, fd, bat, fzf, tree, jq | mise | all | Search and shell utilities |
+| gh, Git LFS, git-filter-repo, GnuPG | mise | desktop, server | Git and GitHub workflows |
 | shellcheck, gitleaks | mise | all | Static and secret checks |
 | Docker, Compose | native + mise | all | Container workflows |
 | Azure CLI | mise capability `cloud` | opt-in | Azure workflows |
 | kubectl, Azure kubelogin | mise capability `kubernetes` | opt-in | Kubernetes workflows |
 | gitleaks | mise capability `security` | opt-in | Secret scanning |
 
-The enterprise profile uses an existing, MDM-approved Homebrew installation for CLI formulae, Yabai/skhd, Ghostty, fonts, and OpenChamber. It excludes the rest of the desktop casks.
+The enterprise profile uses an existing, MDM-approved Homebrew installation for Yabai/skhd, Ghostty, and fonts. It excludes the rest of the desktop casks.
 
 ## macOS applications
 
 | Group | Applications |
 |---|---|
 | Terminal/windowing | Ghostty, Yabai, skhd, Hack Nerd Font, JetBrains Mono |
-| Security/network | 1Password, 1Password CLI, Tailscale |
+| Security/network | 1Password, Tailscale |
 | Browser/knowledge | Google Chrome, Obsidian |
 | AI workspace | OpenChamber |
 | Collaboration | Slack, Zoom, Linear, Granola |
 | Voice/input | Wispr Flow, Handy; Handy is optional on enterprise |
 | Containers | Docker Desktop |
-
-## Deliberately retained fun
-
-Neofetch, asciiquarium, cowsay, lolcat, and ponysay are intentional. They are not cleanup candidates.
 
 ## Retained custom workflow
 

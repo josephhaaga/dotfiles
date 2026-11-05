@@ -41,10 +41,8 @@ the next apply installs the full desktop cask list.
 {{-   fail (printf "invalid DOTFILES_PROFILE %q; expected desktop, enterprise, server, or container" $profile) -}}
 {{- end -}}
 
-# Pin the source directory chezmoi was initialised from. Without it chezmoi
-# falls back to ~/.local/share/chezmoi, which this repository never creates, so
-# every command outside the working tree fails with a missing directory. The
-# value is derived at init time and is already resolved through .chezmoiroot.
+# Pin the source directory chezmoi was initialised from so subsequent commands
+# operate on this checkout.
 sourceDir = {{ .chezmoi.sourceDir | quote }}
 
 [data]

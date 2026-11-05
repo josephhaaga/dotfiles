@@ -29,7 +29,7 @@ chmod +x "$fixture/bin/launchctl" "$fixture/bin/systemctl" \
 
 for profile in desktop enterprise server container; do
   rendered="$(chezmoi execute-template --source "$DOTFILES" --override-data "{\"profile\":\"$profile\"}" \
-    < "$DOTFILES/home/.chezmoiscripts/run_onchange_after_55-configure-agent-profiler.sh.tmpl")"
+    < "$DOTFILES/.chezmoiscripts/run_onchange_after_55-configure-agent-profiler.sh.tmpl")"
   : > "$TEST_CALL_LOG"
   HOME="$fixture/home" PATH="$fixture/bin:$PATH" bash -c "$rendered"
   case "$profile" in
@@ -49,7 +49,7 @@ for profile in desktop enterprise server container; do
 done
 
 : > "$TEST_CALL_LOG"
-HOME="$fixture/home" bash "$DOTFILES/home/dot_local/bin/executable_agent-profiler-serve"
+HOME="$fixture/home" bash "$DOTFILES/dot_local/bin/executable_agent-profiler-serve"
 grep -q '^host=127.0.0.1$' "$TEST_CALL_LOG"
 grep -q '^port=7070$' "$TEST_CALL_LOG"
 grep -qF "bun run $fixture/home/.local/lib/node_modules/@josephhaaga/agent-profiler/dist/server/index.js" "$TEST_CALL_LOG"

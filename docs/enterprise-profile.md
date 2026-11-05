@@ -3,7 +3,7 @@
 Use this profile only with an explicit environment override:
 
 ```bash
-DOTFILES_PROFILE=enterprise ./setup
+DOTFILES_PROFILE=enterprise mise x chezmoi@2.72.0 -- chezmoi init --apply josephhaaga/dotfiles
 ```
 
 macOS defaults to `desktop`; the repository cannot reliably detect MDM enrollment.
@@ -16,14 +16,14 @@ macOS defaults to `desktop`; the repository cannot reliably detect MDM enrollmen
 
 The enterprise profile requires Homebrew to be available already; it will not bootstrap Homebrew on an MDM machine. `brew bundle` installs:
 
-- All formulae under `packages.macos.brews`, including age, Bash, chezmoi, CMake, Git tools, GnuPG, jq, mise, tree, wget, Yabai/skhd, and the deliberately retained fun commands.
+- All formulae under `packages.macos.window_manager_brews`, including age, Bash, chezmoi, CMake, Git tools, GnuPG, jq, mise, tree, wget, Yabai/skhd, and the deliberately retained fun commands.
 - The trusted third-party `asmvik/formulae` tap required by Yabai/skhd.
 - Ghostty, Hack Nerd Font, JetBrains Mono, and OpenChamber. No other casks are included.
 
 It also installs the following software under the user's home directory:
 
 - mise `v2026.8.6`, using a checksum-verified installer.
-- The versions in `home/.chezmoidata/packages.yaml` under `packages.mise`: Azure CLI, Azure kubelogin, bat, bun, fd, fzf, GitHub CLI, gitleaks, Go, herdr, kubectl, Neovim, Node.js, Python, ripgrep, ShellCheck, Starship, StyLua, tealdeer, and uv.
+- The versions in `.chezmoidata/packages.yaml` under `packages.mise`: Azure CLI, Azure kubelogin, bat, bun, fd, fzf, GitHub CLI, gitleaks, Go, herdr, kubectl, Neovim, Node.js, Python, ripgrep, ShellCheck, Starship, StyLua, tealdeer, and uv.
 - The npm packages under `packages.npm`: the OpenCode V2 CLI, tree-sitter CLI, and the enterprise-only Plannotator OpenCode plugin. npm uses the machine's existing private-registry and custom-CA configuration.
 - Oh My Zsh at pinned Git revision `97e11051e2f8053b1d694788d1cb4b0dbb1e2365`.
 - Neofetch `7.1.0`, using a checksum-verified download.
@@ -43,7 +43,7 @@ The enterprise profile excludes all desktop-only paths through `.chezmoiignore` 
 
 ## Managed Configuration
 
-chezmoi deploys the portable configuration plus Ghostty, Yabai/skhd, and the window-manager helper. This includes zsh, Git aliases, mise, Neovim, Starship, tealdeer, neofetch, herdr, and minimal OpenCode configuration. Global agent instructions, downloaded skills, and Plannotator hooks are no longer managed; the enterprise provider and MCP allowlists remain enforced.
+chezmoi deploys the portable configuration plus Ghostty, Yabai/skhd, and the window-manager helper. This includes zsh, Git aliases, mise, Neovim, Starship, tealdeer, herdr, and minimal OpenCode configuration. Global agent instructions, downloaded skills, and Plannotator hooks are no longer managed; the enterprise provider and MCP allowlists remain enforced.
 
 OpenCode is configured differently on this profile than on the others:
 
@@ -65,7 +65,7 @@ The enterprise profile retains its explicit provider and MCP allowlists. `script
 
 The enterprise network serves npm through a private mirror and terminates TLS with an inspecting proxy, so any fallback to `registry.npmjs.org` fails with `SELF_SIGNED_CERT_IN_CHAIN`.
 
-The registry itself is configured outside this repository, in the Node installation's global npmrc. That file is not read when `npm install --global` is given a `--prefix`, because `--prefix` also relocates where npm looks for the global npmrc. `run_onchange_after_50-install-agent-tools.sh.tmpl` therefore resolves the registry with `npm config get registry` before `--prefix` takes effect and passes it explicitly with `--registry`.
+The registry itself is configured outside this repository, in the Node installation's global npmrc. That file is not read when `npm install --global` is given a `--prefix`, because `--prefix` also relocates where npm looks for the global npmrc. `run_onchange_after_20-provision-tools.sh.tmpl` therefore resolves the registry with `npm config get registry` before `--prefix` takes effect and passes it explicitly with `--registry`.
 
 Do not manage npm credentials here. The auth token lives in `~/.npmrc` and stays local runtime state.
 

@@ -1,6 +1,6 @@
 # Machine Profiles
 
-Profiles are selected automatically by `home/.chezmoi.toml.tmpl` and can be overridden with `DOTFILES_PROFILE` during bootstrap.
+Profiles are selected automatically by `.chezmoi.toml.tmpl` and can be overridden with `DOTFILES_PROFILE` during bootstrap.
 
 ## desktop
 
@@ -15,7 +15,7 @@ MDM-controlled macOS. Uses an existing, MDM-approved Homebrew installation for t
 Select it explicitly during bootstrap because MDM enrollment cannot be detected reliably:
 
 ```bash
-DOTFILES_PROFILE=enterprise ./setup
+DOTFILES_PROFILE=enterprise mise x chezmoi@2.72.0 -- chezmoi init --apply josephhaaga/dotfiles
 ```
 
 See [Enterprise profile audit](enterprise-profile.md) for the complete install and managed-file boundary.
@@ -30,7 +30,7 @@ Docker group membership is equivalent to root access. The first bootstrap adds t
 
 Linux development containers. The image owns native packages. chezmoi installs user configuration and mise tools without enabling systemd services, changing the login shell, or deploying desktop-only workflows.
 
-Use `DOTFILES_PROFILE=container ./setup` when container detection is unavailable.
+Use `DOTFILES_PROFILE=container mise x chezmoi@2.72.0 -- chezmoi init --apply josephhaaga/dotfiles` when container detection is unavailable.
 
 ## Optional capabilities
 
@@ -43,7 +43,7 @@ Capabilities enable additional tools independently of the machine profile:
 For initial bootstrap, set `DOTFILES_CAPABILITIES` to a comma-separated list:
 
 ```bash
-DOTFILES_CAPABILITIES=kubernetes ./setup
+DOTFILES_CAPABILITIES=kubernetes mise x chezmoi@2.72.0 -- chezmoi init --apply josephhaaga/dotfiles
 ```
 
 On an existing machine, enable Kubernetes without applying unrelated configuration:

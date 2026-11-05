@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import plugin from "../home/dot_config/opencode/local-plugins/whiteboard/index.js";
+import plugin from "../dot_config/opencode/local-plugins/whiteboard/index.js";
 
 function fixture() {
   const sessions = new Map();

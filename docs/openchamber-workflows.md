@@ -3,8 +3,8 @@
 Run the offline preview from the repository first:
 
 ```bash
-python3 home/dot_local/bin/executable_openchamber-workflows \
-  --defaults home/dot_config/dotfiles/openchamber-workflow-defaults.json --dry-run
+python3 dot_local/bin/executable_openchamber-workflows \
+  --defaults dot_config/dotfiles/openchamber-workflow-defaults.json --dry-run
 ```
 
 This change uses native OpenChamber features, not a custom extension or a Linear-label dispatcher. It does not install, enable, or modify the abandoned prototype.
@@ -41,7 +41,7 @@ This is a **source-only retirement**, not deletion from deployed machines. Remov
 
 ### Version checks
 
-The supported package is currently `@openchamber/web` **2.3.1**, matching the server package pin in `home/.chezmoidata/packages.yaml`. The workflow contract is reviewed for **2.1.1**, **2.2.0**, and **2.3.1**. `/api/version` and GET/PUT `/api/config/settings` are internal, version-dependent APIs, **not a stable public contract**. Desktop releases can differ from the pinned server package; an unreviewed version fails closed.
+The supported package is currently `@openchamber/web` **2.3.1**, matching the server package pin in `.chezmoidata/packages.yaml`. The workflow contract is reviewed for **2.1.1**, **2.2.0**, and **2.3.1**. `/api/version` and GET/PUT `/api/config/settings` are internal, version-dependent APIs, **not a stable public contract**. Desktop releases can differ from the pinned server package; an unreviewed version fails closed.
 
 The 2.3.1 contract probe passed against the installed npm package. Its registry and sanitizer no longer support `sessionWorkAutoOpen`, so that obsolete field is omitted from the shared defaults and helper allowlist.
 
@@ -77,8 +77,8 @@ Use the helper from the repository until you choose to deploy it. Its offline dr
 2. Run the authenticated preview. Paste that instance's current **Cookie request header** from the browser's developer tools into the hidden prompt; do not paste it into chat, a command line, or this repository. Cookie names may include the instance port. No login or OAuth flow is performed by the script.
 
    ```bash
-   python3 home/dot_local/bin/executable_openchamber-workflows \
-     --defaults home/dot_config/dotfiles/openchamber-workflow-defaults.json \
+   python3 dot_local/bin/executable_openchamber-workflows \
+     --defaults dot_config/dotfiles/openchamber-workflow-defaults.json \
      --url https://YOUR-APP-HOST --dry-run
    ```
 

@@ -16,7 +16,7 @@ packages:
     k9s: "0.51.0"
     neovim: "0.12.5"
     "pipx:josephhaaga-clerk": "0.0.12"
-    "pypi:git-filter-repo": "2.47.0"
+    "pipx:git-filter-repo": "2.47.0"
     # Keep calendar tooling available without blocking applies while PyPI
     # dependency metadata is unstable. mise installs lazy tools on first use.
     "pipx:gcalcli":

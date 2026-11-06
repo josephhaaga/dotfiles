@@ -58,7 +58,10 @@ if command -v op >/dev/null 2>&1 && command -v opencode >/dev/null 2>&1 && [[ -f
   alias opencode-vm='op run --env-file="$HOME/.config/opencode/opencode-vm.env" -- opencode --server http://127.0.0.1:14096'
 fi
 
-if [[ -o interactive ]] && command -v mise >/dev/null 2>&1 && mise current kubectl >/dev/null 2>&1; then
-  source <("$(mise which kubectl)" completion zsh)
-  alias k=kubectl
+if [[ -o interactive ]] && command -v mise >/dev/null 2>&1; then
+  kubectl_bin="$(mise which kubectl 2>/dev/null)" || kubectl_bin=""
+  if [[ -n "$kubectl_bin" ]]; then
+    source <("$kubectl_bin" completion zsh)
+    alias k=kubectl
+  fi
 fi

@@ -39,6 +39,8 @@ source "$ZSH/oh-my-zsh.sh"
 if command -v mise >/dev/null 2>&1; then
   export MISE_PYTHON_UV_VENV_AUTO=false
   eval "$(mise activate zsh)"
+  # Prefer globally managed npm commands after mise adds backend binaries.
+  path=("$HOME/.local/bin" $path)
 fi
 
 if command -v starship >/dev/null 2>&1; then

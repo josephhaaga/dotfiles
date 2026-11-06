@@ -1,7 +1,7 @@
 # VM-hosted reports
 
 The VM can publish self-contained reports to approved devices through the same
-mTLS-protected Caddy endpoint as OpenChamber. This is intended for durable HTML
+mTLS-protected Caddy endpoint. This is intended for durable HTML
 artifacts that should be readable from a laptop, tablet, or phone without an
 SSH session or a separate application server.
 

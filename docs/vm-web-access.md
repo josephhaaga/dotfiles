@@ -1,6 +1,6 @@
 # VM web access
 
-The server profile publishes OpenChamber and static reports at
+The server profile publishes static reports at
 `https://josephhaaga.sh.tribe.ai` without exposing their backing services or
 files directly. An approved device must authenticate to Caddy with a client
 certificate before Caddy handles any request.
@@ -12,12 +12,7 @@ Safari with device certificate
   -> HTTPS on josephhaaga.sh.tribe.ai:443
   -> mTLS client-certificate verification at Caddy
   -> /reports/*: static files in the dotfiles checkout
-  -> other paths: OpenChamber on VM loopback port 3000
-                  -> OpenCode V2 managed by OpenChamber
 ```
-
-Caddy handles WebSocket upgrades automatically. Its `flush_interval -1`
-setting forwards OpenChamber's SSE streams without buffering.
 
 ## Certificates and keys
 
@@ -37,13 +32,8 @@ used for installation contains the private key and must remain secret.
 - Caddy alone listens publicly on ports 80 and 443.
 - Caddy serves `/reports/*` from the repository's `reports/` directory. It
   provides a directory index and disables browser and intermediary caching.
-- OpenChamber listens only on `127.0.0.1:3000`.
-- The OpenCode 2.0.16 service listens only on `127.0.0.1:49374` and remains
+- The OpenCode service listens only on `127.0.0.1:49374` and remains
   available through the SSH tunnel for `opencode-vm`.
-- OpenChamber V2.0.1 uses its bundled-compatible OpenCode 2.0.16 through
-  `~/.local/bin/openchamber-opencode-v2-preview`. The wrapper isolates its
-  runtime data under `~/.local/share/openchamber` so it cannot affect the
-  paired OpenCode 2.0.16 service.
 
 See [VM-hosted reports](vm-hosted-reports.md) for the report publishing
 contract and workflow.

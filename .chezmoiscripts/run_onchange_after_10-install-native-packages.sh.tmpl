@@ -18,6 +18,16 @@ for cask in {{ range .packages.macos.enterprise_optional_casks }}{{ printf "%q "
 done
 {{ end -}}
 {{ else if eq .profile "server" -}}
+sudo install -d -m 0755 /etc/yum.repos.d
+sudo tee /etc/yum.repos.d/rex.repo >/dev/null <<'EOF'
+[rex]
+name=Rex ({{ .packages.rex.channel }})
+baseurl=https://pkgs.superlogical.com/rex/rpm/{{ .packages.rex.channel }}/$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://pkgs.superlogical.com/rex/keys/rex.asc
+EOF
 packages=(
 {{- range .packages.amazon_linux }}
   {{ . | quote }}

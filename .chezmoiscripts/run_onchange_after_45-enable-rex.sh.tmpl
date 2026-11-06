@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+{{ if eq .profile "server" -}}
+# Keep the single VM user's Rex server available between SSH logins. The
+# packaged socket activates the per-user server on first connection.
+loginctl enable-linger "$USER"
+systemctl --user enable --now rex.socket
+{{ else -}}
+printf '%s\n' 'Rex server socket is managed only by the server profile.'
+{{ end -}}

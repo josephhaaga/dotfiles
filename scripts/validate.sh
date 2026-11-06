@@ -68,7 +68,7 @@ if [ -d "$SOURCE" ]; then
     exit 1
   fi
 
-  empty_capabilities="$(DOTFILES_PROFILE=desktop DOTFILES_CAPABILITIES= \
+  empty_capabilities="$(DOTFILES_PROFILE=desktop DOTFILES_CAPABILITIES='' \
     chezmoi execute-template --source "$SOURCE" < "$SOURCE/.chezmoi.toml.tmpl" |
     sed -n 's/^ *capabilities = \(.*\)$/\1/p')"
   if [ "$empty_capabilities" != '[]' ]; then

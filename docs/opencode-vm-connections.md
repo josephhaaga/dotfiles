@@ -6,23 +6,8 @@ combined into one tunnel.
 
 | Method | Local entry point | VM destination | Lifetime |
 | --- | --- | --- | --- |
-| Safari web | `https://josephhaaga.sh.tribe.ai` | Caddy to OpenChamber on `127.0.0.1:3000` | Per browser request |
 | Local TUI | `http://127.0.0.1:14096` | `127.0.0.1:49374` | Persistent LaunchAgent |
 | OpenAI OAuth | `http://localhost:1455/auth/callback` | `127.0.0.1:1455` | Temporary manual tunnel |
-
-## Safari web access
-
-Safari connects directly to the public Caddy endpoint. No SSH tunnel is used.
-
-```text
-Safari
-  -> HTTPS on josephhaaga.sh.tribe.ai:443
-  -> mTLS client-certificate verification at Caddy
-  -> OpenChamber on VM loopback port 3000
-```
-
-The device must have its client certificate and private key installed. See
-[VM web access](vm-web-access.md) for certificate and proxy details.
 
 ## Local TUI attachment
 
@@ -55,10 +40,8 @@ client process environment.
 
 ## OpenAI browser OAuth
 
-OpenChamber and the local TUI use the same source-managed OpenCode V2 server on
-the VM (`127.0.0.1:49374`). OpenChamber connects using its documented external
-server mode (`OPENCODE_HOST` plus `OPENCODE_SKIP_START=true`); it neither bundles
-OpenCode nor uses an OpenChamber-specific wrapper.
+The local TUI connects to the source-managed OpenCode V2 server on the VM
+(`127.0.0.1:49374`).
 
 The server's pairing password is a VM-local runtime value in
 `~/.config/opencode/server.env`. Both user services read it; the file is never

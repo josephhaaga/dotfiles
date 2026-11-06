@@ -27,6 +27,9 @@ case "$profile" in
 esac
 
 required=(chezmoi mise zsh nvim herdr uv node bun go rg fd starship stylua gh opencode tree-sitter)
+if [ "$profile" = server ]; then
+  required+=(rex)
+fi
 
 # Match the mise template: recorded capabilities outrank the bootstrap env.
 # Kubernetes tools are deliberately absent from an ordinary container install.
@@ -82,6 +85,7 @@ fi
 
 if [ "$profile" = server ]; then
   systemctl --user is-active --quiet opencode.service || status=1
+  systemctl --user is-active --quiet rex.socket || status=1
   systemctl --user is-active --quiet tern-remote.service || status=1
   systemctl is-active --quiet docker.service || status=1
   systemctl is-active --quiet crond.service || status=1

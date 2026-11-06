@@ -10,7 +10,7 @@ There is no work/personal split. Collaboration tools are part of the normal desk
 
 ## enterprise
 
-MDM-controlled macOS. Uses an existing, MDM-approved Homebrew installation for the shared CLI formulae, Yabai/skhd, Ghostty, fonts, and OpenChamber. It also installs the pinned user-space and agent toolchains. Handy is attempted as an optional cask and does not fail the apply if Workbrew policy rejects it. It does not install other personal or collaboration applications, Docker Desktop, LaunchAgents, or macOS preferences.
+MDM-controlled macOS. Uses an existing, MDM-approved Homebrew installation for the shared CLI formulae, Yabai/skhd, Ghostty, and fonts. It also installs the pinned user-space and agent toolchains. Handy is attempted as an optional cask and does not fail the apply if Workbrew policy rejects it. It does not install other personal or collaboration applications, Docker Desktop, LaunchAgents, or macOS preferences.
 
 Select it explicitly during bootstrap because MDM enrollment cannot be detected reliably:
 

@@ -44,7 +44,7 @@ not managed.
 
 ## Removed from the managed baseline
 
-Global OpenCode instructions, downloaded skills (Impeccable, Graphify, Retro), and Plannotator's plugin, commands, and installer are retired. Native OpenChamber owns the plan/review workflow; model selection is no longer pinned by dotfiles. Repository-local instructions remain supported. See [native workflows](openchamber-workflows.md) for the source-only cleanup boundary.
+Global OpenCode instructions, downloaded skills (Impeccable, Graphify, Retro), Plannotator's plugin, commands, installer, and OpenChamber are retired. Repository-local instructions remain supported.
 
 - tmux and TPM; Herdr owns persistent sessions.
 - Pi, OMP, Crush, Claude Code, Codex, OMO, agent profiler, OpenPortal Hub, and browser MCP servers.

@@ -63,6 +63,10 @@ packages:
   opencode_plugins:
     agent_profiler: "0.4.1"
 
+  # Rex publishes only snapshot builds until its first stable release.
+  rex:
+    channel: snapshot
+
   # Chrome Sync remains responsible for cross-device installation. This inventory
   # lets `chrome-extensions` audit the local Chrome profile. Missing Chrome Web
   # Store pages can be opened later with its explicit --install-missing option.
@@ -168,6 +172,7 @@ packages:
     - mesa-libgbm
     - nss
     - pango
+    - rex
     - tar
     - tree
     - unzip

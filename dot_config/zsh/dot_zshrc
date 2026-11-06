@@ -28,6 +28,10 @@ mkdir -p "$ZSH_CACHE_DIR" "${ZSH_COMPDUMP:h}"
 
 ZSH_THEME=""
 ZSH_DISABLE_COMPFIX=true
+# The managed checkout is shallow and detached at a reviewed revision. Updating
+# it interactively cannot select a branch and fails with "invalid reference".
+ZSH_DISABLE_UPDATE_PROMPT=true
+ZSH_DISABLE_AUTO_UPDATE=true
 plugins=(git httpie shrink-path uv)
 
 source "$ZSH/oh-my-zsh.sh"
@@ -54,7 +58,7 @@ if command -v op >/dev/null 2>&1 && command -v opencode >/dev/null 2>&1 && [[ -f
   alias opencode-vm='op run --env-file="$HOME/.config/opencode/opencode-vm.env" -- opencode --server http://127.0.0.1:14096'
 fi
 
-if [[ -o interactive ]] && command -v kubectl >/dev/null 2>&1; then
-  source <(kubectl completion zsh)
+if [[ -o interactive ]] && command -v mise >/dev/null 2>&1 && mise current kubectl >/dev/null 2>&1; then
+  source <("$(mise which kubectl)" completion zsh)
   alias k=kubectl
 fi

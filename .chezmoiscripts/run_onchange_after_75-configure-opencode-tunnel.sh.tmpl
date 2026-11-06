@@ -2,16 +2,16 @@
 
 set -euo pipefail
 
-# LaunchAgent: {{ include "private_Library/private_LaunchAgents/com.josephhaaga.opencode-tunnel.plist.tmpl" | sha256sum }}
+# LaunchAgents: {{ include "private_Library/private_LaunchAgents/com.josephhaaga.opencode-tunnel.plist.tmpl" | sha256sum }} {{ include "private_Library/private_LaunchAgents/com.josephhaaga.rex-vm-tunnel.plist.tmpl" | sha256sum }}
 
 {{ if eq .profile "desktop" -}}
-label="com.josephhaaga.opencode-tunnel"
 domain="gui/$(id -u)"
-unit="{{ .chezmoi.homeDir }}/Library/LaunchAgents/$label.plist"
-
-launchctl bootout "$domain/$label" 2>/dev/null || true
-launchctl enable "$domain/$label"
-launchctl bootstrap "$domain" "$unit"
+for label in com.josephhaaga.opencode-tunnel com.josephhaaga.rex-vm-tunnel; do
+  unit="{{ .chezmoi.homeDir }}/Library/LaunchAgents/$label.plist"
+  launchctl bootout "$domain/$label" 2>/dev/null || true
+  launchctl enable "$domain/$label"
+  launchctl bootstrap "$domain" "$unit"
+done
 {{ else -}}
-printf '%s\n' 'OpenCode SSH tunnel is only configured on the desktop profile.'
+printf '%s\n' 'OpenCode and Rex SSH tunnels are configured only on the desktop profile.'
 {{ end -}}

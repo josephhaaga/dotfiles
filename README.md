@@ -68,12 +68,10 @@ inventory, grouped into installed and missing extensions. Applying dotfiles does
 not run this informational audit. To open Chrome Web Store pages for missing
 extensions, run `chrome-extensions --install-missing` explicitly.
 
-`link-agent-skills` exposes the checked-out personal skills repository to
-OpenCode, Pi, OMP, and Codex through `~/.agents/skills`. It links every skill
-from the default source, `~/Documents/skills/skills`, individually, so
-package-managed skills already in that directory remain untouched. It never
-modifies the checkout or replaces an existing path. Set `PERSONAL_SKILLS_DIR`
-when the repository lives elsewhere.
+`link-agent-skills` installs all skills from `josephhaaga/skills` at the global
+user scope through the Skills CLI. It requires Node.js and runs the equivalent
+of `npx skills add josephhaaga/skills --global --all`; a local checkout is not
+required.
 
 Mise lockfiles are local runtime state. They are not managed by chezmoi.
 

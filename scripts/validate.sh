@@ -5,6 +5,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES="$(cd "$SCRIPT_DIR/.." && pwd)"
+# shellcheck source=scripts/lib/opencode-config.sh
+source "$SCRIPT_DIR/lib/opencode-config.sh"
 check_installed=false
 
 if [ "${1:-}" = "--check-installed" ]; then
@@ -54,6 +56,7 @@ if [ -d "$SOURCE" ]; then
   bash "$DOTFILES/scripts/test-smoke-capabilities.sh"
   bash "$DOTFILES/scripts/test-agent-profiler.sh"
   bash "$DOTFILES/scripts/test-whiteboard.sh"
+  bash "$DOTFILES/scripts/test-opencode-config.sh"
 
   if DOTFILES_PROFILE=invalid chezmoi execute-template --source "$SOURCE" \
     < "$SOURCE/.chezmoi.toml.tmpl" >/dev/null 2>&1; then
@@ -159,6 +162,12 @@ if [ -d "$SOURCE" ]; then
         '((.mcp.servers // {}) | keys) - $allowed | .[]' >&2
     exit 1
   fi
+
+  if ! printf '%s' "$enterprise_opencode" |
+      jq -e 'if has("model") then (.model | startswith("github-copilot/")) else true end' >/dev/null; then
+    echo "enterprise default model must not bypass its Copilot-only provider policy" >&2
+    exit 1
+  fi
   if ! printf '%s' "$enterprise_opencode" |
       jq -e '[.experimental.policies[] | select(.action == "provider.use" and .effect == "allow") | .resource] == ["github-copilot"]' >/dev/null; then
     echo "enterprise opencode config must allow only the github-copilot provider" >&2
@@ -180,9 +189,13 @@ if [ -d "$SOURCE" ]; then
           .plugins == ((if $profile == "desktop" then ["./local-plugins/whiteboard"] else [] end) + [{"package": $package, "options": {
             "endpoint": "http://127.0.0.1:7070/v1/traces",
             "captureContent": true, "captureHeaders": false
-          }}]) and (has("model") | not) and (has("agents") | not)
-          and (has("default_agent") | not)' >/dev/null; then
-      echo "$profile OpenCode config overrides native workflow choices" >&2
+          }}])' >/dev/null; then
+      echo "$profile OpenCode plugins differ from the configured plugin inventory" >&2
+      exit 1
+    fi
+
+    if ! printf '%s' "$rendered" | validate_opencode_preferences; then
+      echo "$profile OpenCode model or agent preferences have invalid field shapes" >&2
       exit 1
     fi
 

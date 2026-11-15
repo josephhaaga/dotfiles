@@ -1,0 +1,36 @@
+# Edit this chezmoi source, then apply only ~/.config/chyron/config.toml.
+# Chyron reloads saved configuration automatically; no rebuild/restart needed.
+version = 1
+idle_title = "wm"
+title_limit = 46
+separator = "  |  "
+daemon_interval = 5
+command_timeout = 4
+
+[marquee]
+width = 220
+speed = 55
+lead_in = 0.3
+compact_when_idle = true
+pause_on_hover = true
+
+[events]
+format = "{source} · {message}"
+history_limit = 15
+maximum_age = 15
+static_duration = 15
+
+# Declaring blocks replaces the default list. Use top-level blocks = [] to disable.
+[[blocks]]
+name = "Space"
+command = "yabai -m query --spaces --space | /usr/bin/plutil -extract index raw -o - -"
+interval = 3
+in_menu_bar = false
+
+[[daemons]]
+name = "skhd"
+labels = ["com.koekeishiya.skhd", "homebrew.mxcl.skhd-service"]
+
+[[daemons]]
+name = "yabai"
+labels = ["com.asmvik.yabai", "com.koekeishiya.yabai", "homebrew.mxcl.yabai-service"]

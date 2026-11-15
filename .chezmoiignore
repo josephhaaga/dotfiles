@@ -32,6 +32,7 @@ tests
 
 {{- if not (has .profile (list "desktop" "enterprise")) }}
 # macOS-only configuration and applications.
+.config/chyron
 .config/ghostty
 .skhdrc
 .config/skhd

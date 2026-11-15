@@ -99,6 +99,20 @@ if [ -d "$SOURCE" ]; then
     data="{\"profile\":\"$profile\"}"
 
     managed_paths="$(chezmoi managed --source "$SOURCE" --override-data "$data")"
+    case "$profile" in
+      desktop|enterprise)
+        if ! printf '%s\n' "$managed_paths" | grep -q '^\.config/chyron/config.toml$'; then
+          echo "$profile must manage Chyron configuration" >&2
+          exit 1
+        fi
+        ;;
+      server|container)
+        if printf '%s\n' "$managed_paths" | grep -q '^\.config/chyron\(/\|$\)'; then
+          echo "$profile must not manage macOS-only Chyron configuration" >&2
+          exit 1
+        fi
+        ;;
+    esac
     if printf '%s\n' "$managed_paths" | grep -Eq '^(\.config/openchamber(/|$)|\.config/caddy(/|$)|\.agents/loops(/|$))'; then
       echo "$profile must not manage retired OpenChamber, Caddy, or schedule paths" >&2
       exit 1
